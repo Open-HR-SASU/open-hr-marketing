@@ -48,8 +48,9 @@ src/
 
 ## Sanity CMS
 
-- **Project ID:** `kg29oq3t`
+- **Project ID:** `tbkdha33`
 - **Dataset:** `production`
+- **Studio:** `./studio/` (run with `npm run dev` from studio directory)
 
 Content is fetched at build time. All pages use `getPage(slug, locale)` to retrieve sections from Sanity.
 

@@ -7,7 +7,7 @@
 import { createClient, type ClientConfig } from '@sanity/client';
 
 const config: ClientConfig = {
-  projectId: 'kg29oq3t',
+  projectId: 'tbkdha33',
   dataset: 'production',
   apiVersion: '2024-01-01',
   // Use CDN for static builds — content is fetched at build time
