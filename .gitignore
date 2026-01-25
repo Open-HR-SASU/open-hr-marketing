@@ -1,0 +1,22 @@
+# Build
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Clever Cloud
+.clever.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

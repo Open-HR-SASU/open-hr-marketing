@@ -1,0 +1,97 @@
+---
+/**
+ * Features Section
+ *
+ * Grid of feature highlights with icons.
+ * Displays features array from Sanity content.
+ */
+
+import { RichText } from './RichText';
+import { getBackgroundClass, type SectionProps } from './types';
+
+interface Props extends Partial<SectionProps> {}
+
+const {
+  heading,
+  subheading,
+  body,
+  features,
+  backgroundStyle,
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+
+// Feature icons as SVG strings
+const featureIcons: Record<string, string> = {
+  checkmark: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />',
+  shield: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />',
+  clock: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />',
+  users: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />',
+  chart: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />',
+  star: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />',
+  lock: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />',
+  globe: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
+  briefcase: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />',
+  award: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />',
+  'trending-up': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />',
+  zap: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />',
+  target: '<circle cx="12" cy="12" r="10" stroke-width="2" /><circle cx="12" cy="12" r="6" stroke-width="2" /><circle cx="12" cy="12" r="2" stroke-width="2" />',
+  layers: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />',
+};
+
+function getIconPath(icon?: string): string {
+  return featureIcons[icon || 'checkmark'] || featureIcons.checkmark;
+}
+---
+
+<section class:list={['py-16 md:py-24', bgClass, className]}>
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="mx-auto mb-12 max-w-3xl text-center">
+      {heading && (
+        <h2 class="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">
+          {heading}
+        </h2>
+      )}
+      {subheading && (
+        <p class="text-lg text-gray-600">{subheading}</p>
+      )}
+    </div>
+
+    <!-- Features Grid -->
+    {features && features.length > 0 && (
+      <div class="mx-auto grid max-w-5xl gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {features.map((feature) => (
+          <div class="rounded-lg bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-openhr-teal-900/10 text-openhr-teal-900">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Fragment set:html={getIconPath(feature.icon)} />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-lg font-semibold">{feature.heading}</h3>
+            <p class="text-gray-600">{feature.description}</p>
+            {feature.link && feature.linkLabel && (
+              <a
+                href={feature.link}
+                class="mt-4 inline-flex items-center text-sm font-medium text-openhr-teal-900 hover:text-openhr-teal-700"
+              >
+                {feature.linkLabel}
+                <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    <!-- Fallback body content if no features -->
+    {(!features || features.length === 0) && body && body.length > 0 && (
+      <div class="mx-auto max-w-4xl">
+        <RichText content={body} className="text-gray-600" />
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,81 @@
+---
+/**
+ * Homepage for each locale
+ *
+ * Generates static pages for: /fr/, /en-GB/, /en-US/, /de/, /es/, /it/
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import { locales, type Locale } from '@/lib/i18n';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+// Locale-specific page titles
+const titles: Record<Locale, string> = {
+  'fr': 'Open HR - L\'infrastructure RH de demain',
+  'en-GB': 'Open HR - Tomorrow\'s HR Infrastructure',
+  'en-US': 'Open HR - Tomorrow\'s HR Infrastructure',
+  'de': 'Open HR - Die HR-Infrastruktur von morgen',
+  'es': 'Open HR - La infraestructura de RRHH del manana',
+  'it': 'Open HR - L\'infrastruttura HR di domani',
+};
+
+const descriptions: Record<Locale, string> = {
+  'fr': 'Open HR construit l\'infrastructure RH de demain. Rejoignez notre programme pilote.',
+  'en-GB': 'Open HR is building tomorrow\'s HR infrastructure. Join our pilot programme.',
+  'en-US': 'Open HR is building tomorrow\'s HR infrastructure. Join our pilot program.',
+  'de': 'Open HR baut die HR-Infrastruktur von morgen. Nehmen Sie an unserem Pilotprogramm teil.',
+  'es': 'Open HR esta construyendo la infraestructura de RRHH del manana. Unete a nuestro programa piloto.',
+  'it': 'Open HR sta costruendo l\'infrastruttura HR di domani. Unisciti al nostro programma pilota.',
+};
+
+const eyebrows: Record<Locale, string> = {
+  'fr': 'Bientot disponible',
+  'en-GB': 'Coming Soon',
+  'en-US': 'Coming Soon',
+  'de': 'Bald verfugbar',
+  'es': 'Proximamente',
+  'it': 'Prossimamente',
+};
+
+const ctaLabels: Record<Locale, { primary: string; secondary: string }> = {
+  'fr': { primary: 'Rejoindre le pilote', secondary: 'En savoir plus' },
+  'en-GB': { primary: 'Join the Pilot', secondary: 'Learn More' },
+  'en-US': { primary: 'Join the Pilot', secondary: 'Learn More' },
+  'de': { primary: 'Pilot beitreten', secondary: 'Mehr erfahren' },
+  'es': { primary: 'Unirse al piloto', secondary: 'Saber mas' },
+  'it': { primary: 'Unisciti al pilota', secondary: 'Scopri di piu' },
+};
+---
+
+<MainLayout
+  title={titles[locale]}
+  description={descriptions[locale]}
+  locale={locale}
+>
+  <!-- Hero Section -->
+  <section class="container py-24 text-center">
+    <p class="text-sm font-medium text-openhr-teal-900 mb-4">
+      {eyebrows[locale]}
+    </p>
+    <h1 class="text-display-2 text-foreground mb-6">
+      Open HR
+    </h1>
+    <p class="text-body text-muted-foreground max-w-2xl mx-auto mb-8">
+      {descriptions[locale]}
+    </p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <a href={`/${locale}/pilot/`} class="btn btn-primary">
+        {ctaLabels[locale].primary}
+      </a>
+      <a href={`/${locale}/about/`} class="btn btn-secondary">
+        {ctaLabels[locale].secondary}
+      </a>
+    </div>
+  </section>
+</MainLayout>

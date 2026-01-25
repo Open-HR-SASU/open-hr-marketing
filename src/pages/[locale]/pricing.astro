@@ -1,0 +1,84 @@
+---
+/**
+ * Pricing Page
+ *
+ * Interactive pricing display with monthly/annual toggle.
+ * Uses React island for the toggle functionality.
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import Mark from '@/components/Mark.astro';
+import PricingSection from '@/components/islands/PricingSection';
+import { locales, type Locale } from '@/lib/i18n';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+// Localized content
+const content = {
+  fr: {
+    title: 'Tarifs - Open HR',
+    description: 'Tarifs simples et transparents. Choisissez le plan qui vous convient.',
+    heading: 'Tarifs simples. Sans surprise.',
+    subheading: 'Choisissez le plan qui correspond a vos besoins.',
+  },
+  'en-GB': {
+    title: 'Pricing - Open HR',
+    description: 'Straightforward, transparent pricing. Choose the plan that suits you.',
+    heading: 'Straightforward pricing. No surprises.',
+    subheading: 'Choose the plan that suits your needs.',
+  },
+  'en-US': {
+    title: 'Pricing - Open HR',
+    description: 'Simple, transparent pricing. Choose the plan that works for you.',
+    heading: 'Simple pricing. No surprises.',
+    subheading: 'Pick the plan that works for you.',
+  },
+  de: {
+    title: 'Preise - Open HR',
+    description: 'Klare, transparente Preise. Wahlen Sie den Plan, der zu Ihnen passt.',
+    heading: 'Klare Preise. Keine Uberraschungen.',
+    subheading: 'Wahlen Sie den Plan, der zu Ihnen passt.',
+  },
+  es: {
+    title: 'Precios - Open HR',
+    description: 'Precios claros y transparentes. Elige el plan que mejor te funcione.',
+    heading: 'Precios claros. Sin sorpresas.',
+    subheading: 'Elige el plan que mejor te funcione.',
+  },
+  it: {
+    title: 'Prezzi - Open HR',
+    description: 'Prezzi chiari e trasparenti. Scegli il piano giusto per te.',
+    heading: 'Prezzi chiari. Nessuna sorpresa.',
+    subheading: 'Scegli il piano giusto per te.',
+  },
+}[locale];
+---
+
+<MainLayout
+  title={content.title}
+  description={content.description}
+  locale={locale}
+>
+  <section class="container py-16 md:py-24">
+    <!-- Header -->
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="mb-6 flex justify-center">
+        <Mark size="lg" class="text-openhr-teal-900" />
+      </div>
+      <h1 class="mb-4 font-display text-4xl font-extrabold text-foreground md:text-5xl">
+        {content.heading}
+      </h1>
+      <p class="text-xl text-gray-600">
+        {content.subheading}
+      </p>
+    </div>
+
+    <!-- Pricing Section (React Island) -->
+    <PricingSection locale={locale} client:load />
+  </section>
+</MainLayout>

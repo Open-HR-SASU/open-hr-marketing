@@ -1,0 +1,367 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ============================================
+   Open HR Design System Foundation (Astro)
+   ============================================
+   Philosophy: Infrastructure, not decoration.
+   Every design decision follows Dieter Rams' principles.
+   "Less, but better."
+   ============================================ */
+
+/* Design System Tokens */
+@theme inline {
+  /* Typography - Four-tier system
+     OPEN (display)    -> The Orator: Headlines, proclamations
+     HUMAN (body)      -> The Counselor: Interface text, explanations
+     RESOURCES (mono)  -> The Archivist: Data, scores, technical
+     MARK (mark)       -> The Notation: mark specifically
+  */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-mark: 'Inter', system-ui, sans-serif;
+
+  /* Foundation Colors */
+  --color-background: #ffffff;
+  --color-foreground: #1A1A1A;
+
+  /* Brand Colors - Open HR Identity */
+  --color-primary: #006064;
+  --color-primary-hover: #00838F;
+  --color-primary-light: #E0F7FA;
+  --color-primary-foreground: #ffffff;
+
+  /* Open HR Teal - Brand Color Palette */
+  --color-openhr-teal-50: #E0F7FA;
+  --color-openhr-teal-100: #B2EBF2;
+  --color-openhr-teal-200: #80DEEA;
+  --color-openhr-teal-300: #4DD0E1;
+  --color-openhr-teal-400: #26C6DA;
+  --color-openhr-teal-500: #00BCD4;
+  --color-openhr-teal-600: #00ACC1;
+  --color-openhr-teal-700: #00838F;  /* HOVER STATE */
+  --color-openhr-teal-800: #00695C;
+  --color-openhr-teal-900: #006064;  /* PRIMARY - never use default teal */
+
+  --color-secondary: #666666;
+  --color-secondary-foreground: #ffffff;
+
+  --color-accent: #10b981;
+  --color-accent-foreground: #ffffff;
+
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #ffffff;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #666666;
+
+  /* Gray Scale - Infrastructure shades */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+
+  /* Border & Input */
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #006064;
+
+  /* Border Radius - 8px grid system */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Typography Scale */
+  --font-size-display-1: 4rem;
+  --line-height-display-1: 1.1;
+  --letter-spacing-display-1: -0.02em;
+
+  --font-size-display-2: 3rem;
+  --line-height-display-2: 1.1;
+  --letter-spacing-display-2: -0.02em;
+
+  --font-size-display-3: 2rem;
+  --line-height-display-3: 1.1;
+  --letter-spacing-display-3: -0.02em;
+
+  --font-size-heading: 1.5rem;
+  --line-height-heading: 1.2;
+
+  --font-size-body: 1rem;
+  --line-height-body: 1.6;
+
+  --font-size-body-sm: 0.875rem;
+  --line-height-body-sm: 1.6;
+
+  --font-size-technical: 1rem;
+  --line-height-technical: 1.4;
+  --letter-spacing-technical: 0.01em;
+
+  /* Container */
+  --container-max-width: 1280px;
+}
+
+/* Base Layer - Design System Foundations */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+
+  /* Typography Hierarchy */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+
+  /* Technical Data Styling */
+  code,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-technical);
+    line-height: var(--line-height-technical);
+    letter-spacing: var(--letter-spacing-technical);
+  }
+
+  /* Accessibility: Respect motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Focus States - Always visible, never hidden */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-ring);
+  }
+}
+
+/* Component Layer - Reusable Patterns */
+@layer components {
+  /* Display Typography */
+  .text-display-1 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-display-1);
+    line-height: var(--line-height-display-1);
+    letter-spacing: var(--letter-spacing-display-1);
+    font-weight: 800;
+  }
+
+  .text-display-2 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-display-2);
+    line-height: var(--line-height-display-2);
+    letter-spacing: var(--letter-spacing-display-2);
+    font-weight: 600;
+  }
+
+  .text-display-3 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-display-3);
+    line-height: var(--line-height-display-3);
+    letter-spacing: var(--letter-spacing-display-3);
+    font-weight: 600;
+  }
+
+  .text-heading {
+    font-family: var(--font-body);
+    font-size: var(--font-size-heading);
+    line-height: var(--line-height-heading);
+    font-weight: 600;
+  }
+
+  .text-body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+  }
+
+  .text-body-sm {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--line-height-body-sm);
+  }
+
+  .text-technical {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-technical);
+    line-height: var(--line-height-technical);
+    letter-spacing: var(--letter-spacing-technical);
+  }
+
+  /* Container */
+  .container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* Button base styles */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: background-color 150ms ease, color 150ms ease, transform 100ms ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    padding: 0.75rem 1.5rem;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    padding: 0.75rem 1.5rem;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-primary-light);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-foreground);
+    padding: 0.5rem 1rem;
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-gray-100);
+  }
+}
+
+/* Utility Layer */
+@layer utilities {
+  /* Font families */
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .font-mark {
+    font-family: var(--font-mark);
+  }
+
+  /* Open HR Teal - Background */
+  .bg-openhr-teal-50 { background-color: var(--color-openhr-teal-50); }
+  .bg-openhr-teal-100 { background-color: var(--color-openhr-teal-100); }
+  .bg-openhr-teal-200 { background-color: var(--color-openhr-teal-200); }
+  .bg-openhr-teal-300 { background-color: var(--color-openhr-teal-300); }
+  .bg-openhr-teal-400 { background-color: var(--color-openhr-teal-400); }
+  .bg-openhr-teal-500 { background-color: var(--color-openhr-teal-500); }
+  .bg-openhr-teal-600 { background-color: var(--color-openhr-teal-600); }
+  .bg-openhr-teal-700 { background-color: var(--color-openhr-teal-700); }
+  .bg-openhr-teal-800 { background-color: var(--color-openhr-teal-800); }
+  .bg-openhr-teal-900 { background-color: var(--color-openhr-teal-900); }
+
+  /* Open HR Teal - Text */
+  .text-openhr-teal-50 { color: var(--color-openhr-teal-50); }
+  .text-openhr-teal-100 { color: var(--color-openhr-teal-100); }
+  .text-openhr-teal-200 { color: var(--color-openhr-teal-200); }
+  .text-openhr-teal-300 { color: var(--color-openhr-teal-300); }
+  .text-openhr-teal-400 { color: var(--color-openhr-teal-400); }
+  .text-openhr-teal-500 { color: var(--color-openhr-teal-500); }
+  .text-openhr-teal-600 { color: var(--color-openhr-teal-600); }
+  .text-openhr-teal-700 { color: var(--color-openhr-teal-700); }
+  .text-openhr-teal-800 { color: var(--color-openhr-teal-800); }
+  .text-openhr-teal-900 { color: var(--color-openhr-teal-900); }
+
+  /* Open HR Teal - Border */
+  .border-openhr-teal-50 { border-color: var(--color-openhr-teal-50); }
+  .border-openhr-teal-100 { border-color: var(--color-openhr-teal-100); }
+  .border-openhr-teal-200 { border-color: var(--color-openhr-teal-200); }
+  .border-openhr-teal-300 { border-color: var(--color-openhr-teal-300); }
+  .border-openhr-teal-400 { border-color: var(--color-openhr-teal-400); }
+  .border-openhr-teal-500 { border-color: var(--color-openhr-teal-500); }
+  .border-openhr-teal-600 { border-color: var(--color-openhr-teal-600); }
+  .border-openhr-teal-700 { border-color: var(--color-openhr-teal-700); }
+  .border-openhr-teal-800 { border-color: var(--color-openhr-teal-800); }
+  .border-openhr-teal-900 { border-color: var(--color-openhr-teal-900); }
+}
+
+/* Custom Scrollbar - Infrastructure aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}

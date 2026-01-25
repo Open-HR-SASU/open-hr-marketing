@@ -1,0 +1,39 @@
+---
+/**
+ * Fallback Section
+ *
+ * Rendered when section type is not recognized.
+ * Shows a developer-friendly message in development.
+ */
+
+import type { SectionProps } from './types';
+
+interface Props extends Partial<SectionProps> {}
+
+const { type, heading, documentId } = Astro.props;
+
+const isDev = import.meta.env.DEV;
+---
+
+{isDev ? (
+  <section class="py-8 bg-amber-50 border border-amber-200 rounded-lg mx-4 my-4">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-amber-800 font-medium">
+        Unknown section type: <code class="bg-amber-100 px-2 py-1 rounded">{type}</code>
+      </p>
+      {heading && (
+        <p class="text-amber-700 text-sm mt-2">
+          Heading: "{heading}"
+        </p>
+      )}
+      {documentId && (
+        <p class="text-amber-600 text-xs mt-1">
+          Document ID: {documentId}
+        </p>
+      )}
+    </div>
+  </section>
+) : (
+  <!-- In production, render nothing for unknown sections -->
+  <Fragment />
+)}

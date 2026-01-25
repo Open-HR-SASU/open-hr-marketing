@@ -1,0 +1,144 @@
+---
+/**
+ * Header Component (Astro)
+ *
+ * Static header with navigation links.
+ * Mobile menu is a React island for interactivity.
+ *
+ * Navigation order (B2C pivot 2026-01-08):
+ * Workers | About | Pricing
+ */
+import Mark from './Mark.astro';
+import MobileNav from './islands/MobileNav';
+import { type Locale } from '@/lib/i18n';
+import { getNavigation, type NavigationItem } from '@/lib/sanity';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Fallback navigation links per locale
+const FALLBACK_NAV_LINKS: Record<Locale, Array<{ href: string; label: string }>> = {
+  fr: [
+    { href: 'workers', label: 'Travailleurs' },
+    { href: 'about', label: 'A propos' },
+    { href: 'pricing', label: 'Tarifs' },
+  ],
+  'en-GB': [
+    { href: 'workers', label: 'Workers' },
+    { href: 'about', label: 'About' },
+    { href: 'pricing', label: 'Pricing' },
+  ],
+  'en-US': [
+    { href: 'workers', label: 'Workers' },
+    { href: 'about', label: 'About' },
+    { href: 'pricing', label: 'Pricing' },
+  ],
+  de: [
+    { href: 'workers', label: 'Arbeitnehmer' },
+    { href: 'about', label: 'Uber uns' },
+    { href: 'pricing', label: 'Preise' },
+  ],
+  es: [
+    { href: 'workers', label: 'Trabajadores' },
+    { href: 'about', label: 'Nosotros' },
+    { href: 'pricing', label: 'Precios' },
+  ],
+  it: [
+    { href: 'workers', label: 'Lavoratori' },
+    { href: 'about', label: 'Chi siamo' },
+    { href: 'pricing', label: 'Prezzi' },
+  ],
+};
+
+// CTA labels per locale
+const CTA_LABELS: Record<Locale, string> = {
+  fr: 'Commencer',
+  'en-GB': 'Start Free',
+  'en-US': 'Start Free',
+  de: 'Kostenlos starten',
+  es: 'Empezar gratis',
+  it: 'Inizia gratis',
+};
+
+// Transform Sanity navigation to nav links
+function transformNavigation(items: NavigationItem[]): Array<{ href: string; label: string }> {
+  return items
+    .sort((a, b) => a.order - b.order)
+    .map((item) => ({
+      href: item.href?.startsWith('/') ? item.href.slice(1) : item.href || '#',
+      label: item.label,
+    }));
+}
+
+// Build locale-prefixed href with trailing slash for static hosting
+function buildHref(href: string): string {
+  if (href.startsWith('http') || href.startsWith('#')) {
+    return href;
+  }
+  // Ensure trailing slash for Bunny Edge Storage compatibility
+  const path = href.endsWith('/') ? href : `${href}/`;
+  return `/${locale}/${path}`.replace(/\/+/g, '/');
+}
+
+// Fetch navigation
+let navLinks: Array<{ href: string; label: string }>;
+try {
+  const sanityNav = await getNavigation(locale);
+  if (sanityNav && sanityNav.length > 0) {
+    navLinks = transformNavigation(sanityNav);
+  } else {
+    navLinks = FALLBACK_NAV_LINKS[locale];
+  }
+} catch {
+  navLinks = FALLBACK_NAV_LINKS[locale];
+}
+---
+
+<header class="relative z-40 border-b border-gray-200 bg-background">
+  <nav class="container mx-auto flex items-center justify-between px-4 py-4 sm:px-6">
+    <!-- Logo/Mark -->
+    <a
+      href={`/${locale}/`}
+      class="group flex items-center gap-3"
+      aria-label="Open HR - Home"
+    >
+      <Mark size="sm" class="text-primary transition-colors group-hover:text-primary/80" />
+      <span class="font-display text-xl font-semibold text-foreground">
+        Open HR
+      </span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex md:items-center md:gap-8">
+      {navLinks.map((link) => (
+        <a
+          href={buildHref(link.href)}
+          class="text-sm font-medium text-gray-700 transition-colors hover:text-primary"
+        >
+          {link.label}
+        </a>
+      ))}
+
+      <!-- CTA Button - links to platform for auth -->
+      <a
+        href="https://app.open-hr.work/login"
+        class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      >
+        {CTA_LABELS[locale]}
+      </a>
+    </div>
+
+    <!-- Mobile Menu (React Island) -->
+    <div class="md:hidden">
+      <MobileNav
+        client:load
+        navLinks={navLinks.map(link => ({ ...link, href: buildHref(link.href) }))}
+        ctaLabel={CTA_LABELS[locale]}
+        ctaHref="https://app.open-hr.work/login"
+      />
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,147 @@
+---
+/**
+ * Legal Pages (Catch-all Route)
+ *
+ * Handles all legal pages:
+ * - /[locale]/legal/privacy/
+ * - /[locale]/legal/terms/
+ * - /[locale]/legal/cookies/
+ * - /[locale]/legal/refscore/
+ *
+ * Content is fetched from Sanity CMS.
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
+import { locales, type Locale } from '@/lib/i18n';
+import { getPage, getPageMetadata } from '@/lib/sanity';
+
+export function getStaticPaths() {
+  // Legal page slugs to generate
+  const legalSlugs = ['privacy', 'terms', 'cookies', 'refscore'];
+
+  const paths = [];
+  for (const locale of locales) {
+    for (const slug of legalSlugs) {
+      paths.push({
+        params: { locale, slug },
+      });
+    }
+  }
+  return paths;
+}
+
+const { locale, slug } = Astro.params as { locale: Locale; slug: string };
+
+// Construct Sanity slug (legal pages may use "legal/privacy" or just "privacy")
+const sanitySlug = `legal/${slug}`;
+
+// Fetch page content from Sanity
+const page = await getPage(sanitySlug, locale) || await getPage(slug, locale);
+const metadata = await getPageMetadata(sanitySlug, locale) || await getPageMetadata(slug, locale);
+
+// Fallback titles for each legal page
+const fallbackTitles: Record<string, Record<Locale, string>> = {
+  privacy: {
+    'fr': 'Politique de confidentialite - Open HR',
+    'en-GB': 'Privacy Policy - Open HR',
+    'en-US': 'Privacy Policy - Open HR',
+    'de': 'Datenschutzrichtlinie - Open HR',
+    'es': 'Politica de privacidad - Open HR',
+    'it': 'Informativa sulla privacy - Open HR',
+  },
+  terms: {
+    'fr': 'Conditions d\'utilisation - Open HR',
+    'en-GB': 'Terms of Service - Open HR',
+    'en-US': 'Terms of Service - Open HR',
+    'de': 'Nutzungsbedingungen - Open HR',
+    'es': 'Terminos de servicio - Open HR',
+    'it': 'Termini di servizio - Open HR',
+  },
+  cookies: {
+    'fr': 'Politique de cookies - Open HR',
+    'en-GB': 'Cookie Policy - Open HR',
+    'en-US': 'Cookie Policy - Open HR',
+    'de': 'Cookie-Richtlinie - Open HR',
+    'es': 'Politica de cookies - Open HR',
+    'it': 'Informativa sui cookie - Open HR',
+  },
+  refscore: {
+    'fr': 'RefScore - Open HR',
+    'en-GB': 'RefScore - Open HR',
+    'en-US': 'RefScore - Open HR',
+    'de': 'RefScore - Open HR',
+    'es': 'RefScore - Open HR',
+    'it': 'RefScore - Open HR',
+  },
+};
+
+const fallbackHeadings: Record<string, Record<Locale, string>> = {
+  privacy: {
+    'fr': 'Politique de confidentialite',
+    'en-GB': 'Privacy Policy',
+    'en-US': 'Privacy Policy',
+    'de': 'Datenschutzrichtlinie',
+    'es': 'Politica de privacidad',
+    'it': 'Informativa sulla privacy',
+  },
+  terms: {
+    'fr': 'Conditions d\'utilisation',
+    'en-GB': 'Terms of Service',
+    'en-US': 'Terms of Service',
+    'de': 'Nutzungsbedingungen',
+    'es': 'Terminos de servicio',
+    'it': 'Termini di servizio',
+  },
+  cookies: {
+    'fr': 'Politique de cookies',
+    'en-GB': 'Cookie Policy',
+    'en-US': 'Cookie Policy',
+    'de': 'Cookie-Richtlinie',
+    'es': 'Politica de cookies',
+    'it': 'Informativa sui cookie',
+  },
+  refscore: {
+    'fr': 'RefScore Methodologie',
+    'en-GB': 'RefScore Methodology',
+    'en-US': 'RefScore Methodology',
+    'de': 'RefScore Methodik',
+    'es': 'Metodologia RefScore',
+    'it': 'Metodologia RefScore',
+  },
+};
+
+const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitles[slug]?.[locale] || `${slug} - Open HR`;
+const description = metadata?.seo?.metaDescription || `${fallbackHeadings[slug]?.[locale] || slug} - Open HR`;
+const heading = fallbackHeadings[slug]?.[locale] || slug;
+---
+
+<MainLayout
+  title={title}
+  description={description}
+  locale={locale}
+>
+  {page?.sections && page.sections.length > 0 ? (
+    <SectionsRenderer sections={page.sections} />
+  ) : (
+    <!-- Fallback content when CMS content unavailable -->
+    <section class="container py-16 md:py-24">
+      <div class="mx-auto max-w-4xl">
+        <h1 class="mb-8 font-display text-4xl font-bold text-foreground md:text-5xl">
+          {heading}
+        </h1>
+        <div class="prose prose-lg max-w-none">
+          <p class="text-gray-600">
+            {locale === 'fr'
+              ? 'Le contenu de cette page sera bientot disponible.'
+              : 'The content of this page will be available soon.'}
+          </p>
+          <p class="mt-4">
+            <a href={`/${locale}/`} class="text-openhr-teal-900 hover:text-openhr-teal-700">
+              {locale === 'fr' ? 'Retour a l\'accueil' : 'Back to Home'}
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+  )}
+</MainLayout>

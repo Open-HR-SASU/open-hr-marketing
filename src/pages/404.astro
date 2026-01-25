@@ -1,0 +1,81 @@
+---
+/**
+ * 404 Not Found Page
+ *
+ * Static 404 page served by Bunny Edge Storage when a route is not found.
+ * Uses fr locale as default (matches Bunny geo-restriction to France).
+ */
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import Mark from '@/components/Mark.astro';
+
+const locale = 'fr';
+
+// Localized content for common visitor locales
+const content = {
+  title: 'Page non trouvée - Open HR',
+  heading: 'Page non trouvée',
+  message: 'Désolé, la page que vous recherchez n\'existe pas ou a été déplacée.',
+  cta: 'Retour à l\'accueil',
+  altHeading: 'Page not found',
+  altMessage: 'Sorry, the page you are looking for does not exist or has been moved.',
+  altCta: 'Back to Home',
+};
+---
+
+<Layout
+  title={content.title}
+  description={content.message}
+  locale={locale}
+  noIndex={true}
+>
+  <Header locale={locale} />
+  <main class="flex-1">
+    <section class="container flex min-h-[60vh] flex-col items-center justify-center py-16 text-center md:py-24">
+      <div class="mb-8">
+        <Mark size="xl" class="text-gray-300" />
+      </div>
+
+      <h1 class="mb-4 font-display text-6xl font-extrabold text-gray-900 md:text-8xl">
+        404
+      </h1>
+
+      <!-- French (primary) -->
+      <div class="mb-8">
+        <h2 class="mb-2 text-2xl font-bold text-gray-700">
+          {content.heading}
+        </h2>
+        <p class="text-lg text-gray-600">
+          {content.message}
+        </p>
+      </div>
+
+      <!-- English (secondary) -->
+      <div class="mb-8 border-t border-gray-200 pt-6 text-gray-500">
+        <p class="mb-1 text-sm">
+          {content.altHeading}
+        </p>
+        <p class="text-sm">
+          {content.altMessage}
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-4 sm:flex-row">
+        <a
+          href="/fr/"
+          class="rounded-lg bg-openhr-teal-900 px-6 py-3 font-medium text-white transition-colors hover:bg-openhr-teal-800"
+        >
+          {content.cta}
+        </a>
+        <a
+          href="/en-GB/"
+          class="rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          {content.altCta}
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</Layout>

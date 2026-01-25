@@ -1,0 +1,98 @@
+---
+/**
+ * Base Layout for Open HR Marketing Site
+ *
+ * Provides:
+ * - Font loading (Bricolage Grotesque, Instrument Sans, JetBrains Mono, Inter)
+ * - Global styles
+ * - SEO meta tags
+ * - Favicon configuration
+ */
+import '@fontsource/bricolage-grotesque/400.css';
+import '@fontsource/bricolage-grotesque/600.css';
+import '@fontsource/bricolage-grotesque/800.css';
+import '@fontsource/instrument-sans/400.css';
+import '@fontsource/instrument-sans/500.css';
+import '@fontsource/instrument-sans/600.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/700.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '../styles/globals.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  locale?: string;
+  ogImage?: string;
+  noIndex?: boolean;
+}
+
+const {
+  title,
+  description = "L'infrastructure RH de demain. Open HR.",
+  locale = 'fr',
+  ogImage = '/og-image.png',
+  noIndex = false
+} = Astro.props;
+
+// Map locale codes to HTML lang attributes
+const localeToLang: Record<string, string> = {
+  'fr': 'fr',
+  'en-GB': 'en-GB',
+  'en-US': 'en',
+  'de': 'de',
+  'es': 'es',
+  'it': 'it'
+};
+
+const htmlLang = localeToLang[locale] || 'fr';
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:locale" content={locale.replace('-', '_')} />
+    <meta property="og:site_name" content="Open HR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192x192.png" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#006064" />
+
+    <!-- Plausible Analytics -->
+    <script defer data-domain="open-hr.fr,open-hr.work" src="https://plausible.io/js/script.js"></script>
+  </head>
+  <body class="antialiased min-h-screen flex flex-col">
+    <slot />
+  </body>
+</html>

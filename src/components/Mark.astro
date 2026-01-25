@@ -1,0 +1,59 @@
+---
+/**
+ * The ((○)) Mark Component - V5 Brand Specification (Astro)
+ *
+ * The mark is infrastructure notation, not a decorative logo.
+ * Like or (c) or TM, it should become universally recognized
+ * as verification of professional identity.
+ *
+ * Design specifications (V5):
+ * - Circle: Filled annulus (ring) with 30 deg gap at 12 o'clock
+ * - Gap bisected at 12 o'clock
+ * - Parentheses: Filled crescent shapes (two pairs: inner + outer)
+ * - All elements are filled shapes with sharp, geometric edges
+ * - Color: Inherits via currentColor, default Teal 900 (#006064)
+ */
+
+interface Props {
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'hero';
+  class?: string;
+}
+
+const { size = 'md', class: className } = Astro.props;
+
+const sizes: Record<string, string> = {
+  sm: 'h-6',    // 24px - inline usage, mobile, header/footer
+  md: 'h-9',    // 36px - standard desktop
+  lg: 'h-12',   // 48px - emphasis
+  xl: 'h-16',   // 64px - section headers
+  hero: 'h-20', // 80px - landing pages
+};
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 200"
+  class:list={['w-auto', sizes[size], className]}
+  aria-label="Open HR verification mark"
+  role="img"
+>
+  <title>Open HR Verification Mark</title>
+  <desc>The verification mark - verified professional identity</desc>
+
+  <g fill="currentColor">
+    <!-- Outer Left Parenthesis - Filled crescent -->
+    <path d="M 70 15 A 95 95 0 0 0 70 185 L 70 174 A 84 84 0 0 1 70 26 Z"/>
+
+    <!-- Inner Left Parenthesis - Filled crescent -->
+    <path d="M 150 30 A 78 78 0 0 0 150 170 L 150 159 A 67 67 0 0 1 150 41 Z"/>
+
+    <!-- Center Open Circle - Filled annulus with 30 deg gap at 12 o'clock -->
+    <path d="M 268.94 51.70 A 50 50 0 1 1 243.06 51.70 L 245.91 62.33 A 39 39 0 1 0 266.09 62.33 Z" fill-rule="evenodd"/>
+
+    <!-- Inner Right Parenthesis - Filled crescent -->
+    <path d="M 362 30 A 78 78 0 0 1 362 170 L 362 159 A 67 67 0 0 0 362 41 Z"/>
+
+    <!-- Outer Right Parenthesis - Filled crescent -->
+    <path d="M 442 15 A 95 95 0 0 1 442 185 L 442 174 A 84 84 0 0 0 442 26 Z"/>
+  </g>
+</svg>

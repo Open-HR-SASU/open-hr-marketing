@@ -1,0 +1,68 @@
+---
+/**
+ * Workers Page
+ *
+ * CMS-powered page for workers/employees.
+ * Generates static pages for all 6 locales.
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
+import { locales, type Locale } from '@/lib/i18n';
+import { getPage, getPageMetadata } from '@/lib/sanity';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+// Fetch page content from Sanity
+const page = await getPage('workers', locale);
+const metadata = await getPageMetadata('workers', locale);
+
+// Fallback content
+const fallbackTitle = {
+  'fr': 'Pour les travailleurs - Open HR',
+  'en-GB': 'For Workers - Open HR',
+  'en-US': 'For Workers - Open HR',
+  'de': 'Fur Arbeitnehmer - Open HR',
+  'es': 'Para trabajadores - Open HR',
+  'it': 'Per i lavoratori - Open HR',
+}[locale];
+
+const fallbackDescription = {
+  'fr': 'Controlez votre identite professionnelle avec Open HR.',
+  'en-GB': 'Control your professional identity with Open HR.',
+  'en-US': 'Control your professional identity with Open HR.',
+  'de': 'Kontrollieren Sie Ihre berufliche Identitat mit Open HR.',
+  'es': 'Controla tu identidad profesional con Open HR.',
+  'it': 'Controlla la tua identita professionale con Open HR.',
+}[locale];
+
+const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle;
+const description = metadata?.seo?.metaDescription || fallbackDescription;
+---
+
+<MainLayout
+  title={title}
+  description={description}
+  locale={locale}
+>
+  {page?.sections && page.sections.length > 0 ? (
+    <SectionsRenderer sections={page.sections} />
+  ) : (
+    <section class="container py-24 text-center">
+      <h1 class="text-display-2 text-foreground mb-6">
+        {locale === 'fr' ? 'Pour les travailleurs' : 'For Workers'}
+      </h1>
+      <p class="text-body text-muted-foreground max-w-2xl mx-auto mb-8">
+        {fallbackDescription}
+      </p>
+      <a href={`/${locale}/`} class="btn btn-primary">
+        {locale === 'fr' ? 'Retour a l\'accueil' : 'Back to Home'}
+      </a>
+    </section>
+  )}
+</MainLayout>

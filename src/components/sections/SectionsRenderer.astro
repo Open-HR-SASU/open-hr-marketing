@@ -1,0 +1,61 @@
+---
+/**
+ * Sections Renderer
+ *
+ * Maps section `sectionType` values to Astro components.
+ * Enables dynamic page rendering from Sanity CMS content.
+ *
+ * Usage:
+ *   import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
+ *   <SectionsRenderer sections={page.sections} />
+ */
+
+import type { Section } from '@/lib/sanity/fetchers';
+import { sectionToProps } from './types';
+
+// Section Components
+import HeroSection from './HeroSection.astro';
+import FeaturesSection from './FeaturesSection.astro';
+import CTASection from './CTASection.astro';
+import ContentSection from './ContentSection.astro';
+import FallbackSection from './FallbackSection.astro';
+
+interface Props {
+  sections: Section[] | null;
+  className?: string;
+}
+
+const { sections, className } = Astro.props;
+---
+
+{sections && sections.length > 0 && (
+  <Fragment>
+    {sections.map((section) => {
+      const props = sectionToProps(section, className);
+      const type = section.sectionType;
+
+      // Map section types to components
+      // Using explicit conditionals since Astro doesn't support dynamic component references
+      return (
+        <Fragment>
+          {type === 'hero' && <HeroSection {...props} />}
+          {type === 'heroMockup' && <HeroSection {...props} />}
+          {type === 'features' && <FeaturesSection {...props} />}
+          {type === 'cta' && <CTASection {...props} />}
+          {type === 'content' && <ContentSection {...props} />}
+          {type === 'pricing' && <ContentSection {...props} />}
+          {type === 'testimonials' && <ContentSection {...props} />}
+          {type === 'faq' && <ContentSection {...props} />}
+          {type === 'stats' && <ContentSection {...props} />}
+          {type === 'process' && <ContentSection {...props} />}
+          {type === 'howItWorks' && <ContentSection {...props} />}
+          {type === 'referenceExperience' && <ContentSection {...props} />}
+          {type === 'appPreview' && <ContentSection {...props} />}
+          {!['hero', 'heroMockup', 'features', 'cta', 'content', 'pricing', 'testimonials', 'faq', 'stats', 'process', 'howItWorks', 'referenceExperience', 'appPreview'].includes(type) && (
+            <FallbackSection {...props} />
+          )}
+        </Fragment>
+      );
+    })}
+  </Fragment>
+)}

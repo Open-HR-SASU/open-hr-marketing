@@ -1,0 +1,41 @@
+---
+/**
+ * Content Section
+ *
+ * General-purpose content block with text.
+ * Flexible layout for various content needs.
+ */
+
+import { RichText } from './RichText';
+import { getBackgroundClass, type SectionProps } from './types';
+
+interface Props extends Partial<SectionProps> {}
+
+const {
+  heading,
+  subheading,
+  body,
+  backgroundStyle,
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+---
+
+<section class:list={['py-16 md:py-20', bgClass, className]}>
+  <div class="container mx-auto px-4">
+    <div class="mx-auto max-w-4xl">
+      {heading && (
+        <h2 class="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">
+          {heading}
+        </h2>
+      )}
+      {subheading && (
+        <p class="mb-6 text-lg text-gray-600">{subheading}</p>
+      )}
+      {body && body.length > 0 && (
+        <RichText content={body} />
+      )}
+    </div>
+  </div>
+</section>
