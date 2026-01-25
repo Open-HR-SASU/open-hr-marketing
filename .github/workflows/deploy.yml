@@ -29,30 +29,14 @@ jobs:
         run: npm run build
 
       - name: Deploy to Bunny Edge Storage
-        env:
-          BUNNY_STORAGE_ZONE: ${{ secrets.BUNNY_STORAGE_ZONE }}
-          BUNNY_STORAGE_KEY: ${{ secrets.BUNNY_STORAGE_KEY }}
-          BUNNY_STORAGE_HOSTNAME: ${{ secrets.BUNNY_STORAGE_HOSTNAME }}
-        run: |
-          # Install bunny-storage-deploy tool
-          npm install -g bunny-storage-deploy
-
-          # Deploy dist folder to Bunny Edge Storage
-          bunny-storage-deploy \
-            --source ./dist \
-            --destination / \
-            --storage-zone "$BUNNY_STORAGE_ZONE" \
-            --access-key "$BUNNY_STORAGE_KEY" \
-            --storage-endpoint "$BUNNY_STORAGE_HOSTNAME"
-
-      - name: Purge CDN Cache
-        env:
-          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
-          BUNNY_PULL_ZONE_ID: ${{ secrets.BUNNY_PULL_ZONE_ID }}
-        run: |
-          curl -X POST \
-            "https://api.bunny.net/pullzone/$BUNNY_PULL_ZONE_ID/purgeCache" \
-            -H "AccessKey: $BUNNY_API_KEY" \
-            -H "Content-Type: application/json"
-
-          echo "CDN cache purged successfully"
+        uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
+        with:
+          source: ./dist
+          destination: /
+          storageZoneName: ${{ secrets.BUNNY_STORAGE_ZONE }}
+          storagePassword: ${{ secrets.BUNNY_STORAGE_KEY }}
+          accessKey: ${{ secrets.BUNNY_API_KEY }}
+          pullZoneId: ${{ secrets.BUNNY_PULL_ZONE_ID }}
+          upload: true
+          remove: true
+          purgePullZone: true
