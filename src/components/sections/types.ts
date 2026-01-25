@@ -110,9 +110,39 @@ export interface SectionProps {
 }
 
 /**
+ * Localize internal links by adding locale prefix
+ * - Internal links start with / but not // (protocol-relative)
+ * - External links (http://, https://) are left unchanged
+ * - Adds trailing slash for Bunny Edge Storage compatibility
+ */
+function localizeLink(link: string | null | undefined, locale: Locale): string | null {
+  if (!link) return null;
+
+  // External links - leave unchanged
+  if (link.startsWith('http://') || link.startsWith('https://') || link.startsWith('//')) {
+    return link;
+  }
+
+  // Already has locale prefix - leave unchanged
+  if (link.match(/^\/(fr|en-GB|en-US|de|es|it)(\/|$)/)) {
+    // Ensure trailing slash
+    return link.endsWith('/') ? link : `${link}/`;
+  }
+
+  // Internal link - add locale prefix and trailing slash
+  if (link.startsWith('/')) {
+    const path = link.endsWith('/') ? link : `${link}/`;
+    return `/${locale}${path}`;
+  }
+
+  // Relative link or anchor - leave unchanged
+  return link;
+}
+
+/**
  * Transform Sanity Section to SectionProps
  */
-export function sectionToProps(section: Section, className?: string): SectionProps {
+export function sectionToProps(section: Section, locale: Locale, className?: string): SectionProps {
   return {
     type: section.sectionType as SectionType,
     language: section.language,
@@ -123,10 +153,10 @@ export function sectionToProps(section: Section, className?: string): SectionPro
     features: section.features ?? null,
     pricingTiers: section.pricingTiers ?? null,
     ctaText: section.ctaText ?? null,
-    ctaLink: section.ctaLink ?? null,
+    ctaLink: localizeLink(section.ctaLink, locale),
     ctaStyle: section.ctaStyle ?? null,
     ctaSecondaryText: section.ctaText2 ?? null,
-    ctaSecondaryLink: section.ctaLink2 ?? null,
+    ctaSecondaryLink: localizeLink(section.ctaLink2, locale),
     backgroundStyle: (section.backgroundStyle as BackgroundStyle) ?? null,
     anchor: section.anchor ?? null,
     ariaLabel: section.ariaLabel ?? null,
@@ -136,7 +166,7 @@ export function sectionToProps(section: Section, className?: string): SectionPro
     className,
     showPilotSignup: section.showPilotSignup,
     showAppStoreBadges: section.showAppStoreBadges,
-    pilotSignupUrl: section.pilotSignupUrl,
+    pilotSignupUrl: localizeLink(section.pilotSignupUrl, locale),
   };
 }
 

@@ -7,10 +7,10 @@
  *
  * Usage:
  *   import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
- *   <SectionsRenderer sections={page.sections} />
+ *   <SectionsRenderer sections={page.sections} locale={locale} />
  */
 
-import type { Section } from '@/lib/sanity/fetchers';
+import type { Section, Locale } from '@/lib/sanity/fetchers';
 import { sectionToProps } from './types';
 
 // Section Components
@@ -22,16 +22,17 @@ import FallbackSection from './FallbackSection.astro';
 
 interface Props {
   sections: Section[] | null;
+  locale: Locale;
   className?: string;
 }
 
-const { sections, className } = Astro.props;
+const { sections, locale, className } = Astro.props;
 ---
 
 {sections && sections.length > 0 && (
   <Fragment>
     {sections.map((section) => {
-      const props = sectionToProps(section, className);
+      const props = sectionToProps(section, locale, className);
       const type = section.sectionType;
 
       // Map section types to components

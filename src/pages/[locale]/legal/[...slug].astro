@@ -121,7 +121,7 @@ const heading = fallbackHeadings[slug]?.[locale] || slug;
   locale={locale}
 >
   {page?.sections && page.sections.length > 0 ? (
-    <SectionsRenderer sections={page.sections} />
+    <SectionsRenderer sections={page.sections} locale={locale} />
   ) : (
     <!-- Fallback content when CMS content unavailable -->
     <section class="container py-16 md:py-24">

@@ -51,7 +51,7 @@ const description = metadata?.seo?.metaDescription || fallbackDescription;
   locale={locale}
 >
   {page?.sections && page.sections.length > 0 ? (
-    <SectionsRenderer sections={page.sections} />
+    <SectionsRenderer sections={page.sections} locale={locale} />
   ) : (
     <section class="container py-24 text-center">
       <h1 class="text-display-2 text-foreground mb-6">
