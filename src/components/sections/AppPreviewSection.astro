@@ -187,12 +187,12 @@ const mockupIframeUrls = defaultScreens.map(screen => `/mockups/${language}/${sc
       </div>
     )}
 
-    {/* Dynamic mockups: No CMS images provided - embed live i18n mockups */}
+    {/* Static mockups: No CMS images provided - use static PNG screenshots */}
     {!hasImages && (
       <div class="flex items-center justify-center gap-4 md:gap-8">
         <div class="hidden md:block transform -rotate-6 translate-y-8 opacity-80">
           <DeviceFrame
-            iframeSrc={mockupIframeUrls[0]}
+            screenSrc={`/mockups/mockup-${defaultScreens[0]}-fr.png`}
             screenAlt={`${defaultScreens[0]} screen`}
             size="sm"
             variant="mobile"
@@ -200,7 +200,7 @@ const mockupIframeUrls = defaultScreens.map(screen => `/mockups/${language}/${sc
         </div>
         <div class="z-10 transform scale-110">
           <DeviceFrame
-            iframeSrc={mockupIframeUrls[1]}
+            screenSrc={`/mockups/mockup-${defaultScreens[1]}-fr.png`}
             screenAlt={`${defaultScreens[1]} screen`}
             size="lg"
             variant="mobile"
@@ -208,7 +208,7 @@ const mockupIframeUrls = defaultScreens.map(screen => `/mockups/${language}/${sc
         </div>
         <div class="hidden md:block transform rotate-6 translate-y-8 opacity-80">
           <DeviceFrame
-            iframeSrc={mockupIframeUrls[2]}
+            screenSrc={`/mockups/mockup-${defaultScreens[2]}-fr.png`}
             screenAlt={`${defaultScreens[2]} screen`}
             size="sm"
             variant="mobile"

@@ -131,11 +131,14 @@ const steps: FlowStep[] = flowSteps.length > 0
 
 const hasSteps = steps.length > 0;
 
-// Helper to get iframe URL for dynamic mockup
-function getMockupIframeSrc(step: FlowStep): string | undefined {
-  if (step.mockupImage?.asset?.url) return undefined; // Has CMS image
+// Helper to get static mockup image path (replaces iframe approach)
+// Static images avoid CSP frame-ancestors issues with self-embedding
+function getMockupStaticSrc(step: FlowStep): string | undefined {
+  if (step.mockupImage?.asset?.url) return step.mockupImage.asset.url; // Has CMS image
   const screen = step.mockupScreen || DEFAULT_FLOW[0]?.screen || 'questionnaire';
-  return `/mockups/${language}/${screen}/`;
+  // Use static PNG screenshots from public/mockups/
+  // Currently only French mockups available; fall back to French for other locales
+  return `/mockups/mockup-${screen}-fr.png`;
 }
 ---
 
@@ -198,8 +201,7 @@ function getMockupIframeSrc(step: FlowStep): string | undefined {
               {/* Device mockup */}
               <div class="mb-4">
                 <DeviceFrame
-                  screenSrc={step.mockupImage?.asset?.url}
-                  iframeSrc={getMockupIframeSrc(step)}
+                  screenSrc={getMockupStaticSrc(step)}
                   screenAlt={step.mockupImage?.alt || step.title || `Step ${index + 1}`}
                   size="sm"
                   variant="mobile"
@@ -225,7 +227,7 @@ function getMockupIframeSrc(step: FlowStep): string | undefined {
       </div>
     )}
 
-    {/* Fallback: No steps - show dynamic reference journey mockups */}
+    {/* Fallback: No steps - show static reference journey mockups */}
     {!hasSteps && (
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-3 lg:gap-6">
         {DEFAULT_FLOW.map((flow, num) => (
@@ -234,7 +236,7 @@ function getMockupIframeSrc(step: FlowStep): string | undefined {
               {num + 1}
             </div>
             <DeviceFrame
-              iframeSrc={`/mockups/${language}/${flow.screen}/`}
+              screenSrc={`/mockups/mockup-${flow.screen}-fr.png`}
               screenAlt={flow.title}
               size="sm"
               variant="mobile"
