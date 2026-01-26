@@ -1,0 +1,176 @@
+---
+/**
+ * Pilot Checkout Success Page
+ *
+ * Landing page after successful Stripe Checkout completion.
+ * Displays confirmation message and next steps.
+ *
+ * URL: /{locale}/pilot/success?session_id={CHECKOUT_SESSION_ID}
+ *
+ * @see OPE-388 - Pilot Stripe Checkout Integration
+ * @see DL-33 - Pilot Pricing Decision
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import Mark from '@/components/Mark.astro';
+import { locales, type Locale } from '@/lib/i18n';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+// Localized content
+const content = {
+  fr: {
+    title: 'Inscription reussie - Open HR',
+    description: 'Votre inscription au programme pilote Open HR a ete confirmee.',
+    heading: 'Bienvenue dans le pilote !',
+    subheading: 'Votre inscription a ete confirmee.',
+    message: 'Merci de rejoindre le programme pilote Open HR. Vous recevrez un email de confirmation avec les prochaines etapes.',
+    nextSteps: 'Prochaines etapes',
+    steps: [
+      'Vous recevrez un email de confirmation dans les prochaines minutes.',
+      'Nous vous contacterons avant le lancement pour configurer votre compte.',
+      'Vous aurez acces a RefScore des le debut du programme.',
+    ],
+    backHome: 'Retour a l\'accueil',
+  },
+  'en-GB': {
+    title: 'Registration Successful - Open HR',
+    description: 'Your Open HR pilot programme registration has been confirmed.',
+    heading: 'Welcome to the Pilot!',
+    subheading: 'Your registration has been confirmed.',
+    message: 'Thank you for joining the Open HR pilot programme. You will receive a confirmation email with next steps.',
+    nextSteps: 'Next Steps',
+    steps: [
+      'You will receive a confirmation email within the next few minutes.',
+      'We will contact you before launch to set up your account.',
+      'You will have access to RefScore from the start of the programme.',
+    ],
+    backHome: 'Back to Home',
+  },
+  'en-US': {
+    title: 'Registration Successful - Open HR',
+    description: 'Your Open HR pilot program registration has been confirmed.',
+    heading: 'Welcome to the Pilot!',
+    subheading: 'Your registration has been confirmed.',
+    message: 'Thank you for joining the Open HR pilot program. You will receive a confirmation email with next steps.',
+    nextSteps: 'Next Steps',
+    steps: [
+      'You will receive a confirmation email within the next few minutes.',
+      'We will contact you before launch to set up your account.',
+      'You will have access to RefScore from the start of the program.',
+    ],
+    backHome: 'Back to Home',
+  },
+  de: {
+    title: 'Registrierung erfolgreich - Open HR',
+    description: 'Ihre Open HR Pilotprogramm-Registrierung wurde bestatigt.',
+    heading: 'Willkommen im Pilotprogramm!',
+    subheading: 'Ihre Registrierung wurde bestatigt.',
+    message: 'Vielen Dank, dass Sie am Open HR Pilotprogramm teilnehmen. Sie erhalten eine Bestatigungs-E-Mail mit den nachsten Schritten.',
+    nextSteps: 'Nachste Schritte',
+    steps: [
+      'Sie erhalten innerhalb der nachsten Minuten eine Bestatigungs-E-Mail.',
+      'Wir werden Sie vor dem Start kontaktieren, um Ihr Konto einzurichten.',
+      'Sie haben von Anfang an Zugang zu RefScore.',
+    ],
+    backHome: 'Zuruck zur Startseite',
+  },
+  es: {
+    title: 'Registro exitoso - Open HR',
+    description: 'Tu registro en el programa piloto de Open HR ha sido confirmado.',
+    heading: 'Bienvenido al Piloto!',
+    subheading: 'Tu registro ha sido confirmado.',
+    message: 'Gracias por unirte al programa piloto de Open HR. Recibiras un correo de confirmacion con los proximos pasos.',
+    nextSteps: 'Proximos pasos',
+    steps: [
+      'Recibiras un correo de confirmacion en los proximos minutos.',
+      'Te contactaremos antes del lanzamiento para configurar tu cuenta.',
+      'Tendras acceso a RefScore desde el inicio del programa.',
+    ],
+    backHome: 'Volver al inicio',
+  },
+  it: {
+    title: 'Registrazione riuscita - Open HR',
+    description: 'La tua registrazione al programma pilota Open HR e stata confermata.',
+    heading: 'Benvenuto nel Pilota!',
+    subheading: 'La tua registrazione e stata confermata.',
+    message: 'Grazie per esserti unito al programma pilota Open HR. Riceverai un\'email di conferma con i prossimi passi.',
+    nextSteps: 'Prossimi passi',
+    steps: [
+      'Riceverai un\'email di conferma entro pochi minuti.',
+      'Ti contatteremo prima del lancio per configurare il tuo account.',
+      'Avrai accesso a RefScore dall\'inizio del programma.',
+    ],
+    backHome: 'Torna alla home',
+  },
+}[locale];
+---
+
+<MainLayout
+  title={content.title}
+  description={content.description}
+  locale={locale}
+>
+  <section class="container py-16 md:py-24">
+    <div class="mx-auto max-w-2xl">
+      <!-- Success Icon and Header -->
+      <div class="mb-12 text-center">
+        <div class="mb-6 flex justify-center">
+          <div class="flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+            <svg class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </div>
+        <h1 class="mb-4 font-display text-4xl font-extrabold text-foreground md:text-5xl">
+          {content.heading}
+        </h1>
+        <p class="text-xl text-gray-600">
+          {content.subheading}
+        </p>
+      </div>
+
+      <!-- Confirmation Message -->
+      <div class="mb-12 rounded-xl bg-green-50 p-8 text-center">
+        <p class="text-lg text-green-800">
+          {content.message}
+        </p>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="mb-12 rounded-xl bg-white p-8 shadow-lg">
+        <h2 class="mb-6 text-xl font-bold text-gray-900">
+          {content.nextSteps}
+        </h2>
+        <ol class="space-y-4">
+          {content.steps.map((step, index) => (
+            <li class="flex items-start gap-4">
+              <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-openhr-teal-100 text-sm font-semibold text-openhr-teal-900">
+                {index + 1}
+              </span>
+              <span class="pt-1 text-gray-700">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <!-- Back to Home Link -->
+      <div class="text-center">
+        <a
+          href={`/${locale}/`}
+          class="inline-flex items-center gap-2 text-openhr-teal-900 hover:text-openhr-teal-700"
+        >
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          {content.backHome}
+        </a>
+      </div>
+    </div>
+  </section>
+</MainLayout>
