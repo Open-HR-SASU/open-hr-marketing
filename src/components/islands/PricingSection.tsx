@@ -300,7 +300,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
             className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
               isAnnual
                 ? 'bg-openhr-teal-700 text-white'
-                : 'bg-openhr-teal-50 text-openhr-teal-700'
+                : 'bg-openhr-teal-50 text-openhr-teal-900'
             }`}
           >
             {t.toggle.discount}
