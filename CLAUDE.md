@@ -48,11 +48,21 @@ src/
 
 ## Sanity CMS
 
-- **Project ID:** `tbkdha33`
+- **Project ID:** `tbkdha33` (ACTIVE)
 - **Dataset:** `production`
 - **Studio:** `./studio/` (run with `npm run dev` from studio directory)
 
 Content is fetched at build time. All pages use `getPage(slug, locale)` to retrieve sections from Sanity.
+
+### Configuration (CRITICAL)
+
+| Setting | Value | Reason |
+|---------|-------|--------|
+| `projectId` | `tbkdha33` | Active project — **DO NOT** use `kg29oq3t` (disabled) |
+| `useCdn` | `false` | Per Sanity docs, static builds need live API for fresh content |
+| `apiVersion` | `2024-01-01` | Stable API version |
+
+**RCA Reference:** OPE-393 — Clever Cloud deployed old commit with disabled project ID `kg29oq3t`, causing "Project Disabled" build errors.
 
 ### Key Document Types
 
@@ -63,6 +73,21 @@ Content is fetched at build time. All pages use `getPage(slug, locale)` to retri
 | `navigationItem` | Header navigation links |
 | `footer` | Footer columns and links |
 | `siteSettings` | Global site configuration |
+
+### Slug Conventions (CRITICAL)
+
+**Homepage slug must be `home` for all locales.** The code queries `getPage('home', locale)` in `/src/pages/[locale]/index.astro`.
+
+| Page | Expected Slug | Notes |
+|------|---------------|-------|
+| Homepage | `home` | NOT `/` — code expects literal `home` |
+| About | `about` | |
+| Workers | `workers` | |
+| Pricing | `pricing` | |
+| Pilot | `pilot` | |
+| How It Works | `how-it-works` | |
+
+**RCA Reference:** OPE-393 — Site fell back to hardcoded content for 5/6 locales because homepage slugs were `/` instead of `home`.
 
 ## Locales
 

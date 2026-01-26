@@ -10,8 +10,10 @@ const config: ClientConfig = {
   projectId: 'tbkdha33',
   dataset: 'production',
   apiVersion: '2024-01-01',
-  // Use CDN for static builds — content is fetched at build time
-  useCdn: true,
+  // Per Sanity docs: useCdn: false for static builds ensures fresh content
+  // CDN caching can serve stale data during SSG builds
+  // See: https://www.sanity.io/docs/help/js-client-cdn-configuration
+  useCdn: false,
 };
 
 export const sanityClient = createClient(config);
