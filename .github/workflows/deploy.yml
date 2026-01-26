@@ -11,6 +11,9 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -31,28 +34,27 @@ jobs:
           PUBLIC_SANITY_PROJECT_ID: tbkdha33
           PUBLIC_SANITY_DATASET: production
 
-      - name: Deploy to Bunny Storage via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy to Bunny Storage
+        uses: R-J-dev/bunny-deploy@v2.0.2
         with:
-          server: storage.bunnycdn.com
-          username: ${{ secrets.BUNNY_STORAGE_ZONE }}
-          password: ${{ secrets.BUNNY_STORAGE_KEY }}
-          local-dir: ./dist/
-          dangerous-clean-slate: true
+          # Storage zone credentials
+          storage-zone-name: ${{ secrets.BUNNY_STORAGE_ZONE }}
+          storage-zone-password: ${{ secrets.BUNNY_STORAGE_KEY }}
+          storage-endpoint: "https://storage.bunnycdn.com"
 
-      - name: Purge Bunny CDN Cache
-        run: |
-          echo "Purging pull zone ${{ secrets.BUNNY_PULL_ZONE_ID }}..."
-          RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST \
-            "https://api.bunny.net/pullzone/${{ secrets.BUNNY_PULL_ZONE_ID }}/purgeCache" \
-            -H "AccessKey: ${{ secrets.BUNNY_API_KEY }}" \
-            -H "Content-Type: application/json")
-          HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
-          BODY=$(echo "$RESPONSE" | grep -v "HTTP_CODE:")
-          echo "Response code: $HTTP_CODE"
-          echo "Response body: $BODY"
-          if [ "$HTTP_CODE" != "204" ] && [ "$HTTP_CODE" != "200" ]; then
-            echo "ERROR: Cache purge failed with HTTP $HTTP_CODE"
-            exit 1
-          fi
-          echo "Cache purged successfully"
+          # Upload configuration
+          directory-to-upload: "./dist"
+          concurrency: "50"
+
+          # Delete remote files not in local build
+          enable-delete-action: true
+
+          # Cache purge configuration
+          access-key: ${{ secrets.BUNNY_API_KEY }}
+          enable-purge-pull-zone: true
+          pull-zone-id: ${{ secrets.BUNNY_PULL_ZONE_ID }}
+          replication-timeout: "15000"
+
+          # Request handling
+          request-timeout: "10000"
+          retry-limit: "3"
