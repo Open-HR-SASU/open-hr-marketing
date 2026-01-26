@@ -27,6 +27,9 @@ jobs:
 
       - name: Build site
         run: npm run build
+        env:
+          PUBLIC_SANITY_PROJECT_ID: tbkdha33
+          PUBLIC_SANITY_DATASET: production
 
       - name: Deploy to Bunny Edge Storage
         uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
