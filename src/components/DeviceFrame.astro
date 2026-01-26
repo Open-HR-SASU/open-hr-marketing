@@ -1,0 +1,178 @@
+---
+/**
+ * Device Frame Component
+ *
+ * CSS-based device mockup (iPhone style) for showcasing app screenshots.
+ * Supports both static images and dynamic iframe embedding.
+ *
+ * Design Direction: Dr. Dietrich Claude, CDO
+ * - Subtle, elegant device representation
+ * - Works on all screen sizes
+ * - Accessible (decorative, not critical content)
+ *
+ * Modes:
+ * - Image mode: Pass screenSrc for static screenshot
+ * - Iframe mode: Pass iframeSrc for live embedded content
+ * - Placeholder: Neither passed, shows gradient placeholder
+ */
+
+interface Props {
+  /** Image URL for the screen content (static mode) */
+  screenSrc?: string;
+  /** Iframe URL for live embedded content (dynamic mode) */
+  iframeSrc?: string;
+  /** Alt text for the screen */
+  screenAlt?: string;
+  /** Device size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  class?: string;
+  /** Render as mobile (narrower aspect ratio) */
+  variant?: 'mobile' | 'desktop';
+}
+
+const {
+  screenSrc,
+  iframeSrc,
+  screenAlt = 'App screenshot',
+  size = 'md',
+  class: className = '',
+  variant = 'mobile',
+} = Astro.props;
+
+// Determine content mode
+const hasImage = !!screenSrc;
+const hasIframe = !!iframeSrc;
+const hasContent = hasImage || hasIframe;
+
+// Size mappings
+const sizeClasses = {
+  sm: 'w-48 md:w-56',
+  md: 'w-64 md:w-72',
+  lg: 'w-72 md:w-80 lg:w-96',
+};
+
+// Aspect ratios (approximate iPhone proportions)
+const aspectClasses = {
+  mobile: 'aspect-[9/19.5]',
+  desktop: 'aspect-[16/10]',
+};
+---
+
+<div
+  class:list={[
+    'device-frame relative',
+    sizeClasses[size],
+    className,
+  ]}
+  role="img"
+  aria-label={screenAlt}
+>
+  {/* Device bezel */}
+  <div
+    class:list={[
+      'device-bezel relative overflow-hidden rounded-[2.5rem] bg-gray-900 p-2 shadow-2xl',
+      'ring-1 ring-gray-800',
+      aspectClasses[variant],
+    ]}
+  >
+    {/* Dynamic Island / Notch */}
+    {variant === 'mobile' && (
+      <div class="absolute left-1/2 top-3 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-gray-900" />
+    )}
+
+    {/* Screen */}
+    <div class="device-screen relative h-full w-full overflow-hidden rounded-[2rem] bg-white">
+      {/* Image mode */}
+      {hasImage && (
+        <img
+          src={screenSrc}
+          alt={screenAlt}
+          class="h-full w-full object-cover object-top"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+
+      {/* Iframe mode - live embedded content */}
+      {hasIframe && !hasImage && (
+        <iframe
+          src={iframeSrc}
+          title={screenAlt}
+          class="device-iframe h-full w-full border-0"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin"
+          scrolling="no"
+        />
+      )}
+
+      {/* Placeholder - no content provided */}
+      {!hasContent && (
+        <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-openhr-teal-900/10 to-openhr-teal-900/20">
+          <div class="text-center text-openhr-teal-900/40">
+            <svg
+              class="mx-auto h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+              />
+            </svg>
+            <p class="mt-2 text-xs font-medium">Preview</p>
+          </div>
+        </div>
+      )}
+
+      {/* Screen glare effect (subtle) */}
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+    </div>
+
+    {/* Home indicator (bottom bar) */}
+    {variant === 'mobile' && (
+      <div class="absolute bottom-2 left-1/2 h-1 w-28 -translate-x-1/2 rounded-full bg-gray-600" />
+    )}
+  </div>
+
+  {/* Device shadow */}
+  <div class="absolute -inset-4 -z-10 rounded-[3rem] bg-gray-900/5 blur-2xl" />
+</div>
+
+<style>
+  .device-frame {
+    /* Smooth transforms for hover effects if needed */
+    transition: transform 0.3s ease;
+  }
+
+  .device-bezel {
+    /* Subtle metallic edge effect */
+    background: linear-gradient(
+      135deg,
+      #1f2937 0%,
+      #111827 50%,
+      #1f2937 100%
+    );
+  }
+
+  /* Optional hover effect */
+  .device-frame:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .device-frame:hover {
+      transform: none;
+    }
+  }
+
+  /* Iframe specific styles */
+  .device-iframe {
+    transform-origin: top left;
+    pointer-events: none; /* Prevent interaction in demo mode */
+  }
+</style>

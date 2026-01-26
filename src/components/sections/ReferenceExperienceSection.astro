@@ -1,0 +1,275 @@
+---
+/**
+ * Reference Experience Section
+ *
+ * Showcases the reference collection journey - what references see and experience.
+ * Uses a step-by-step visual flow with device mockups.
+ *
+ * Design Direction: Dr. Dietrich Claude, CDO
+ * - Timeline/flow visualization connecting the mockups
+ * - Clear step indicators (1, 2, 3...)
+ * - Mobile-first: vertical stack with connecting lines
+ *
+ * Disclosure Guidance: Dr. Sarah Sapiens, R&D
+ * - GREEN: Reference request email/SMS preview
+ * - GREEN: Questionnaire interface with GENERIC placeholder questions
+ * - GREEN: Thank you / completion screen
+ * - AMBER: Actual questionnaire items - use placeholders only
+ * - RED: RefScore calculations, BAO taxonomy, D/S-loading
+ *
+ * Mockup Modes:
+ * - If flowSteps/mockupImages provided from Sanity, uses static images
+ * - Otherwise, embeds live i18n mockups showing the reference journey
+ */
+
+import DeviceFrame from '@/components/DeviceFrame.astro';
+import { RichText } from './RichText';
+import { getBackgroundClass, type SectionProps } from './types';
+
+type MockupScreen = 'dashboard' | 'questionnaire' | 'invite' | 'completion';
+type Locale = 'fr' | 'en-GB' | 'en-US' | 'de' | 'es' | 'it';
+
+// Default reference journey flow with i18n
+const DEFAULT_FLOW_I18N: Record<Locale, Array<{ screen: MockupScreen; title: string; description: string }>> = {
+  'fr': [
+    { screen: 'invite', title: 'Invitation', description: 'Les références reçoivent une invitation personnalisée par email ou SMS' },
+    { screen: 'questionnaire', title: 'Questionnaire', description: 'Répondre aux questions comportementales sur le candidat' },
+    { screen: 'completion', title: 'Confirmation', description: 'Recevoir la confirmation que le feedback a été soumis confidentiellement' },
+  ],
+  'en-GB': [
+    { screen: 'invite', title: 'Receive Invitation', description: 'References receive a personalised invitation via email or SMS' },
+    { screen: 'questionnaire', title: 'Complete Questionnaire', description: 'Answer behavioural questions about working with the candidate' },
+    { screen: 'completion', title: 'Confirmation', description: 'Receive confirmation that feedback was submitted confidentially' },
+  ],
+  'en-US': [
+    { screen: 'invite', title: 'Receive Invitation', description: 'References receive a personalized invitation via email or SMS' },
+    { screen: 'questionnaire', title: 'Complete Questionnaire', description: 'Answer behavioral questions about working with the candidate' },
+    { screen: 'completion', title: 'Confirmation', description: 'Receive confirmation that feedback was submitted confidentially' },
+  ],
+  'de': [
+    { screen: 'invite', title: 'Einladung erhalten', description: 'Referenzen erhalten eine personalisierte Einladung per E-Mail oder SMS' },
+    { screen: 'questionnaire', title: 'Fragebogen ausfüllen', description: 'Verhaltensfragen über die Zusammenarbeit mit dem Kandidaten beantworten' },
+    { screen: 'completion', title: 'Bestätigung', description: 'Bestätigung erhalten, dass das Feedback vertraulich übermittelt wurde' },
+  ],
+  'es': [
+    { screen: 'invite', title: 'Recibir invitación', description: 'Las referencias reciben una invitación personalizada por correo electrónico o SMS' },
+    { screen: 'questionnaire', title: 'Completar cuestionario', description: 'Responder preguntas de comportamiento sobre el trabajo con el candidato' },
+    { screen: 'completion', title: 'Confirmación', description: 'Recibir confirmación de que los comentarios se enviaron de forma confidencial' },
+  ],
+  'it': [
+    { screen: 'invite', title: 'Ricevi invito', description: 'Le referenze ricevono un invito personalizzato via email o SMS' },
+    { screen: 'questionnaire', title: 'Compila questionario', description: 'Rispondi alle domande comportamentali sul lavoro con il candidato' },
+    { screen: 'completion', title: 'Conferma', description: 'Ricevi conferma che il feedback è stato inviato in modo confidenziale' },
+  ],
+};
+
+interface FlowStep {
+  _key: string;
+  stepNumber?: number;
+  title?: string;
+  description?: string;
+  mockupImage?: {
+    asset?: {
+      url?: string;
+    };
+    alt?: string;
+  };
+  /** For dynamic mode: which mockup screen to show */
+  mockupScreen?: MockupScreen;
+}
+
+interface Props extends Partial<SectionProps> {
+  /** Flow steps with mockup images */
+  flowSteps?: FlowStep[];
+  /** Fallback: Array of mockup images if flowSteps not provided */
+  mockupImages?: Array<{
+    asset?: {
+      url?: string;
+    };
+    alt?: string;
+  }>;
+}
+
+const {
+  heading,
+  subheading,
+  eyebrow,
+  body,
+  ctaText,
+  ctaLink,
+  ctaSecondaryText,
+  ctaSecondaryLink,
+  backgroundStyle,
+  flowSteps = [],
+  mockupImages = [],
+  language = 'fr',
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+
+// Get default flow for current locale
+const DEFAULT_FLOW = DEFAULT_FLOW_I18N[language as Locale] || DEFAULT_FLOW_I18N['en-GB'];
+
+// Use flowSteps if available, otherwise create steps from mockupImages, otherwise use default flow
+const steps: FlowStep[] = flowSteps.length > 0
+  ? flowSteps
+  : mockupImages.length > 0
+    ? mockupImages.map((img, i) => ({
+        _key: `step-${i}`,
+        stepNumber: i + 1,
+        title: `Step ${i + 1}`,
+        mockupImage: img,
+      }))
+    : DEFAULT_FLOW.map((flow, i) => ({
+        _key: `dynamic-${i}`,
+        stepNumber: i + 1,
+        title: flow.title,
+        description: flow.description,
+        mockupScreen: flow.screen,
+      }));
+
+const hasSteps = steps.length > 0;
+
+// Helper to get iframe URL for dynamic mockup
+function getMockupIframeSrc(step: FlowStep): string | undefined {
+  if (step.mockupImage?.asset?.url) return undefined; // Has CMS image
+  const screen = step.mockupScreen || DEFAULT_FLOW[0]?.screen || 'questionnaire';
+  return `/mockups/${language}/${screen}/`;
+}
+---
+
+<section class:list={['py-16 md:py-24 lg:py-32 overflow-hidden', bgClass, className]}>
+  <div class="container mx-auto px-4">
+    {/* Text Content - Centered */}
+    <div class="mx-auto max-w-3xl text-center mb-12 md:mb-16">
+      {/* Eyebrow */}
+      {eyebrow && (
+        <p class="mb-4 text-sm font-medium uppercase tracking-wider text-openhr-teal-900">
+          {eyebrow}
+        </p>
+      )}
+
+      {/* Heading */}
+      {heading && (
+        <h2 class="mb-6 font-display text-display-3 font-bold text-foreground md:text-display-2">
+          {heading}
+        </h2>
+      )}
+
+      {/* Subheading */}
+      {subheading && (
+        <p class="mb-8 font-body text-lg text-gray-600 md:text-xl md:leading-relaxed">
+          {subheading}
+        </p>
+      )}
+
+      {/* Rich text body */}
+      {body && body.length > 0 && (
+        <div class="mb-8">
+          <RichText content={body} className="text-gray-600" />
+        </div>
+      )}
+    </div>
+
+    {/* Reference Flow Steps */}
+    {hasSteps && (
+      <div class="relative">
+        {/* Decorative background */}
+        <div class="absolute inset-0 -z-10 mx-auto max-w-4xl rounded-full bg-openhr-teal-900/5 blur-3xl" />
+
+        {/* Timeline connector - visible on md+ */}
+        <div class="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-1 w-3/4 max-w-4xl bg-gradient-to-r from-openhr-teal-900/10 via-openhr-teal-900/20 to-openhr-teal-900/10 rounded-full" />
+
+        {/* Steps grid */}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-3 lg:gap-6">
+          {steps.map((step, index) => (
+            <div class="relative flex flex-col items-center text-center" key={step._key}>
+              {/* Step number badge */}
+              <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-openhr-teal-900 text-white font-bold text-lg shadow-lg">
+                {step.stepNumber || index + 1}
+              </div>
+
+              {/* Mobile connector line (between steps) */}
+              {index < steps.length - 1 && (
+                <div class="md:hidden absolute -bottom-4 left-1/2 -translate-x-1/2 h-8 w-0.5 bg-openhr-teal-900/20" />
+              )}
+
+              {/* Device mockup */}
+              <div class="mb-4">
+                <DeviceFrame
+                  screenSrc={step.mockupImage?.asset?.url}
+                  iframeSrc={getMockupIframeSrc(step)}
+                  screenAlt={step.mockupImage?.alt || step.title || `Step ${index + 1}`}
+                  size="sm"
+                  variant="mobile"
+                />
+              </div>
+
+              {/* Step title */}
+              {step.title && (
+                <h3 class="font-display text-lg font-semibold text-foreground mb-2">
+                  {step.title}
+                </h3>
+              )}
+
+              {/* Step description */}
+              {step.description && (
+                <p class="text-sm text-gray-600 max-w-xs">
+                  {step.description}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Fallback: No steps - show dynamic reference journey mockups */}
+    {!hasSteps && (
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-3 lg:gap-6">
+        {DEFAULT_FLOW.map((flow, num) => (
+          <div class="flex flex-col items-center text-center" key={num}>
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-openhr-teal-900 text-white font-bold text-lg">
+              {num + 1}
+            </div>
+            <DeviceFrame
+              iframeSrc={`/mockups/${language}/${flow.screen}/`}
+              screenAlt={flow.title}
+              size="sm"
+              variant="mobile"
+            />
+            <h3 class="mt-4 font-display text-lg font-semibold text-foreground">
+              {flow.title}
+            </h3>
+            <p class="text-sm text-gray-600 max-w-xs">
+              {flow.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {/* CTA Buttons */}
+    {(ctaText || ctaSecondaryText) && (
+      <div class="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
+        {ctaText && ctaLink && (
+          <a
+            href={ctaLink}
+            class="btn btn-primary rounded-md bg-openhr-teal-900 px-8 py-3 font-medium text-white transition-all hover:bg-openhr-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+          >
+            {ctaText}
+          </a>
+        )}
+        {ctaSecondaryText && ctaSecondaryLink && (
+          <a
+            href={ctaSecondaryLink}
+            class="btn btn-secondary rounded-md border border-gray-300 bg-white px-8 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+          >
+            {ctaSecondaryText}
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</section>
