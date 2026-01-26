@@ -4,14 +4,20 @@
  *
  * Includes:
  * - Base Layout (fonts, meta, styles)
+ * - Skip link for accessibility (OPE-424)
  * - Header with navigation
- * - Main content slot
+ * - Main content slot with landmark
  * - Footer with navigation
+ *
+ * @see OPE-424 - Skip to main content link
+ * @see OPE-421 - JSON-LD structured data
  */
 import Layout from './Layout.astro';
+import SkipLink from '@/components/SkipLink.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { type Locale } from '@/lib/i18n';
+import type { Schema } from '@/lib/seo';
 
 interface Props {
   title: string;
@@ -19,9 +25,11 @@ interface Props {
   locale: Locale;
   ogImage?: string;
   noIndex?: boolean;
+  /** Additional JSON-LD schemas for page-specific structured data */
+  additionalSchemas?: Schema[];
 }
 
-const { title, description, locale, ogImage, noIndex } = Astro.props;
+const { title, description, locale, ogImage, noIndex, additionalSchemas } = Astro.props;
 ---
 
 <Layout
@@ -30,9 +38,11 @@ const { title, description, locale, ogImage, noIndex } = Astro.props;
   locale={locale}
   ogImage={ogImage}
   noIndex={noIndex}
+  additionalSchemas={additionalSchemas}
 >
+  <SkipLink locale={locale} />
   <Header locale={locale} />
-  <main class="flex-1">
+  <main id="main-content" tabindex="-1" class="flex-1 outline-none">
     <slot />
   </main>
   <Footer locale={locale} />

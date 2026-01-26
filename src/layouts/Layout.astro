@@ -6,21 +6,26 @@
  * - Font loading (Bricolage Grotesque, Instrument Sans, JetBrains Mono, Inter)
  * - Global styles
  * - SEO meta tags
+ * - JSON-LD Organization schema (all pages)
  * - Favicon configuration
+ *
+ * @see OPE-421 - JSON-LD structured data
  */
-import '@fontsource/bricolage-grotesque/400.css';
+// Font Loading Strategy (OPE-420 Performance Audit):
+// - Only load weights actually used in critical path
+// - Bricolage Grotesque 400 removed (headings use 600/800)
+// - JetBrains Mono 500/700 removed (only 400 used for code)
+// - Inter removed entirely (not used in marketing pages)
 import '@fontsource/bricolage-grotesque/600.css';
 import '@fontsource/bricolage-grotesque/800.css';
 import '@fontsource/instrument-sans/400.css';
 import '@fontsource/instrument-sans/500.css';
 import '@fontsource/instrument-sans/600.css';
 import '@fontsource/jetbrains-mono/400.css';
-import '@fontsource/jetbrains-mono/500.css';
-import '@fontsource/jetbrains-mono/700.css';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
 import '../styles/globals.css';
 import AnalyticsBanner from '@/components/AnalyticsBanner.astro';
+import JsonLd from '@/components/JsonLd.astro';
+import { generateOrganizationSchema, type Schema } from '@/lib/seo';
 
 interface Props {
   title: string;
@@ -28,6 +33,8 @@ interface Props {
   locale?: string;
   ogImage?: string;
   noIndex?: boolean;
+  /** Additional JSON-LD schemas to include alongside Organization */
+  additionalSchemas?: Schema[];
 }
 
 const {
@@ -35,7 +42,8 @@ const {
   description = "L'infrastructure RH de demain. Open HR.",
   locale = 'fr',
   ogImage = '/og-image.png',
-  noIndex = false
+  noIndex = false,
+  additionalSchemas = []
 } = Astro.props;
 
 // Map locale codes to HTML lang attributes
@@ -50,6 +58,12 @@ const localeToLang: Record<string, string> = {
 
 const htmlLang = localeToLang[locale] || 'fr';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Generate Organization schema (included on all pages)
+const organizationSchema = generateOrganizationSchema();
+
+// Combine Organization with any additional schemas
+const allSchemas = [organizationSchema, ...additionalSchemas];
 ---
 
 <!DOCTYPE html>
@@ -89,6 +103,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#006064" />
+
+    <!-- JSON-LD Structured Data (OPE-421) -->
+    <JsonLd schemas={allSchemas} />
 
     <!-- Plausible Analytics -->
     <script defer data-domain="open-hr.fr,open-hr.work" src="https://plausible.io/js/script.js"></script>

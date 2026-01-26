@@ -132,9 +132,11 @@ try {
     </div>
 
     <!-- Mobile Menu (React Island) -->
+    <!-- Uses client:media to only load React on mobile viewports (< 768px) -->
+    <!-- This saves ~100KB of JS on desktop where the menu isn't needed -->
     <div class="md:hidden">
       <MobileNav
-        client:load
+        client:media="(max-width: 767px)"
         navLinks={navLinks.map(link => ({ ...link, href: buildHref(link.href) }))}
         ctaLabel={CTA_LABELS[locale]}
         ctaHref="https://app.open-hr.work/login"

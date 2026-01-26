@@ -9,10 +9,14 @@
  *
  * CORS: Configured in platform (OPE-369)
  * @see OPE-388 - Pilot Stripe Checkout Integration
+ * @see OPE-419 - Form validation and error handling audit
  * @see DL-33 - Pilot Pricing Decision (€5/month grandfathered)
  */
 
-import { useState, type FormEvent } from 'react';
+import { useState, useRef, type FormEvent } from 'react';
+
+// Request timeout in milliseconds (15 seconds) - OPE-419
+const REQUEST_TIMEOUT_MS = 15000;
 
 interface PilotSignupFormProps {
   locale: 'fr' | 'en-GB' | 'en-US' | 'de' | 'es' | 'it';
@@ -36,6 +40,7 @@ const translations = {
     errorAlreadyPaid: 'Cette adresse email a déjà complété l\'inscription pilote.',
     errorGeneric: 'Une erreur est survenue. Veuillez réessayer.',
     errorNetwork: 'Erreur de connexion. Vérifiez votre connexion internet.',
+    errorTimeout: 'La requête a expiré. Veuillez réessayer.',
     gdprConsent: 'J\'accepte que mes données soient traitées conformément à la',
     gdprConsentLink: 'politique de confidentialité',
     validation: {
@@ -61,6 +66,7 @@ const translations = {
     errorAlreadyPaid: 'This email address has already completed pilot registration.',
     errorGeneric: 'An error occurred. Please try again.',
     errorNetwork: 'Connection error. Check your internet connection.',
+    errorTimeout: 'The request timed out. Please try again.',
     gdprConsent: 'I agree that my data will be processed in accordance with the',
     gdprConsentLink: 'privacy policy',
     validation: {
@@ -86,6 +92,7 @@ const translations = {
     errorAlreadyPaid: 'This email address has already completed pilot registration.',
     errorGeneric: 'An error occurred. Please try again.',
     errorNetwork: 'Connection error. Check your internet connection.',
+    errorTimeout: 'The request timed out. Please try again.',
     gdprConsent: 'I agree that my data will be processed in accordance with the',
     gdprConsentLink: 'privacy policy',
     validation: {
@@ -111,6 +118,7 @@ const translations = {
     errorAlreadyPaid: 'Diese E-Mail-Adresse hat die Pilotregistrierung bereits abgeschlossen.',
     errorGeneric: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
     errorNetwork: 'Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung.',
+    errorTimeout: 'Die Anfrage ist abgelaufen. Bitte versuchen Sie es erneut.',
     gdprConsent: 'Ich stimme zu, dass meine Daten gemäß der',
     gdprConsentLink: 'Datenschutzerklärung',
     gdprConsentSuffix: 'verarbeitet werden',
@@ -137,6 +145,7 @@ const translations = {
     errorAlreadyPaid: 'Esta dirección de correo ya ha completado el registro piloto.',
     errorGeneric: 'Ocurrió un error. Por favor, inténtalo de nuevo.',
     errorNetwork: 'Error de conexión. Verifica tu conexión a internet.',
+    errorTimeout: 'La solicitud ha expirado. Por favor, inténtalo de nuevo.',
     gdprConsent: 'Acepto que mis datos sean tratados de acuerdo con la',
     gdprConsentLink: 'política de privacidad',
     validation: {
@@ -162,6 +171,7 @@ const translations = {
     errorAlreadyPaid: 'Questo indirizzo email ha già completato la registrazione pilota.',
     errorGeneric: 'Si è verificato un errore. Per favore riprova.',
     errorNetwork: 'Errore di connessione. Verifica la tua connessione internet.',
+    errorTimeout: 'La richiesta è scaduta. Per favore riprova.',
     gdprConsent: 'Accetto che i miei dati siano trattati in conformità con la',
     gdprConsentLink: 'informativa sulla privacy',
     validation: {
@@ -178,6 +188,12 @@ type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
 export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
   const t = translations[locale] || translations['en-US'];
+
+  // Refs for focus management (accessibility) - OPE-419
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const gdprConsentRef = useRef<HTMLInputElement>(null);
 
   const [formState, setFormState] = useState<FormState>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -226,12 +242,36 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
     }
 
     setFieldErrors(errors);
-    return Object.keys(errors).length === 0;
+
+    // Focus the first field with an error for accessibility (OPE-419)
+    if (Object.keys(errors).length > 0) {
+      const errorOrder: Array<keyof typeof errors> = ['firstName', 'lastName', 'email', 'gdprConsent'];
+      for (const field of errorOrder) {
+        if (errors[field]) {
+          const refMap = {
+            firstName: firstNameRef,
+            lastName: lastNameRef,
+            email: emailRef,
+            gdprConsent: gdprConsentRef,
+          };
+          refMap[field].current?.focus();
+          break;
+        }
+      }
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+
+    // Prevent double submission (OPE-419)
+    if (formState === 'submitting') {
+      return;
+    }
 
     // Validate before submitting
     if (!validateForm()) {
@@ -239,6 +279,10 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
     }
 
     setFormState('submitting');
+
+    // Set up request timeout with AbortController (OPE-419)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
       const response = await fetch(api, {
@@ -253,7 +297,10 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
             ? new URLSearchParams(window.location.search).get('utm_source') || 'organic'
             : 'organic',
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json().catch(() => ({}));
@@ -285,8 +332,15 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
         setErrorMessage(data.message || t.errorGeneric);
       }
     } catch (error) {
+      clearTimeout(timeoutId);
       setFormState('error');
-      setErrorMessage(t.errorNetwork);
+
+      // Check if error was caused by timeout (abort) - OPE-419
+      if (error instanceof Error && error.name === 'AbortError') {
+        setErrorMessage(t.errorTimeout);
+      } else {
+        setErrorMessage(t.errorNetwork);
+      }
     }
   };
 
@@ -303,8 +357,8 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
   // Success state
   if (formState === 'success') {
     return (
-      <div className="mx-auto max-w-md rounded-lg bg-green-50 p-8 text-center">
-        <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="mx-auto max-w-md rounded-lg bg-green-50 p-8 text-center" role="status">
+        <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
         <p className="mt-4 text-lg font-medium text-green-800">{t.success}</p>
@@ -319,9 +373,9 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
         <p className="mt-2 text-gray-600">{t.subtitle}</p>
       </div>
 
-      {/* Error message */}
+      {/* Error message - OPE-419: Added role="alert" for screen readers */}
       {formState === 'error' && errorMessage && (
-        <div className="rounded-md bg-red-50 p-4">
+        <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="assertive">
           <p className="text-sm text-red-700">{errorMessage}</p>
         </div>
       )}
@@ -333,9 +387,11 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
             {t.firstName} *
           </label>
           <input
+            ref={firstNameRef}
             type="text"
             id="firstName"
             name="firstName"
+            autoComplete="given-name"
             aria-required="true"
             aria-invalid={!!fieldErrors.firstName}
             aria-describedby={fieldErrors.firstName ? 'firstName-error' : undefined}
@@ -360,9 +416,11 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
             {t.lastName} *
           </label>
           <input
+            ref={lastNameRef}
             type="text"
             id="lastName"
             name="lastName"
+            autoComplete="family-name"
             aria-required="true"
             aria-invalid={!!fieldErrors.lastName}
             aria-describedby={fieldErrors.lastName ? 'lastName-error' : undefined}
@@ -390,9 +448,11 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
           {t.email} *
         </label>
         <input
+          ref={emailRef}
           type="email"
           id="email"
           name="email"
+          autoComplete="email"
           aria-required="true"
           aria-invalid={!!fieldErrors.email}
           aria-describedby={fieldErrors.email ? 'email-error' : undefined}
@@ -433,6 +493,7 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
       <div>
         <div className="flex items-start gap-3">
           <input
+            ref={gdprConsentRef}
             type="checkbox"
             id="gdprConsent"
             name="gdprConsent"

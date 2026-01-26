@@ -9,6 +9,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import Mark from '@/components/Mark.astro';
 import PricingSection from '@/components/islands/PricingSection';
 import { locales, type Locale } from '@/lib/i18n';
+import { generateProductSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -57,12 +58,16 @@ const content = {
     subheading: 'Scegli il piano giusto per te.',
   },
 }[locale];
+
+// Generate Product schema for pricing page (OPE-421)
+const productSchema = generateProductSchema(locale);
 ---
 
 <MainLayout
   title={content.title}
   description={content.description}
   locale={locale}
+  additionalSchemas={[productSchema]}
 >
   <section class="container py-16 md:py-24">
     <!-- Header -->
