@@ -1,0 +1,152 @@
+---
+/**
+ * Legal Document Renderer
+ *
+ * Progressive disclosure layout for legal documents from Sanity CMS.
+ * Features:
+ * - Quick summary (TL;DR) at top
+ * - Collapsible accordion sections
+ * - Table of contents (sticky on desktop)
+ * - Version and date badges
+ * - Multiple section display types
+ *
+ * @see legalDocument schema in studio/schemaTypes/legalDocument.ts
+ */
+import type { LegalDocument, LegalSection } from '@/lib/sanity/fetchers';
+import type { Locale } from '@/lib/i18n';
+import { getLegalLabels } from '@/lib/i18n';
+import LegalQuickSummary from './LegalQuickSummary.astro';
+import LegalTableOfContents from './LegalTableOfContents.astro';
+import LegalAccordion from './LegalAccordion';
+
+interface Props {
+  document: LegalDocument;
+  locale: Locale;
+}
+
+const { document, locale } = Astro.props;
+const labels = getLegalLabels(locale);
+
+// Format dates for display
+function formatDate(dateString: string, loc: Locale): string {
+  const date = new Date(dateString);
+  const localeMap: Record<Locale, string> = {
+    fr: 'fr-FR',
+    'en-GB': 'en-GB',
+    'en-US': 'en-US',
+    de: 'de-DE',
+    es: 'es-ES',
+    it: 'it-IT',
+  };
+  return date.toLocaleDateString(localeMap[loc], {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+// Status badge colors
+const statusColors: Record<string, string> = {
+  draft: 'bg-amber-100 text-amber-800',
+  review: 'bg-blue-100 text-blue-800',
+  active: 'bg-green-100 text-green-800',
+  archived: 'bg-gray-100 text-gray-600',
+};
+
+const statusLabels: Record<string, string> = {
+  draft: labels.statusDraft,
+  review: labels.statusReview,
+  active: labels.statusActive,
+  archived: labels.statusArchived,
+};
+
+// Prepare sections for accordion
+const sectionsWithExpanded = (document.sections ?? []).map((section, index) => ({
+  ...section,
+  isExpanded: document.expandFirstSection && index === 0 ? true : section.defaultExpanded ?? false,
+}));
+---
+
+<article class="legal-document" data-document-type={document.documentType}>
+  <div class="container mx-auto px-4 py-8 md:py-12">
+    <!-- Header -->
+    <header class="mb-8 md:mb-12">
+      <h1 class="font-display text-3xl font-bold text-foreground md:text-4xl lg:text-5xl">
+        {document.title}
+      </h1>
+
+      {/* Version and date badges */}
+      {document.showVersionBadge && (
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <span class={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${statusColors[document.status] ?? statusColors.active}`}>
+            {statusLabels[document.status] ?? document.status}
+          </span>
+          <span class="text-sm text-gray-500">
+            {labels.version} {document.version}
+          </span>
+          <span class="text-sm text-gray-500">
+            {labels.effectiveDate}: {formatDate(document.effectiveDate, locale)}
+          </span>
+          {document.lastUpdated !== document.effectiveDate && (
+            <span class="text-sm text-gray-500">
+              {labels.lastUpdated}: {formatDate(document.lastUpdated, locale)}
+            </span>
+          )}
+        </div>
+      )}
+    </header>
+
+    <!-- Main content with optional TOC sidebar -->
+    <div class={document.showToc ? 'lg:grid lg:grid-cols-[1fr_280px] lg:gap-12' : ''}>
+      <!-- Content column -->
+      <div class="min-w-0">
+        {/* Quick Summary (TL;DR) */}
+        {document.quickSummary && document.quickSummary.points && document.quickSummary.points.length > 0 && (
+          <LegalQuickSummary
+            heading={document.quickSummary.heading ?? labels.quickSummaryDefault}
+            points={document.quickSummary.points}
+          />
+        )}
+
+        {/* Accordion sections */}
+        {sectionsWithExpanded.length > 0 && (
+          <LegalAccordion
+            client:load
+            sections={sectionsWithExpanded}
+            locale={locale}
+            expandLabel={labels.expandSection}
+            collapseLabel={labels.collapseSection}
+          />
+        )}
+
+        {/* Footer note */}
+        {document.footerNote && (
+          <footer class="mt-12 border-t border-gray-200 pt-6">
+            <p class="text-sm italic text-gray-500">
+              {document.footerNote}
+            </p>
+          </footer>
+        )}
+      </div>
+
+      {/* Table of Contents sidebar (desktop only) */}
+      {document.showToc && document.sections && document.sections.length > 0 && (
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <LegalTableOfContents
+              sections={document.sections}
+              heading={labels.tableOfContents}
+            />
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .legal-document {
+    /* Smooth scroll for TOC anchor links */
+    scroll-behavior: smooth;
+  }
+</style>

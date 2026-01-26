@@ -12,6 +12,8 @@ import {
   FOOTER_QUERY,
   SECTION_BY_ID_QUERY,
   PRICING_SECTION_QUERY,
+  LEGAL_DOCUMENT_QUERY,
+  LEGAL_DOCUMENT_SLUGS_QUERY,
 } from './queries';
 import type { Locale } from '@/lib/i18n';
 
@@ -292,4 +294,135 @@ export async function getPricingSection(
   locale: Locale
 ): Promise<PricingSection | null> {
   return sanityFetch<PricingSection | null>(PRICING_SECTION_QUERY, { locale });
+}
+
+// =============================================================================
+// LEGAL DOCUMENT TYPES
+// =============================================================================
+
+export interface LegalContactInfo {
+  companyName?: string;
+  legalForm?: string;
+  capital?: string;
+  address?: string;
+  rcs?: string;
+  euid?: string;
+  vat?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+}
+
+export interface LegalRight {
+  _key: string;
+  icon?: string;
+  name?: string;
+  description?: string;
+}
+
+export interface LegalSubsection {
+  _key: string;
+  subNumber?: string;
+  subTitle?: string;
+  subContent?: unknown[]; // Portable Text
+}
+
+export interface InlineTableRow {
+  _key: string;
+  cells: string[];
+}
+
+export interface InlineTable {
+  _key: string;
+  _type: 'inlineTable';
+  caption?: string;
+  headers?: string[];
+  rows?: InlineTableRow[];
+}
+
+export interface LegalSection {
+  _key: string;
+  _type: string;
+  sectionNumber?: string;
+  title: string;
+  anchor?: { current: string };
+  displayType?: 'text' | 'table' | 'contact' | 'rights' | 'subsections';
+  defaultExpanded?: boolean;
+  content?: (unknown | InlineTable)[]; // Portable Text with inline tables
+  contactInfo?: LegalContactInfo;
+  rights?: LegalRight[];
+  subsections?: LegalSubsection[];
+}
+
+export interface LegalQuickSummaryPoint {
+  _key: string;
+  icon?: string;
+  text?: string;
+}
+
+export interface LegalQuickSummary {
+  heading?: string;
+  points?: LegalQuickSummaryPoint[];
+}
+
+export interface LegalDocumentSEO {
+  metaTitle?: string;
+  metaDescription?: string;
+  noIndex?: boolean;
+}
+
+export type LegalDocumentType =
+  | 'legal-notice'
+  | 'privacy'
+  | 'cookies'
+  | 'terms'
+  | 'terms-of-use'
+  | 'acceptable-use';
+
+export interface LegalDocument {
+  _id: string;
+  _type: 'legalDocument';
+  _createdAt: string;
+  _updatedAt: string;
+  title: string;
+  slug: { current: string };
+  documentType: LegalDocumentType;
+  language: Locale;
+  version: string;
+  status: 'draft' | 'review' | 'active' | 'archived';
+  effectiveDate: string;
+  lastUpdated: string;
+  quickSummary?: LegalQuickSummary;
+  sections?: LegalSection[];
+  footerNote?: string;
+  seo?: LegalDocumentSEO;
+  showToc?: boolean;
+  showVersionBadge?: boolean;
+  expandFirstSection?: boolean;
+}
+
+// =============================================================================
+// LEGAL DOCUMENT FETCHERS
+// =============================================================================
+
+/**
+ * Get a legal document by slug and locale
+ */
+export async function getLegalDocument(
+  slug: string,
+  locale: Locale
+): Promise<LegalDocument | null> {
+  return sanityFetch<LegalDocument | null>(LEGAL_DOCUMENT_QUERY, { slug, locale });
+}
+
+/**
+ * Get all legal document slugs for a locale (for static generation)
+ */
+export async function getLegalDocumentSlugs(
+  locale: Locale
+): Promise<Array<{ slug: string; documentType: LegalDocumentType }>> {
+  return sanityFetch<Array<{ slug: string; documentType: LegalDocumentType }>>(
+    LEGAL_DOCUMENT_SLUGS_QUERY,
+    { locale }
+  );
 }

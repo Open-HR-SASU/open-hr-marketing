@@ -2,44 +2,78 @@
 /**
  * Legal Pages (Catch-all Route)
  *
- * Handles all legal pages:
- * - /[locale]/legal/privacy/
- * - /[locale]/legal/terms/
+ * Handles all legal pages from Sanity CMS legalDocument type:
+ * - /[locale]/legal/mentions-legales/
+ * - /[locale]/legal/confidentialite/
  * - /[locale]/legal/cookies/
- * - /[locale]/legal/refscore/
+ * - etc.
  *
- * Content is fetched from Sanity CMS.
+ * Falls back to legacy page type if legalDocument not found.
+ *
+ * @see legalDocument schema in studio/schemaTypes/legalDocument.ts
  */
 import MainLayout from '@/layouts/MainLayout.astro';
 import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
-import { locales, type Locale } from '@/lib/i18n';
-import { getPage, getPageMetadata } from '@/lib/sanity';
+import LegalDocumentRenderer from '@/components/legal/LegalDocumentRenderer.astro';
+import { locales, type Locale, getLegalLabels } from '@/lib/i18n';
+import { getPage, getPageMetadata, getLegalDocument, getLegalDocumentSlugs } from '@/lib/sanity';
 
-export function getStaticPaths() {
-  // Legal page slugs to generate
-  const legalSlugs = ['privacy', 'terms', 'cookies', 'refscore'];
-
+export async function getStaticPaths() {
   const paths = [];
+
+  // Fetch legal document slugs for each locale
   for (const locale of locales) {
-    for (const slug of legalSlugs) {
-      paths.push({
-        params: { locale, slug },
-      });
+    try {
+      const legalDocs = await getLegalDocumentSlugs(locale);
+      for (const doc of legalDocs) {
+        paths.push({
+          params: { locale, slug: doc.slug },
+          props: { documentType: doc.documentType },
+        });
+      }
+    } catch {
+      // If Sanity query fails, fall back to static slugs
     }
   }
+
+  // Also add legacy slugs for backwards compatibility
+  const legacySlugs = ['privacy', 'terms', 'cookies', 'refscore'];
+  for (const locale of locales) {
+    for (const slug of legacySlugs) {
+      // Check if this slug is already added from Sanity
+      const exists = paths.some(
+        (p) => p.params.locale === locale && p.params.slug === slug
+      );
+      if (!exists) {
+        paths.push({
+          params: { locale, slug },
+          props: { documentType: null },
+        });
+      }
+    }
+  }
+
   return paths;
 }
 
 const { locale, slug } = Astro.params as { locale: Locale; slug: string };
+const labels = getLegalLabels(locale);
 
-// Construct Sanity slug (legal pages may use "legal/privacy" or just "privacy")
-const sanitySlug = `legal/${slug}`;
+// Try to fetch from new legalDocument type first
+const legalDocument = await getLegalDocument(slug, locale);
 
-// Fetch page content from Sanity
-const page = await getPage(sanitySlug, locale) || await getPage(slug, locale);
-const metadata = await getPageMetadata(sanitySlug, locale) || await getPageMetadata(slug, locale);
+// Fall back to legacy page type if not found
+let legacyPage = null;
+let legacyMetadata = null;
 
-// Fallback titles for each legal page
+if (!legalDocument) {
+  // Try legacy page lookups
+  const sanitySlug = `legal/${slug}`;
+  legacyPage = await getPage(sanitySlug, locale) || await getPage(slug, locale);
+  legacyMetadata = await getPageMetadata(sanitySlug, locale) || await getPageMetadata(slug, locale);
+}
+
+// Fallback titles for legacy pages (i18n tagged)
 const fallbackTitles: Record<string, Record<Locale, string>> = {
   privacy: {
     'fr': 'Politique de confidentialite - Open HR',
@@ -72,6 +106,22 @@ const fallbackTitles: Record<string, Record<Locale, string>> = {
     'de': 'RefScore - Open HR',
     'es': 'RefScore - Open HR',
     'it': 'RefScore - Open HR',
+  },
+  'mentions-legales': {
+    'fr': 'Mentions Legales - Open HR',
+    'en-GB': 'Legal Notice - Open HR',
+    'en-US': 'Legal Notice - Open HR',
+    'de': 'Impressum - Open HR',
+    'es': 'Aviso Legal - Open HR',
+    'it': 'Note Legali - Open HR',
+  },
+  'confidentialite': {
+    'fr': 'Politique de Confidentialite - Open HR',
+    'en-GB': 'Privacy Policy - Open HR',
+    'en-US': 'Privacy Policy - Open HR',
+    'de': 'Datenschutzrichtlinie - Open HR',
+    'es': 'Politica de Privacidad - Open HR',
+    'it': 'Informativa sulla Privacy - Open HR',
   },
 };
 
@@ -108,10 +158,44 @@ const fallbackHeadings: Record<string, Record<Locale, string>> = {
     'es': 'Metodologia RefScore',
     'it': 'Metodologia RefScore',
   },
+  'mentions-legales': {
+    'fr': 'Mentions Legales',
+    'en-GB': 'Legal Notice',
+    'en-US': 'Legal Notice',
+    'de': 'Impressum',
+    'es': 'Aviso Legal',
+    'it': 'Note Legali',
+  },
+  'confidentialite': {
+    'fr': 'Politique de Confidentialite',
+    'en-GB': 'Privacy Policy',
+    'en-US': 'Privacy Policy',
+    'de': 'Datenschutzrichtlinie',
+    'es': 'Politica de Privacidad',
+    'it': 'Informativa sulla Privacy',
+  },
 };
 
-const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitles[slug]?.[locale] || `${slug} - Open HR`;
-const description = metadata?.seo?.metaDescription || `${fallbackHeadings[slug]?.[locale] || slug} - Open HR`;
+// Determine page metadata
+let title: string;
+let description: string;
+let noIndex = false;
+
+if (legalDocument) {
+  // Use legalDocument metadata
+  title = legalDocument.seo?.metaTitle || legalDocument.title;
+  description = legalDocument.seo?.metaDescription || `${legalDocument.title} - Open HR`;
+  noIndex = legalDocument.seo?.noIndex ?? false;
+} else if (legacyMetadata) {
+  // Use legacy page metadata
+  title = legacyMetadata.seo?.metaTitle || legacyMetadata.title || fallbackTitles[slug]?.[locale] || `${slug} - Open HR`;
+  description = legacyMetadata.seo?.metaDescription || `${fallbackHeadings[slug]?.[locale] || slug} - Open HR`;
+} else {
+  // Use fallbacks
+  title = fallbackTitles[slug]?.[locale] || `${slug} - Open HR`;
+  description = `${fallbackHeadings[slug]?.[locale] || slug} - Open HR`;
+}
+
 const heading = fallbackHeadings[slug]?.[locale] || slug;
 ---
 
@@ -119,9 +203,14 @@ const heading = fallbackHeadings[slug]?.[locale] || slug;
   title={title}
   description={description}
   locale={locale}
+  noIndex={noIndex}
 >
-  {page?.sections && page.sections.length > 0 ? (
-    <SectionsRenderer sections={page.sections} locale={locale} />
+  {legalDocument ? (
+    <!-- New legalDocument type with progressive disclosure -->
+    <LegalDocumentRenderer document={legalDocument} locale={locale} />
+  ) : legacyPage?.sections && legacyPage.sections.length > 0 ? (
+    <!-- Legacy page type -->
+    <SectionsRenderer sections={legacyPage.sections} locale={locale} />
   ) : (
     <!-- Fallback content when CMS content unavailable -->
     <section class="container py-16 md:py-24">
@@ -131,13 +220,11 @@ const heading = fallbackHeadings[slug]?.[locale] || slug;
         </h1>
         <div class="prose prose-lg max-w-none">
           <p class="text-gray-600">
-            {locale === 'fr'
-              ? 'Le contenu de cette page sera bientot disponible.'
-              : 'The content of this page will be available soon.'}
+            {labels.contentUnavailable}
           </p>
           <p class="mt-4">
             <a href={`/${locale}/`} class="text-openhr-teal-900 hover:text-openhr-teal-700">
-              {locale === 'fr' ? 'Retour a l\'accueil' : 'Back to Home'}
+              {labels.backToHome}
             </a>
           </p>
         </div>

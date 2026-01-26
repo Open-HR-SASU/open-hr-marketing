@@ -341,3 +341,107 @@ export const PRICING_SECTION_QUERY = groq`
     }
   }
 `;
+
+// =============================================================================
+// LEGAL DOCUMENT QUERIES
+// =============================================================================
+
+/**
+ * Legal section fragment for progressive disclosure
+ */
+export const legalSectionFragment = /* groq */ `
+  _key,
+  _type,
+  sectionNumber,
+  title,
+  anchor,
+  displayType,
+  defaultExpanded,
+  content[] {
+    ...,
+    _type == "inlineTable" => {
+      _key,
+      _type,
+      caption,
+      headers,
+      rows[] {
+        _key,
+        cells
+      }
+    }
+  },
+  contactInfo {
+    companyName,
+    legalForm,
+    capital,
+    address,
+    rcs,
+    euid,
+    vat,
+    email,
+    phone,
+    website
+  },
+  rights[] {
+    _key,
+    icon,
+    name,
+    description
+  },
+  subsections[] {
+    _key,
+    subNumber,
+    subTitle,
+    subContent
+  }
+`;
+
+/**
+ * Get a legal document by slug and locale
+ */
+export const LEGAL_DOCUMENT_QUERY = groq`
+  *[_type == "legalDocument" && slug.current == $slug && language == $locale][0] {
+    _id,
+    _type,
+    _createdAt,
+    _updatedAt,
+    title,
+    slug,
+    documentType,
+    language,
+    version,
+    status,
+    effectiveDate,
+    lastUpdated,
+    quickSummary {
+      heading,
+      points[] {
+        _key,
+        icon,
+        text
+      }
+    },
+    sections[] {
+      ${legalSectionFragment}
+    },
+    footerNote,
+    seo {
+      metaTitle,
+      metaDescription,
+      noIndex
+    },
+    showToc,
+    showVersionBadge,
+    expandFirstSection
+  }
+`;
+
+/**
+ * Get all legal document slugs for a locale (for static generation)
+ */
+export const LEGAL_DOCUMENT_SLUGS_QUERY = groq`
+  *[_type == "legalDocument" && language == $locale && defined(slug.current)] {
+    "slug": slug.current,
+    documentType
+  }
+`;

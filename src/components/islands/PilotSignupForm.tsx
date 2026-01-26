@@ -23,24 +23,27 @@ interface PilotSignupFormProps {
 const translations = {
   fr: {
     title: 'Rejoignez le programme pilote',
-    subtitle: 'Soyez parmi les premiers a decouvrir Open HR.',
-    firstName: 'Prenom',
+    subtitle: 'Soyez parmi les premiers à découvrir Open HR.',
+    firstName: 'Prénom',
     lastName: 'Nom',
     email: 'Email',
     reason: 'Pourquoi souhaitez-vous participer ? (optionnel)',
     submit: 'S\'inscrire',
     submitting: 'Inscription en cours...',
-    success: 'Inscription reussie ! Vous recevrez un email de confirmation.',
-    errorDuplicate: 'Cette adresse email est deja inscrite.',
-    errorCapacity: 'Le programme pilote a atteint sa capacite. Veuillez rejoindre la liste d\'attente.',
-    errorAlreadyPaid: 'Cette adresse email a deja complete l\'inscription pilote.',
-    errorGeneric: 'Une erreur est survenue. Veuillez reessayer.',
-    errorNetwork: 'Erreur de connexion. Verifiez votre connexion internet.',
+    success: 'Inscription réussie ! Vous recevrez un email de confirmation.',
+    errorDuplicate: 'Cette adresse email est déjà inscrite.',
+    errorCapacity: 'Le programme pilote a atteint sa capacité. Veuillez rejoindre la liste d\'attente.',
+    errorAlreadyPaid: 'Cette adresse email a déjà complété l\'inscription pilote.',
+    errorGeneric: 'Une erreur est survenue. Veuillez réessayer.',
+    errorNetwork: 'Erreur de connexion. Vérifiez votre connexion internet.',
+    gdprConsent: 'J\'accepte que mes données soient traitées conformément à la',
+    gdprConsentLink: 'politique de confidentialité',
     validation: {
-      firstNameRequired: 'Veuillez saisir votre prenom.',
+      firstNameRequired: 'Veuillez saisir votre prénom.',
       lastNameRequired: 'Veuillez saisir votre nom.',
       emailRequired: 'Veuillez saisir votre adresse email.',
       emailInvalid: 'Veuillez saisir une adresse email valide.',
+      gdprRequired: 'Vous devez accepter la politique de confidentialité.',
     },
   },
   'en-GB': {
@@ -58,11 +61,14 @@ const translations = {
     errorAlreadyPaid: 'This email address has already completed pilot registration.',
     errorGeneric: 'An error occurred. Please try again.',
     errorNetwork: 'Connection error. Check your internet connection.',
+    gdprConsent: 'I agree that my data will be processed in accordance with the',
+    gdprConsentLink: 'privacy policy',
     validation: {
       firstNameRequired: 'Please enter your first name.',
       lastNameRequired: 'Please enter your last name.',
       emailRequired: 'Please enter your email address.',
       emailInvalid: 'Please enter a valid email address.',
+      gdprRequired: 'You must accept the privacy policy.',
     },
   },
   'en-US': {
@@ -80,55 +86,65 @@ const translations = {
     errorAlreadyPaid: 'This email address has already completed pilot registration.',
     errorGeneric: 'An error occurred. Please try again.',
     errorNetwork: 'Connection error. Check your internet connection.',
+    gdprConsent: 'I agree that my data will be processed in accordance with the',
+    gdprConsentLink: 'privacy policy',
     validation: {
       firstNameRequired: 'Please enter your first name.',
       lastNameRequired: 'Please enter your last name.',
       emailRequired: 'Please enter your email address.',
       emailInvalid: 'Please enter a valid email address.',
+      gdprRequired: 'You must accept the privacy policy.',
     },
   },
   de: {
     title: 'Am Pilotprogramm teilnehmen',
-    subtitle: 'Gehoren Sie zu den Ersten, die Open HR entdecken.',
+    subtitle: 'Gehören Sie zu den Ersten, die Open HR entdecken.',
     firstName: 'Vorname',
     lastName: 'Nachname',
     email: 'E-Mail',
-    reason: 'Warum mochten Sie teilnehmen? (optional)',
+    reason: 'Warum möchten Sie teilnehmen? (optional)',
     submit: 'Anmelden',
     submitting: 'Anmeldung...',
-    success: 'Anmeldung erfolgreich! Sie erhalten eine Bestatigungs-E-Mail.',
+    success: 'Anmeldung erfolgreich! Sie erhalten eine Bestätigungs-E-Mail.',
     errorDuplicate: 'Diese E-Mail-Adresse ist bereits registriert.',
-    errorCapacity: 'Das Pilotprogramm hat seine Kapazitat erreicht. Bitte treten Sie der Warteliste bei.',
+    errorCapacity: 'Das Pilotprogramm hat seine Kapazität erreicht. Bitte treten Sie der Warteliste bei.',
     errorAlreadyPaid: 'Diese E-Mail-Adresse hat die Pilotregistrierung bereits abgeschlossen.',
     errorGeneric: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
-    errorNetwork: 'Verbindungsfehler. Uberprufen Sie Ihre Internetverbindung.',
+    errorNetwork: 'Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung.',
+    gdprConsent: 'Ich stimme zu, dass meine Daten gemäß der',
+    gdprConsentLink: 'Datenschutzerklärung',
+    gdprConsentSuffix: 'verarbeitet werden',
     validation: {
       firstNameRequired: 'Bitte geben Sie Ihren Vornamen ein.',
       lastNameRequired: 'Bitte geben Sie Ihren Nachnamen ein.',
       emailRequired: 'Bitte geben Sie Ihre E-Mail-Adresse ein.',
-      emailInvalid: 'Bitte geben Sie eine gultige E-Mail-Adresse ein.',
+      emailInvalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+      gdprRequired: 'Sie müssen die Datenschutzerklärung akzeptieren.',
     },
   },
   es: {
-    title: 'Unete al programa piloto',
-    subtitle: 'Se de los primeros en descubrir Open HR.',
+    title: 'Únete al programa piloto',
+    subtitle: 'Sé de los primeros en descubrir Open HR.',
     firstName: 'Nombre',
     lastName: 'Apellido',
-    email: 'Correo electronico',
-    reason: 'Por que quieres participar? (opcional)',
+    email: 'Correo electrónico',
+    reason: '¿Por qué quieres participar? (opcional)',
     submit: 'Inscribirse',
     submitting: 'Inscribiendo...',
-    success: 'Inscripcion exitosa! Recibiras un correo de confirmacion.',
-    errorDuplicate: 'Esta direccion de correo ya esta registrada.',
-    errorCapacity: 'El programa piloto ha alcanzado su capacidad. Por favor, unete a la lista de espera.',
-    errorAlreadyPaid: 'Esta direccion de correo ya ha completado el registro piloto.',
-    errorGeneric: 'Ocurrio un error. Por favor, intentalo de nuevo.',
-    errorNetwork: 'Error de conexion. Verifica tu conexion a internet.',
+    success: '¡Inscripción exitosa! Recibirás un correo de confirmación.',
+    errorDuplicate: 'Esta dirección de correo ya está registrada.',
+    errorCapacity: 'El programa piloto ha alcanzado su capacidad. Por favor, únete a la lista de espera.',
+    errorAlreadyPaid: 'Esta dirección de correo ya ha completado el registro piloto.',
+    errorGeneric: 'Ocurrió un error. Por favor, inténtalo de nuevo.',
+    errorNetwork: 'Error de conexión. Verifica tu conexión a internet.',
+    gdprConsent: 'Acepto que mis datos sean tratados de acuerdo con la',
+    gdprConsentLink: 'política de privacidad',
     validation: {
       firstNameRequired: 'Por favor, ingresa tu nombre.',
       lastNameRequired: 'Por favor, ingresa tu apellido.',
-      emailRequired: 'Por favor, ingresa tu correo electronico.',
-      emailInvalid: 'Por favor, ingresa un correo electronico valido.',
+      emailRequired: 'Por favor, ingresa tu correo electrónico.',
+      emailInvalid: 'Por favor, ingresa un correo electrónico válido.',
+      gdprRequired: 'Debes aceptar la política de privacidad.',
     },
   },
   it: {
@@ -137,20 +153,23 @@ const translations = {
     firstName: 'Nome',
     lastName: 'Cognome',
     email: 'Email',
-    reason: 'Perche vuoi partecipare? (opzionale)',
+    reason: 'Perché vuoi partecipare? (opzionale)',
     submit: 'Iscriviti',
     submitting: 'Iscrizione in corso...',
     success: 'Iscrizione riuscita! Riceverai un\'email di conferma.',
-    errorDuplicate: 'Questo indirizzo email e gia registrato.',
-    errorCapacity: 'Il programma pilota ha raggiunto la capacita. Per favore unisciti alla lista d\'attesa.',
-    errorAlreadyPaid: 'Questo indirizzo email ha gia completato la registrazione pilota.',
-    errorGeneric: 'Si e verificato un errore. Per favore riprova.',
+    errorDuplicate: 'Questo indirizzo email è già registrato.',
+    errorCapacity: 'Il programma pilota ha raggiunto la capacità. Per favore unisciti alla lista d\'attesa.',
+    errorAlreadyPaid: 'Questo indirizzo email ha già completato la registrazione pilota.',
+    errorGeneric: 'Si è verificato un errore. Per favore riprova.',
     errorNetwork: 'Errore di connessione. Verifica la tua connessione internet.',
+    gdprConsent: 'Accetto che i miei dati siano trattati in conformità con la',
+    gdprConsentLink: 'informativa sulla privacy',
     validation: {
       firstNameRequired: 'Inserisci il tuo nome.',
       lastNameRequired: 'Inserisci il tuo cognome.',
       emailRequired: 'Inserisci il tuo indirizzo email.',
       emailInvalid: 'Inserisci un indirizzo email valido.',
+      gdprRequired: 'Devi accettare l\'informativa sulla privacy.',
     },
   },
 };
@@ -167,11 +186,13 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
     lastName: '',
     email: '',
     reason: '',
+    gdprConsent: false,
   });
   const [fieldErrors, setFieldErrors] = useState<{
     firstName?: string;
     lastName?: string;
     email?: string;
+    gdprConsent?: string;
   }>({});
 
   // Determine API URL - uses checkout endpoint for Stripe payment flow (OPE-388)
@@ -199,6 +220,9 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
       errors.email = t.validation.emailRequired;
     } else if (!isValidEmail(formData.email)) {
       errors.email = t.validation.emailInvalid;
+    }
+    if (!formData.gdprConsent) {
+      errors.gdprConsent = t.validation.gdprRequired;
     }
 
     setFieldErrors(errors);
@@ -243,7 +267,7 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
 
         setFormState('success');
         // Reset form
-        setFormData({ firstName: '', lastName: '', email: '', reason: '' });
+        setFormData({ firstName: '', lastName: '', email: '', reason: '', gdprConsent: false });
       } else if (response.status === 409) {
         // Handle specific 409 errors
         const data = await response.json().catch(() => ({}));
@@ -267,9 +291,10 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear field error when user starts typing
+    const { name, value, type } = e.target;
+    const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
+    // Clear field error when user starts typing or checks
     if (fieldErrors[name as keyof typeof fieldErrors]) {
       setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -402,6 +427,46 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
           disabled={formState === 'submitting'}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-openhr-teal-500 focus:outline-none focus:ring-1 focus:ring-openhr-teal-500 disabled:bg-gray-100"
         />
+      </div>
+
+      {/* GDPR Consent */}
+      <div>
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="gdprConsent"
+            name="gdprConsent"
+            checked={formData.gdprConsent}
+            onChange={handleChange}
+            disabled={formState === 'submitting'}
+            aria-required="true"
+            aria-invalid={!!fieldErrors.gdprConsent}
+            aria-describedby={fieldErrors.gdprConsent ? 'gdprConsent-error' : undefined}
+            className={`mt-1 h-4 w-4 rounded border focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed ${
+              fieldErrors.gdprConsent
+                ? 'border-red-500 text-red-500 focus:ring-red-500'
+                : 'border-gray-300 text-openhr-teal-900 focus:ring-openhr-teal-500'
+            }`}
+          />
+          <label htmlFor="gdprConsent" className="text-sm text-gray-700">
+            {t.gdprConsent}{' '}
+            <a
+              href={`/${locale}/legal/privacy/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-openhr-teal-700 underline hover:text-openhr-teal-900"
+            >
+              {t.gdprConsentLink}
+            </a>
+            {'gdprConsentSuffix' in t ? ` ${(t as typeof translations['de']).gdprConsentSuffix}` : ''}
+            . *
+          </label>
+        </div>
+        {fieldErrors.gdprConsent && (
+          <p id="gdprConsent-error" className="mt-1 text-sm text-red-600" role="alert">
+            {fieldErrors.gdprConsent}
+          </p>
+        )}
       </div>
 
       {/* Submit button */}

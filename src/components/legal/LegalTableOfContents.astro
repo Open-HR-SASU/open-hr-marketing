@@ -1,0 +1,42 @@
+---
+/**
+ * Legal Table of Contents
+ *
+ * Sticky sidebar navigation for legal documents.
+ * Auto-generated from section titles and anchors.
+ */
+import type { LegalSection } from '@/lib/sanity/fetchers';
+
+interface Props {
+  sections: LegalSection[];
+  heading: string;
+}
+
+const { sections, heading } = Astro.props;
+---
+
+<nav class="rounded-lg border border-gray-200 bg-gray-50 p-4" aria-label={heading}>
+  <h2 class="mb-3 font-display text-sm font-semibold uppercase tracking-wide text-gray-500">
+    {heading}
+  </h2>
+  <ul class="space-y-2 text-sm" role="list">
+    {sections.map((section) => {
+      const anchor = section.anchor?.current ?? section._key;
+      return (
+        <li>
+          <a
+            href={`#${anchor}`}
+            class="group flex items-baseline gap-2 text-gray-600 transition-colors hover:text-openhr-teal-900"
+          >
+            {section.sectionNumber && (
+              <span class="flex-shrink-0 font-mono text-xs text-gray-400 group-hover:text-openhr-teal-700">
+                {section.sectionNumber}.
+              </span>
+            )}
+            <span class="line-clamp-2">{section.title}</span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>

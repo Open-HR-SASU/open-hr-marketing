@@ -24,20 +24,20 @@ const metadata = await getPageMetadata('how-it-works', locale);
 
 // Fallback content
 const fallbackTitle = {
-  'fr': 'Comment ca marche - Open HR',
+  'fr': 'Comment ça marche - Open HR',
   'en-GB': 'How It Works - Open HR',
   'en-US': 'How It Works - Open HR',
   'de': 'So funktioniert es - Open HR',
-  'es': 'Como funciona - Open HR',
+  'es': 'Cómo funciona - Open HR',
   'it': 'Come funziona - Open HR',
 }[locale];
 
 const fallbackDescription = {
-  'fr': 'Decouvrez comment Open HR fonctionne pour vous.',
+  'fr': 'Découvrez comment Open HR fonctionne pour vous.',
   'en-GB': 'Discover how Open HR works for you.',
   'en-US': 'Discover how Open HR works for you.',
-  'de': 'Erfahren Sie, wie Open HR fur Sie funktioniert.',
-  'es': 'Descubre como funciona Open HR para ti.',
+  'de': 'Erfahren Sie, wie Open HR für Sie funktioniert.',
+  'es': 'Descubre cómo funciona Open HR para ti.',
   'it': 'Scopri come funziona Open HR per te.',
 }[locale];
 
@@ -55,13 +55,13 @@ const description = metadata?.seo?.metaDescription || fallbackDescription;
   ) : (
     <section class="container py-24 text-center">
       <h1 class="text-display-2 text-foreground mb-6">
-        {locale === 'fr' ? 'Comment ca marche' : 'How It Works'}
+        {locale === 'fr' ? 'Comment ça marche' : 'How It Works'}
       </h1>
       <p class="text-body text-muted-foreground max-w-2xl mx-auto mb-8">
         {fallbackDescription}
       </p>
       <a href={`/${locale}/`} class="btn btn-primary">
-        {locale === 'fr' ? 'Retour a l\'accueil' : 'Back to Home'}
+        {locale === 'fr' ? 'Retour à l\'accueil' : 'Back to Home'}
       </a>
     </section>
   )}

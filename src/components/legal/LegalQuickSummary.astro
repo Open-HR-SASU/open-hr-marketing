@@ -1,0 +1,37 @@
+---
+/**
+ * Legal Quick Summary (TL;DR)
+ *
+ * Plain-language summary displayed at top of legal documents.
+ * Follows Bilal GTM "16-year-old test" principle.
+ */
+import type { LegalQuickSummaryPoint } from '@/lib/sanity/fetchers';
+
+interface Props {
+  heading: string;
+  points: LegalQuickSummaryPoint[];
+}
+
+const { heading, points } = Astro.props;
+---
+
+<section
+  class="mb-8 rounded-lg border border-openhr-teal-200 bg-openhr-teal-50/50 p-6"
+  aria-label={heading}
+>
+  <h2 class="mb-4 font-display text-lg font-semibold text-openhr-teal-900">
+    {heading}
+  </h2>
+  <ul class="space-y-3" role="list">
+    {points.map((point) => (
+      <li class="flex items-start gap-3">
+        {point.icon && (
+          <span class="flex-shrink-0 text-xl" aria-hidden="true">
+            {point.icon}
+          </span>
+        )}
+        <span class="text-gray-700">{point.text}</span>
+      </li>
+    ))}
+  </ul>
+</section>
