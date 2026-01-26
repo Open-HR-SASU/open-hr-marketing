@@ -1,0 +1,38 @@
+---
+/**
+ * JSON-LD Structured Data Component
+ *
+ * Renders JSON-LD structured data in a script tag for SEO.
+ * Accepts either a single schema object or an array of schemas.
+ *
+ * Usage:
+ *   <JsonLd schema={organizationSchema} />
+ *   <JsonLd schemas={[organizationSchema, webSiteSchema]} />
+ *
+ * @see https://developers.google.com/search/docs/appearance/structured-data
+ * @see OPE-421
+ */
+import { combineSchemas, type Schema } from '@/lib/seo';
+
+interface Props {
+  /** Single schema object */
+  schema?: Schema;
+  /** Array of schema objects (combined using @graph) */
+  schemas?: Schema[];
+}
+
+const { schema, schemas } = Astro.props;
+
+// Determine the JSON-LD content
+let jsonLdContent: string;
+
+if (schemas && schemas.length > 0) {
+  jsonLdContent = combineSchemas(schemas);
+} else if (schema) {
+  jsonLdContent = JSON.stringify(schema);
+} else {
+  throw new Error('JsonLd component requires either schema or schemas prop');
+}
+---
+
+<script type="application/ld+json" set:html={jsonLdContent} />

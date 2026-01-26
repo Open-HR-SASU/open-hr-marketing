@@ -1,0 +1,44 @@
+---
+/**
+ * Skip to Main Content Link
+ *
+ * Accessibility component that allows keyboard users to bypass
+ * repetitive navigation and jump directly to main content.
+ *
+ * Design requirements (OPE-424):
+ * - Visually hidden until focused
+ * - First focusable element on page
+ * - Teal 900 (#006064) background on focus
+ * - Minimum 44px touch target
+ * - WCAG AA compliant
+ *
+ * @see https://www.w3.org/WAI/WCAG21/Techniques/general/G1
+ * @see OPE-424
+ */
+import { type Locale } from '@/lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Skip link translations for all supported locales
+const SKIP_LINK_TEXT: Record<Locale, string> = {
+  fr: 'Aller au contenu principal',
+  'en-GB': 'Skip to main content',
+  'en-US': 'Skip to main content',
+  de: 'Zum Hauptinhalt springen',
+  es: 'Ir al contenido principal',
+  it: 'Vai al contenuto principale',
+};
+
+const skipText = SKIP_LINK_TEXT[locale];
+---
+
+<a
+  href="#main-content"
+  class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:inline-flex focus:items-center focus:justify-center focus:min-h-[44px] focus:min-w-[44px] focus:px-4 focus:py-2 focus:bg-openhr-teal-900 focus:text-white focus:font-medium focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-openhr-teal-900"
+>
+  {skipText}
+</a>
