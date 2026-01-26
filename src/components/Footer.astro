@@ -44,36 +44,210 @@ const SOCIAL_LINKS = [
   },
 ];
 
-// Fallback footer structure
-const FALLBACK_FOOTER = {
-  columns: [
-    {
-      _key: 'for-you',
-      title: 'For You',
-      links: [
-        { _key: 'workers', label: 'Workers', href: 'workers' },
-        { _key: 'pricing', label: 'Pricing', href: 'pricing' },
-      ],
-    },
-    {
-      _key: 'company',
-      title: 'Company',
-      links: [
-        { _key: 'about', label: 'About', href: 'about' },
-        { _key: 'pilot', label: 'Pilot Program', href: 'pilot' },
-      ],
-    },
-    {
-      _key: 'legal',
-      title: 'Legal',
-      links: [
-        { _key: 'privacy', label: 'Privacy Policy', href: 'legal/privacy' },
-        { _key: 'terms', label: 'Terms of Service', href: 'legal/terms' },
-      ],
-    },
-  ],
-  copyrightText: '{year} Open HR. All rights reserved.',
+// Footer structure type
+interface FooterColumn {
+  _key: string;
+  title: string;
+  links: Array<{ _key: string; label: string; href: string }>;
+}
+
+interface FooterData {
+  columns: FooterColumn[];
+  copyrightText: string;
+}
+
+// Localized fallback footer structure (aligned with header navigation)
+const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
+  fr: {
+    columns: [
+      {
+        _key: 'product',
+        title: 'Produit',
+        links: [
+          { _key: 'workers', label: 'Travailleurs', href: 'workers' },
+          { _key: 'how-it-works', label: 'Comment ça marche', href: 'how-it-works' },
+          { _key: 'pricing', label: 'Tarifs', href: 'pricing' },
+        ],
+      },
+      {
+        _key: 'company',
+        title: 'Entreprise',
+        links: [
+          { _key: 'about', label: 'À propos', href: 'about' },
+          { _key: 'pilot', label: 'Programme Pilote', href: 'pilot' },
+        ],
+      },
+      {
+        _key: 'legal',
+        title: 'Légal',
+        links: [
+          { _key: 'legal-notice', label: 'Mentions légales', href: 'legal/notice' },
+          { _key: 'privacy', label: 'Confidentialité', href: 'legal/privacy' },
+          { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+        ],
+      },
+    ],
+    copyrightText: '© {year} Open HR SASU. Tous droits réservés.',
+  },
+  'en-GB': {
+    columns: [
+      {
+        _key: 'product',
+        title: 'Product',
+        links: [
+          { _key: 'workers', label: 'Workers', href: 'workers' },
+          { _key: 'how-it-works', label: 'How It Works', href: 'how-it-works' },
+          { _key: 'pricing', label: 'Pricing', href: 'pricing' },
+        ],
+      },
+      {
+        _key: 'company',
+        title: 'Company',
+        links: [
+          { _key: 'about', label: 'About', href: 'about' },
+          { _key: 'pilot', label: 'Pilot Programme', href: 'pilot' },
+        ],
+      },
+      {
+        _key: 'legal',
+        title: 'Legal',
+        links: [
+          { _key: 'legal-notice', label: 'Legal Notice', href: 'legal/notice' },
+          { _key: 'privacy', label: 'Privacy Policy', href: 'legal/privacy' },
+          { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+        ],
+      },
+    ],
+    copyrightText: '© {year} Open HR SASU. All rights reserved.',
+  },
+  'en-US': {
+    columns: [
+      {
+        _key: 'product',
+        title: 'Product',
+        links: [
+          { _key: 'workers', label: 'Workers', href: 'workers' },
+          { _key: 'how-it-works', label: 'How It Works', href: 'how-it-works' },
+          { _key: 'pricing', label: 'Pricing', href: 'pricing' },
+        ],
+      },
+      {
+        _key: 'company',
+        title: 'Company',
+        links: [
+          { _key: 'about', label: 'About', href: 'about' },
+          { _key: 'pilot', label: 'Pilot Program', href: 'pilot' },
+        ],
+      },
+      {
+        _key: 'legal',
+        title: 'Legal',
+        links: [
+          { _key: 'legal-notice', label: 'Legal Notice', href: 'legal/notice' },
+          { _key: 'privacy', label: 'Privacy Policy', href: 'legal/privacy' },
+          { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+        ],
+      },
+    ],
+    copyrightText: '© {year} Open HR SASU. All rights reserved.',
+  },
+  de: {
+    columns: [
+      {
+        _key: 'product',
+        title: 'Produkt',
+        links: [
+          { _key: 'workers', label: 'Arbeitnehmer', href: 'workers' },
+          { _key: 'how-it-works', label: 'So funktioniert es', href: 'how-it-works' },
+          { _key: 'pricing', label: 'Preise', href: 'pricing' },
+        ],
+      },
+      {
+        _key: 'company',
+        title: 'Unternehmen',
+        links: [
+          { _key: 'about', label: 'Über uns', href: 'about' },
+          { _key: 'pilot', label: 'Pilotprogramm', href: 'pilot' },
+        ],
+      },
+      {
+        _key: 'legal',
+        title: 'Rechtliches',
+        links: [
+          { _key: 'legal-notice', label: 'Impressum', href: 'legal/notice' },
+          { _key: 'privacy', label: 'Datenschutz', href: 'legal/privacy' },
+          { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+        ],
+      },
+    ],
+    copyrightText: '© {year} Open HR SASU. Alle Rechte vorbehalten.',
+  },
+  es: {
+    columns: [
+      {
+        _key: 'product',
+        title: 'Producto',
+        links: [
+          { _key: 'workers', label: 'Trabajadores', href: 'workers' },
+          { _key: 'how-it-works', label: 'Cómo funciona', href: 'how-it-works' },
+          { _key: 'pricing', label: 'Precios', href: 'pricing' },
+        ],
+      },
+      {
+        _key: 'company',
+        title: 'Empresa',
+        links: [
+          { _key: 'about', label: 'Acerca de', href: 'about' },
+          { _key: 'pilot', label: 'Programa piloto', href: 'pilot' },
+        ],
+      },
+      {
+        _key: 'legal',
+        title: 'Legal',
+        links: [
+          { _key: 'legal-notice', label: 'Aviso legal', href: 'legal/notice' },
+          { _key: 'privacy', label: 'Privacidad', href: 'legal/privacy' },
+          { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+        ],
+      },
+    ],
+    copyrightText: '© {year} Open HR SASU. Todos los derechos reservados.',
+  },
+  it: {
+    columns: [
+      {
+        _key: 'product',
+        title: 'Prodotto',
+        links: [
+          { _key: 'workers', label: 'Lavoratori', href: 'workers' },
+          { _key: 'how-it-works', label: 'Come funziona', href: 'how-it-works' },
+          { _key: 'pricing', label: 'Prezzi', href: 'pricing' },
+        ],
+      },
+      {
+        _key: 'company',
+        title: 'Azienda',
+        links: [
+          { _key: 'about', label: 'Chi siamo', href: 'about' },
+          { _key: 'pilot', label: 'Programma pilota', href: 'pilot' },
+        ],
+      },
+      {
+        _key: 'legal',
+        title: 'Legale',
+        links: [
+          { _key: 'legal-notice', label: 'Note legali', href: 'legal/notice' },
+          { _key: 'privacy', label: 'Privacy', href: 'legal/privacy' },
+          { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+        ],
+      },
+    ],
+    copyrightText: '© {year} Open HR SASU. Tutti i diritti riservati.',
+  },
 };
+
+// Get locale-appropriate fallback
+const FALLBACK_FOOTER = FALLBACK_FOOTERS[locale] || FALLBACK_FOOTERS['en-US'];
 
 // Build locale-prefixed href with trailing slash for static hosting
 function buildHref(href: string): string {

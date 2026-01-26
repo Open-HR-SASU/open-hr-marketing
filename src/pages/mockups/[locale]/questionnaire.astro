@@ -1,0 +1,254 @@
+---
+/**
+ * Questionnaire Mockup Screen
+ *
+ * Shows a reference providing feedback - single BAO item with 5-point scale.
+ * i18n enabled for all 6 locales.
+ */
+
+import MockupLayout from '@/layouts/MockupLayout.astro';
+import { getMockupTranslations } from '@/lib/mockups/translations';
+import { locales, type Locale } from '@/lib/i18n';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const t = getMockupTranslations(locale);
+---
+
+<MockupLayout title={`${t.common.appName} - Questionnaire`} locale={locale}>
+  <style>
+    .context-banner {
+      background: var(--color-background);
+      border-bottom: 1px solid var(--color-border);
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .context-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .context-text {
+      flex: 1;
+    }
+
+    .context-label {
+      font-size: 11px;
+      color: var(--color-gray-500);
+      margin-bottom: 2px;
+    }
+
+    .context-name {
+      font-weight: 600;
+      color: var(--color-gray-900);
+      font-size: 14px;
+    }
+
+    .context-role {
+      font-size: 12px;
+      color: var(--color-gray-500);
+    }
+
+    .progress-section {
+      background: var(--color-background);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--color-gray-500);
+    }
+
+    .progress-track {
+      height: 6px;
+      background: var(--color-gray-200);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 999px;
+      width: 28%;
+    }
+
+    .main-content {
+      padding: 20px 16px 100px;
+    }
+
+    .item-card {
+      background: var(--color-background);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .item-stem {
+      font-size: 14px;
+      color: var(--color-gray-700);
+      margin-bottom: 14px;
+    }
+
+    .bao-card {
+      background: var(--color-gray-100);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .bao-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-gray-900);
+      line-height: 1.5;
+      padding-right: 24px;
+    }
+
+    .bao-tooltip {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-gray-200);
+      color: var(--color-gray-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .response-scale {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .scale-option {
+      padding: 12px 14px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-background);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      color: var(--color-gray-700);
+    }
+
+    .scale-option:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    .scale-option.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .divider {
+      border-top: 1px solid var(--color-border);
+      padding-top: 14px;
+      margin-top: 6px;
+    }
+
+    .not-observed {
+      padding: 12px 14px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-background);
+      text-align: center;
+      font-size: 12px;
+      color: var(--color-gray-500);
+    }
+
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-background);
+      border-top: 1px solid var(--color-border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-bar .btn {
+      flex: 1;
+    }
+  </style>
+
+  <!-- Context Banner -->
+  <header class="context-banner">
+    <div class="context-inner">
+      <div class="avatar">MD</div>
+      <div class="context-text">
+        <div class="context-label">{t.questionnaire.contextLabel}</div>
+        <div class="context-name">{t.questionnaire.candidateName}</div>
+        <div class="context-role">{t.questionnaire.candidateRole} · {t.questionnaire.asRole}</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <span>{t.questionnaire.questionOf.replace('{current}', '7').replace('{total}', '25')}</span>
+      <span>{t.questionnaire.minutesLeft.replace('{min}', '4')}</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="item-card">
+      <p class="item-stem">{t.questionnaire.stemText}</p>
+
+      <div class="bao-card">
+        <span class="bao-text">{t.questionnaire.baoText}</span>
+        <span class="bao-tooltip">?</span>
+      </div>
+
+      <div class="response-scale">
+        <div class="scale-option">{t.questionnaire.scale.never}</div>
+        <div class="scale-option">{t.questionnaire.scale.rarely}</div>
+        <div class="scale-option">{t.questionnaire.scale.sometimes}</div>
+        <div class="scale-option selected">{t.questionnaire.scale.often}</div>
+        <div class="scale-option">{t.questionnaire.scale.almostAlways}</div>
+      </div>
+
+      <div class="divider">
+        <div class="not-observed">{t.questionnaire.scale.notObserved}</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar">
+    <button class="btn btn-secondary">{t.common.previous}</button>
+    <button class="btn btn-primary">{t.common.next}</button>
+  </nav>
+</MockupLayout>

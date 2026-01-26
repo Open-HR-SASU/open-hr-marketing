@@ -24,22 +24,23 @@ const {
 } = Astro.props;
 
 const bgClass = getBackgroundClass(backgroundStyle ?? 'light');
+const isOnDarkBg = backgroundStyle === 'brand' || backgroundStyle === 'dark';
 ---
 
 <section class:list={['py-16 md:py-20', bgClass, className]}>
   <div class="container mx-auto px-4">
     <div class="mx-auto max-w-3xl text-center">
       {heading && (
-        <h2 class="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">
+        <h2 class:list={['mb-4 font-display text-3xl font-bold md:text-4xl', isOnDarkBg ? 'text-white' : 'text-foreground']}>
           {heading}
         </h2>
       )}
       {subheading && (
-        <p class="mb-6 text-lg text-gray-600">{subheading}</p>
+        <p class:list={['mb-6 text-lg', isOnDarkBg ? 'text-white/80' : 'text-gray-600']}>{subheading}</p>
       )}
       {body && body.length > 0 && (
         <div class="mb-8">
-          <RichText content={body} className="text-gray-600" />
+          <RichText content={body} className={isOnDarkBg ? 'text-white/80' : 'text-gray-600'} />
         </div>
       )}
 
@@ -49,7 +50,12 @@ const bgClass = getBackgroundClass(backgroundStyle ?? 'light');
           {ctaText && ctaLink && (
             <a
               href={ctaLink}
-              class="rounded-md bg-openhr-teal-900 px-8 py-3 font-medium text-white transition-all hover:bg-openhr-teal-800"
+              class:list={[
+                'rounded-md px-8 py-3 font-medium transition-all',
+                isOnDarkBg
+                  ? 'border border-white bg-white text-openhr-teal-900 hover:bg-white/90'
+                  : 'bg-openhr-teal-900 text-white hover:bg-openhr-teal-800'
+              ]}
             >
               {ctaText}
             </a>
@@ -57,7 +63,12 @@ const bgClass = getBackgroundClass(backgroundStyle ?? 'light');
           {ctaSecondaryText && ctaSecondaryLink && (
             <a
               href={ctaSecondaryLink}
-              class="rounded-md border border-gray-300 bg-white px-8 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50"
+              class:list={[
+                'rounded-md border px-8 py-3 font-medium transition-all',
+                isOnDarkBg
+                  ? 'border-white bg-transparent text-white hover:bg-white/10'
+                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+              ]}
             >
               {ctaSecondaryText}
             </a>

@@ -84,6 +84,30 @@ export const pricingTierFragment = /* groq */ `
 `;
 
 /**
+ * Mockup image fragment for device frames
+ */
+export const mockupImageFragment = /* groq */ `
+  asset->{
+    url
+  },
+  alt,
+  caption
+`;
+
+/**
+ * Flow step fragment for reference experience sections
+ */
+export const flowStepFragment = /* groq */ `
+  _key,
+  stepNumber,
+  title,
+  description,
+  mockupImage {
+    ${mockupImageFragment}
+  }
+`;
+
+/**
  * Section fragment with all conditional content
  */
 export const sectionFragment = /* groq */ `
@@ -119,7 +143,17 @@ export const sectionFragment = /* groq */ `
   helpText,
   showPilotSignup,
   showAppStoreBadges,
-  pilotSignupUrl
+  pilotSignupUrl,
+  // Mockup fields for visual section types
+  mockupImage {
+    ${mockupImageFragment}
+  },
+  mockupImages[] {
+    ${mockupImageFragment}
+  },
+  flowSteps[] {
+    ${flowStepFragment}
+  }
 `;
 
 // =============================================================================

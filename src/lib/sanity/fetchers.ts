@@ -83,6 +83,22 @@ export interface PricingTier {
   checkoutMode?: 'payment' | 'subscription';
 }
 
+export interface MockupImage {
+  asset?: {
+    url?: string;
+  };
+  alt?: string;
+  caption?: string;
+}
+
+export interface FlowStep {
+  _key: string;
+  stepNumber?: number;
+  title?: string;
+  description?: string;
+  mockupImage?: MockupImage;
+}
+
 export interface Section {
   _id: string;
   _type: string;
@@ -113,6 +129,10 @@ export interface Section {
   showPilotSignup?: boolean;
   showAppStoreBadges?: boolean;
   pilotSignupUrl?: string;
+  // Mockup fields for visual section types
+  mockupImage?: MockupImage;
+  mockupImages?: MockupImage[];
+  flowSteps?: FlowStep[];
 }
 
 export interface Page {

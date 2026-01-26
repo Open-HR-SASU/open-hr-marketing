@@ -145,7 +145,7 @@ function localizeLink(link: string | null | undefined, locale: Locale): string |
 export function sectionToProps(section: Section, locale: Locale, className?: string): SectionProps {
   return {
     type: section.sectionType as SectionType,
-    language: section.language,
+    language: section.language || locale,
     eyebrow: section.eyebrow ?? null,
     heading: section.heading ?? null,
     subheading: section.subheading ?? null,

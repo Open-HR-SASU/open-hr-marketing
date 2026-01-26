@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open HR - Questionnaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #006064;
+      --color-primary-hover: #00838F;
+      --color-primary-light: #E0F7FA;
+      --color-background: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-gray-100: #F1F5F9;
+      --color-gray-200: #E2E8F0;
+      --color-gray-500: #64748B;
+      --color-gray-700: #374151;
+      --color-gray-900: #111827;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-gray-100);
+      color: var(--color-gray-900);
+      min-height: 100vh;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Context Banner */
+    .context-banner {
+      background: var(--color-background);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .context-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .context-text {
+      flex: 1;
+    }
+
+    .context-label {
+      font-size: 12px;
+      color: var(--color-gray-500);
+      margin-bottom: 2px;
+    }
+
+    .context-name {
+      font-weight: 600;
+      color: var(--color-gray-900);
+    }
+
+    .context-role {
+      font-size: 14px;
+      color: var(--color-gray-500);
+    }
+
+    /* Progress Bar */
+    .progress-section {
+      background: var(--color-background);
+      padding: 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .progress-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--color-gray-500);
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--color-gray-200);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 999px;
+      width: 28%;
+      transition: width 0.3s ease;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px 16px 120px;
+    }
+
+    /* Item Card */
+    .item-card {
+      background: var(--color-background);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .item-stem {
+      font-size: 16px;
+      color: var(--color-gray-700);
+      margin-bottom: 16px;
+    }
+
+    /* BAO Card */
+    .bao-card {
+      background: var(--color-gray-100);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .bao-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-gray-900);
+      line-height: 1.5;
+    }
+
+    .bao-tooltip {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--color-gray-200);
+      color: var(--color-gray-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: help;
+    }
+
+    /* Response Scale */
+    .response-scale {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .scale-option {
+      padding: 12px 8px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-background);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 13px;
+      color: var(--color-gray-700);
+    }
+
+    .scale-option:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    .scale-option.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .divider {
+      border-top: 1px solid var(--color-border);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+
+    .not-observed {
+      padding: 12px 16px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-background);
+      text-align: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--color-gray-500);
+      transition: all 0.2s ease;
+    }
+
+    .not-observed:hover {
+      border-color: var(--color-gray-500);
+    }
+
+    /* Navigation Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-background);
+      border-top: 1px solid var(--color-border);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .nav-inner {
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      min-height: 48px;
+    }
+
+    .btn-secondary {
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      color: var(--color-gray-700);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-gray-100);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 480px) {
+      .response-scale {
+        grid-template-columns: 1fr;
+      }
+
+      .scale-option {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Context Banner -->
+  <header class="context-banner">
+    <div class="context-inner">
+      <div class="avatar">MD</div>
+      <div class="context-text">
+        <div class="context-label">Vous donnez votre avis sur :</div>
+        <div class="context-name">Marie Dupont</div>
+        <div class="context-role">Développeuse · En tant que superviseur</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-section">
+    <div class="progress-inner">
+      <div class="progress-header">
+        <span>Question 7 sur 25</span>
+        <span>~4 min restantes</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="item-card">
+      <p class="item-stem">À quelle fréquence avez-vous observé Marie :</p>
+
+      <div class="bao-card">
+        <span class="bao-text">« Terminer le travail assigné dans les délais sans avoir besoin de rappels »</span>
+        <span class="bao-tooltip">?</span>
+      </div>
+
+      <div class="response-scale">
+        <div class="scale-option">Jamais</div>
+        <div class="scale-option">Rarement</div>
+        <div class="scale-option">Parfois</div>
+        <div class="scale-option selected">Souvent</div>
+        <div class="scale-option">Presque toujours</div>
+      </div>
+
+      <div class="divider">
+        <div class="not-observed">Je n'ai pas observé ce comportement</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button class="btn btn-secondary">Précédent</button>
+      <button class="btn btn-primary">Suivant</button>
+    </div>
+  </nav>
+</body>
+</html>

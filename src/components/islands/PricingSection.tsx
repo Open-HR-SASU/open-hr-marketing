@@ -16,17 +16,22 @@ interface PricingSectionProps {
   locale: Locale;
 }
 
-// Pricing data
+/**
+ * Pricing data - Source of truth aligned with platform/src/lib/pricing.ts
+ *
+ * COMPLIANCE: These values are code-driven, not CMS-driven, per Global B2C Compliance requirements.
+ * EU/UK require VAT-inclusive pricing display.
+ */
 const PRICING = {
   refscore: {
-    monthly: 9.99,
-    annualMonthly: 7.99, // Monthly equivalent when paying annually
-    annualTotal: 95.88,
+    monthly: 9,
+    annualMonthly: 7, // Monthly equivalent when paying annually (~20% discount)
+    annualTotal: 84,  // 7 × 12
   },
   refscoreVerified: {
-    monthly: 19.99,
-    annualMonthly: 15.99,
-    annualTotal: 191.88,
+    monthly: 15,
+    annualMonthly: 12, // Monthly equivalent when paying annually (20% discount)
+    annualTotal: 144,  // 12 × 12
   },
 };
 
@@ -45,30 +50,30 @@ const content: Record<Locale, {
     tiers: {
       refscore: {
         name: 'RefScore',
-        description: 'Pour les individus qui construisent leur carriere.',
+        description: 'Pour les individus qui construisent leur carrière.',
         features: [
-          'Jusqu\'a 5 references verifiees',
-          'Verification du parcours professionnel',
+          'Jusqu\'à 5 références vérifiées',
+          'Vérification du parcours professionnel',
           'Lien de profil partageable',
           'Support par email',
         ],
         cta: 'Commencer gratuitement',
       },
       refscoreVerified: {
-        name: 'RefScore Verifie',
-        description: 'Pour les professionnels qui veulent se demarquer.',
+        name: 'RefScore Vérifié',
+        description: 'Pour les professionnels qui veulent se démarquer.',
         features: [
-          'References verifiees illimitees',
-          'Profil detaille de vos competences',
-          'Verification prioritaire (24h)',
+          'Références vérifiées illimitées',
+          'Profil détaillé de vos compétences',
+          'Vérification prioritaire (24h)',
           'Support prioritaire',
-          'Rapports avances',
+          'Rapports avancés',
         ],
-        cta: 'Obtenir RefScore Verifie',
+        cta: 'Obtenir RefScore Vérifié',
       },
     },
     perMonth: '/mois',
-    billedAnnually: 'Facture annuellement',
+    billedAnnually: 'Facturé annuellement',
   },
   'en-GB': {
     toggle: { monthly: 'Monthly', annual: 'Annual', discount: 'Save 20%' },
@@ -131,14 +136,14 @@ const content: Record<Locale, {
     billedAnnually: 'Billed annually',
   },
   de: {
-    toggle: { monthly: 'Monatlich', annual: 'Jahrlich', discount: '-20%' },
+    toggle: { monthly: 'Monatlich', annual: 'Jährlich', discount: '-20%' },
     tiers: {
       refscore: {
         name: 'RefScore',
-        description: 'Fur Einzelpersonen, die ihre Karriere aufbauen.',
+        description: 'Für Einzelpersonen, die ihre Karriere aufbauen.',
         features: [
           'Bis zu 5 verifizierte Referenzen',
-          'Uberprufung des Berufswegs',
+          'Überprüfung des Berufswegs',
           'Teilbarer Profillink',
           'E-Mail-Support',
         ],
@@ -146,19 +151,19 @@ const content: Record<Locale, {
       },
       refscoreVerified: {
         name: 'RefScore Verifiziert',
-        description: 'Fur Fachleute, die das vollstandige Bild wollen.',
+        description: 'Für Fachleute, die das vollständige Bild wollen.',
         features: [
           'Unbegrenzte verifizierte Referenzen',
           'Detailliertes Kompetenzprofil',
-          'Prioritats-Verifizierung (24h)',
-          'Prioritats-Support',
+          'Prioritäts-Verifizierung (24h)',
+          'Prioritäts-Support',
           'Erweiterte Berichte',
         ],
         cta: 'RefScore Verifiziert erhalten',
       },
     },
     perMonth: '/Monat',
-    billedAnnually: 'Jahrlich abgerechnet',
+    billedAnnually: 'Jährlich abgerechnet',
   },
   es: {
     toggle: { monthly: 'Mensual', annual: 'Anual', discount: '-20%' },
@@ -168,7 +173,7 @@ const content: Record<Locale, {
         description: 'Para quienes construyen su carrera.',
         features: [
           'Hasta 5 referencias verificadas',
-          'Verificacion del historial laboral',
+          'Verificación del historial laboral',
           'Enlace de perfil compartible',
           'Soporte por email',
         ],
@@ -180,7 +185,7 @@ const content: Record<Locale, {
         features: [
           'Referencias verificadas ilimitadas',
           'Perfil detallado de habilidades',
-          'Verificacion prioritaria (24h)',
+          'Verificación prioritaria (24h)',
           'Soporte prioritario',
           'Informes avanzados',
         ],
@@ -222,15 +227,41 @@ const content: Record<Locale, {
   },
 };
 
-function formatPrice(amount: number, locale: Locale): string {
+/**
+ * Format price with VAT labeling per Global B2C Compliance requirements
+ *
+ * EU/Eurozone: VAT-inclusive with "TTC" suffix (Toutes Taxes Comprises)
+ * UK: VAT-inclusive with "inc. VAT" suffix
+ * US: Tax-exclusive (no suffix, disclaimer shown separately)
+ */
+function formatPrice(amount: number, locale: Locale, showVatLabel: boolean = true): string {
   const currency = locale === 'en-US' ? 'USD' : locale === 'en-GB' ? 'GBP' : 'EUR';
   const localeCode = locale === 'en-US' ? 'en-US' : locale === 'en-GB' ? 'en-GB' : locale === 'de' ? 'de-DE' : locale === 'es' ? 'es-ES' : locale === 'it' ? 'it-IT' : 'fr-FR';
 
-  return new Intl.NumberFormat(localeCode, {
+  const formatted = new Intl.NumberFormat(localeCode, {
     style: 'currency',
     currency,
-    minimumFractionDigits: 2,
+    minimumFractionDigits: 0, // Whole numbers for clean display
+    maximumFractionDigits: 0,
   }).format(amount);
+
+  // Add VAT labeling per compliance requirements
+  if (!showVatLabel) {
+    return formatted;
+  }
+
+  switch (locale) {
+    case 'fr':
+    case 'de':
+    case 'es':
+    case 'it':
+      return `${formatted} TTC`; // VAT-inclusive for Eurozone
+    case 'en-GB':
+      return `${formatted} inc. VAT`; // VAT-inclusive for UK
+    case 'en-US':
+    default:
+      return formatted; // Tax-exclusive for US
+  }
 }
 
 export function PricingSection({ locale }: PricingSectionProps) {
@@ -280,7 +311,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
       {/* Pricing Cards */}
       <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
         {/* RefScore */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <h3 className="text-xl font-bold text-gray-900">{t.tiers.refscore.name}</h3>
           <p className="mt-2 text-gray-600">{t.tiers.refscore.description}</p>
           <div className="mt-6">
@@ -292,7 +323,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
               <p className="mt-1 text-sm text-gray-500">{t.billedAnnually}</p>
             )}
           </div>
-          <ul className="mt-8 space-y-4">
+          <ul className="mt-8 flex-grow space-y-4">
             {t.tiers.refscore.features.map((feature, i) => (
               <li key={i} className="flex items-start gap-3">
                 <svg className="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -311,9 +342,9 @@ export function PricingSection({ locale }: PricingSectionProps) {
         </div>
 
         {/* RefScore Verified */}
-        <div className="relative rounded-2xl border-2 border-openhr-teal-900 bg-white p-8 shadow-lg">
+        <div className="relative flex flex-col rounded-2xl border-2 border-openhr-teal-900 bg-white p-8 shadow-lg">
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-openhr-teal-900 px-4 py-1 text-sm font-medium text-white">
-            {locale === 'fr' ? 'Populaire' : locale === 'de' ? 'Beliebt' : locale === 'es' ? 'Popular' : locale === 'it' ? 'Popolare' : 'Popular'}
+            {locale === 'fr' ? 'Recommandé' : locale === 'de' ? 'Empfohlen' : locale === 'es' ? 'Recomendado' : locale === 'it' ? 'Consigliato' : 'Recommended'}
           </div>
           <h3 className="text-xl font-bold text-gray-900">{t.tiers.refscoreVerified.name}</h3>
           <p className="mt-2 text-gray-600">{t.tiers.refscoreVerified.description}</p>
@@ -326,7 +357,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
               <p className="mt-1 text-sm text-gray-500">{t.billedAnnually}</p>
             )}
           </div>
-          <ul className="mt-8 space-y-4">
+          <ul className="mt-8 flex-grow space-y-4">
             {t.tiers.refscoreVerified.features.map((feature, i) => (
               <li key={i} className="flex items-start gap-3">
                 <svg className="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

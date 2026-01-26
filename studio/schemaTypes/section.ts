@@ -158,6 +158,92 @@ export default defineType({
       type: 'string',
       hidden: ({document}) => document?.sectionType !== 'appPreview',
     }),
+    // Mockup fields for visual section types
+    defineField({
+      name: 'mockupImage',
+      title: 'Mockup Image',
+      type: 'image',
+      description: 'Single app screenshot for hero mockup sections',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alt Text',
+          description: 'Describe the image for accessibility',
+        },
+      ],
+      hidden: ({document}) => document?.sectionType !== 'heroMockup',
+    }),
+    defineField({
+      name: 'mockupImages',
+      title: 'Mockup Images',
+      type: 'array',
+      description: 'Multiple app screenshots (up to 3 recommended)',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+            },
+            {
+              name: 'caption',
+              type: 'string',
+              title: 'Caption',
+              description: 'Optional caption below the mockup',
+            },
+          ],
+        },
+      ],
+      hidden: ({document}) => !['appPreview', 'referenceExperience'].includes(document?.sectionType as string),
+    }),
+    defineField({
+      name: 'flowSteps',
+      title: 'Flow Steps',
+      type: 'array',
+      description: 'Step-by-step flow with mockups (for reference experience)',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {name: 'stepNumber', type: 'number', title: 'Step Number'},
+            {name: 'title', type: 'string', title: 'Step Title'},
+            {name: 'description', type: 'text', title: 'Description', rows: 2},
+            {
+              name: 'mockupImage',
+              type: 'image',
+              title: 'Mockup Image',
+              options: {hotspot: true},
+              fields: [
+                {name: 'alt', type: 'string', title: 'Alt Text'},
+              ],
+            },
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              stepNumber: 'stepNumber',
+              media: 'mockupImage',
+            },
+            prepare({title, stepNumber, media}) {
+              return {
+                title: `${stepNumber}. ${title || 'Untitled Step'}`,
+                media,
+              }
+            },
+          },
+        },
+      ],
+      hidden: ({document}) => document?.sectionType !== 'referenceExperience',
+    }),
   ],
   preview: {
     select: {

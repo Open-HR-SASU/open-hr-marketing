@@ -1,0 +1,230 @@
+---
+/**
+ * Completion Mockup Screen
+ *
+ * Thank you screen shown to references after completing the questionnaire.
+ * i18n enabled for all 6 locales.
+ */
+
+import MockupLayout from '@/layouts/MockupLayout.astro';
+import { getMockupTranslations } from '@/lib/mockups/translations';
+import { locales, type Locale } from '@/lib/i18n';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const t = getMockupTranslations(locale);
+---
+
+<MockupLayout title={`${t.common.appName} - ${t.completion.title}`} locale={locale}>
+  <style>
+    body {
+      background: var(--color-gray-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .completion-card {
+      background: var(--color-background);
+      border-radius: var(--radius-xl);
+      padding: 32px 24px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      background: var(--color-green-50);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-green-500);
+    }
+
+    .success-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-gray-900);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--color-gray-600);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .candidate-card {
+      background: var(--color-gray-50);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .candidate-info {
+      text-align: left;
+    }
+
+    .candidate-label {
+      font-size: 11px;
+      color: var(--color-gray-500);
+      margin-bottom: 1px;
+    }
+
+    .candidate-name {
+      font-weight: 600;
+      color: var(--color-gray-900);
+      font-size: 14px;
+    }
+
+    .benefits-list {
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .benefit-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .benefit-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .benefit-icon svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .benefit-text {
+      font-size: 13px;
+      color: var(--color-gray-600);
+      line-height: 1.4;
+    }
+
+    .cta-section {
+      padding-top: 20px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .cta-text {
+      font-size: 13px;
+      color: var(--color-gray-500);
+      margin-bottom: 12px;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 20px;
+      font-size: 13px;
+    }
+
+    .footer-text {
+      margin-top: 20px;
+      font-size: 11px;
+      color: var(--color-gray-400);
+    }
+  </style>
+
+  <div class="completion-card">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <h1>{t.completion.title}</h1>
+    <p class="subtitle">{t.completion.subtitle}</p>
+
+    <div class="candidate-card">
+      <div class="avatar">MD</div>
+      <div class="candidate-info">
+        <div class="candidate-label">{t.completion.referenceFor}</div>
+        <div class="candidate-name">{t.questionnaire.candidateName}</div>
+      </div>
+    </div>
+
+    <div class="benefits-list">
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <span class="benefit-text">{t.completion.benefitConfidential}</span>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <span class="benefit-text">{t.completion.benefitGdpr}</span>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <span class="benefit-text">{t.completion.benefitNotified}</span>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <p class="cta-text">{t.completion.ctaText}</p>
+      <button class="btn btn-primary cta-button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="19" y1="8" x2="19" y2="14"/>
+          <line x1="22" y1="11" x2="16" y2="11"/>
+        </svg>
+        {t.completion.ctaButton}
+      </button>
+    </div>
+
+    <p class="footer-text">{t.completion.footerText}</p>
+  </div>
+</MockupLayout>
