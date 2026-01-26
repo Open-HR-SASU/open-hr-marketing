@@ -101,18 +101,19 @@ const cookiePolicyUrl = `/${locale}/legal/cookies/`;
         </div>
 
         <!-- Buttons - Equal prominence for GDPR compliance -->
+        <!-- G15: Touch targets minimum 48x48px for mobile accessibility -->
         <div class="flex gap-3 shrink-0">
           <button
             id="analytics-decline"
             type="button"
-            class="px-4 py-2 text-sm font-medium text-gray-300 bg-transparent border border-gray-600 rounded-md hover:bg-gray-800 hover:border-gray-500 transition-colors focus-visible:ring-2 focus-visible:ring-openhr-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            class="min-h-12 min-w-[80px] px-4 text-sm font-medium text-gray-300 bg-transparent border border-gray-600 rounded-md hover:bg-gray-800 hover:border-gray-500 transition-colors focus-visible:ring-2 focus-visible:ring-openhr-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             {t.decline}
           </button>
           <button
             id="analytics-accept"
             type="button"
-            class="px-4 py-2 text-sm font-medium text-white bg-openhr-teal-900 border border-openhr-teal-900 rounded-md hover:bg-openhr-teal-700 transition-colors focus-visible:ring-2 focus-visible:ring-openhr-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            class="min-h-12 min-w-[80px] px-4 text-sm font-medium text-white bg-openhr-teal-900 border border-openhr-teal-900 rounded-md hover:bg-openhr-teal-700 transition-colors focus-visible:ring-2 focus-visible:ring-openhr-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             {t.accept}
           </button>

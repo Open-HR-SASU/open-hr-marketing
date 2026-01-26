@@ -19,14 +19,15 @@ const { sections, heading } = Astro.props;
   <h2 class="mb-3 font-display text-sm font-semibold uppercase tracking-wide text-gray-500">
     {heading}
   </h2>
-  <ul class="space-y-2 text-sm" role="list">
+  <!-- G15: Touch targets minimum 48x48px for mobile accessibility -->
+  <ul class="space-y-1 text-sm" role="list">
     {sections.map((section) => {
       const anchor = section.anchor?.current ?? section._key;
       return (
         <li>
           <a
             href={`#${anchor}`}
-            class="group flex items-baseline gap-2 text-gray-600 transition-colors hover:text-openhr-teal-900"
+            class="group -ml-2 flex min-h-12 items-center gap-2 rounded-md px-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-openhr-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
           >
             {section.sectionNumber && (
               <span class="flex-shrink-0 font-mono text-xs text-gray-400 group-hover:text-openhr-teal-700">

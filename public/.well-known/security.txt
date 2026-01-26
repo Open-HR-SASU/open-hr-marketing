@@ -1,0 +1,12 @@
+# Open HR Security Policy
+# RFC 9116 compliant security.txt
+# OPE-436: Security disclosure contact file
+
+Contact: mailto:security@open-hr.work
+Expires: 2027-01-26T23:59:59.000Z
+Preferred-Languages: en, fr
+Canonical: https://open-hr.work/.well-known/security.txt
+
+# Acknowledgments
+# We appreciate responsible disclosure and will acknowledge reporters
+# who help us improve our security.

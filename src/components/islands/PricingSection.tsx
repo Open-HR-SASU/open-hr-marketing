@@ -230,9 +230,13 @@ const content: Record<Locale, {
 /**
  * Format price with VAT labeling per Global B2C Compliance requirements
  *
- * EU/Eurozone: VAT-inclusive with "TTC" suffix (Toutes Taxes Comprises)
- * UK: VAT-inclusive with "inc. VAT" suffix
- * US: Tax-exclusive (no suffix, disclaimer shown separately)
+ * Locale-specific VAT terminology (OPE-439):
+ * - FR: "TTC" (Toutes Taxes Comprises)
+ * - DE: "inkl. MwSt." (inklusive Mehrwertsteuer)
+ * - ES: "IVA incl." (IVA incluido)
+ * - IT: "IVA incl." (IVA inclusa)
+ * - UK: "inc. VAT"
+ * - US: Tax-exclusive (no suffix, disclaimer shown separately)
  */
 function formatPrice(amount: number, locale: Locale, showVatLabel: boolean = true): string {
   const currency = locale === 'en-US' ? 'USD' : locale === 'en-GB' ? 'GBP' : 'EUR';
@@ -252,15 +256,18 @@ function formatPrice(amount: number, locale: Locale, showVatLabel: boolean = tru
 
   switch (locale) {
     case 'fr':
+      return `${formatted} TTC`; // French: Toutes Taxes Comprises
     case 'de':
+      return `${formatted} inkl. MwSt.`; // German: inklusive Mehrwertsteuer
     case 'es':
+      return `${formatted} IVA incl.`; // Spanish: IVA incluido
     case 'it':
-      return `${formatted} TTC`; // VAT-inclusive for Eurozone
+      return `${formatted} IVA incl.`; // Italian: IVA inclusa
     case 'en-GB':
-      return `${formatted} inc. VAT`; // VAT-inclusive for UK
+      return `${formatted} inc. VAT`; // UK: inclusive of VAT
     case 'en-US':
     default:
-      return formatted; // Tax-exclusive for US
+      return formatted; // US: Tax-exclusive
   }
 }
 

@@ -23,6 +23,16 @@ interface PilotSignupFormProps {
   apiUrl?: string;
 }
 
+// Privacy policy URL paths per locale (OPE-437: GDPR-compliant locale-specific links)
+const privacyPolicyPaths: Record<PilotSignupFormProps['locale'], string> = {
+  fr: '/fr/legal/confidentialite/',
+  'en-GB': '/en-GB/legal/privacy/',
+  'en-US': '/en-US/legal/privacy/',
+  de: '/de/legal/privacy/',
+  es: '/es/legal/privacy/',
+  it: '/it/legal/privacy/',
+};
+
 // Localized strings
 const translations = {
   fr: {
@@ -512,7 +522,7 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
           <label htmlFor="gdprConsent" className="text-sm text-gray-700">
             {t.gdprConsent}{' '}
             <a
-              href={`/${locale}/legal/privacy/`}
+              href={privacyPolicyPaths[locale]}
               target="_blank"
               rel="noopener noreferrer"
               className="text-openhr-teal-700 underline hover:text-openhr-teal-900"

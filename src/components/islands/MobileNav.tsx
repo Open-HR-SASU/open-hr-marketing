@@ -22,10 +22,10 @@ export default function MobileNav({ navLinks, ctaLabel, ctaHref }: MobileNavProp
 
   return (
     <>
-      {/* Menu Button */}
+      {/* Menu Button - G15: Touch targets minimum 48x48px */}
       <button
         type="button"
-        className="rounded-md p-2 text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="flex min-h-12 min-w-12 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-label="Toggle navigation menu"
@@ -62,7 +62,7 @@ export default function MobileNav({ navLinks, ctaLabel, ctaHref }: MobileNavProp
         )}
       </button>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Dropdown - G15: Touch targets minimum 48x48px */}
       {isOpen && (
         <div className="absolute left-0 right-0 top-full border-b border-gray-200 bg-white">
           <div className="container mx-auto space-y-1 px-4 py-4">
@@ -70,7 +70,7 @@ export default function MobileNav({ navLinks, ctaLabel, ctaHref }: MobileNavProp
               <a
                 key={link.href}
                 href={link.href}
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
+                className="flex min-h-12 items-center rounded-md px-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
@@ -78,7 +78,7 @@ export default function MobileNav({ navLinks, ctaLabel, ctaHref }: MobileNavProp
             ))}
             <a
               href={ctaHref}
-              className="block rounded-md bg-primary px-3 py-2 text-base font-medium text-white hover:bg-primary/90"
+              className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-base font-medium text-white hover:bg-primary/90"
               onClick={() => setIsOpen(false)}
             >
               {ctaLabel}

@@ -64,11 +64,11 @@ function AccordionItem({
       id={anchor}
       className="scroll-mt-24 border-b border-gray-200 last:border-b-0"
     >
-      {/* Accordion header/trigger */}
+      {/* Accordion header/trigger - G15: Touch targets minimum 48x48px */}
       <h2>
         <button
           type="button"
-          className="flex w-full items-center justify-between gap-4 py-5 text-left transition-colors hover:bg-gray-50"
+          className="flex min-h-12 w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors hover:bg-gray-50"
           onClick={onToggle}
           aria-expanded={isOpen}
           aria-controls={panelId}

@@ -111,12 +111,12 @@ try {
       </span>
     </a>
 
-    <!-- Desktop Navigation -->
-    <div class="hidden md:flex md:items-center md:gap-8">
+    <!-- Desktop Navigation - G15: Touch targets minimum 48x48px for tablet users -->
+    <div class="hidden md:flex md:items-center md:gap-2">
       {navLinks.map((link) => (
         <a
           href={buildHref(link.href)}
-          class="text-sm font-medium text-gray-700 transition-colors hover:text-primary"
+          class="flex min-h-12 items-center rounded-md px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           {link.label}
         </a>
@@ -125,7 +125,7 @@ try {
       <!-- CTA Button - links to platform for auth -->
       <a
         href="https://app.open-hr.work/login"
-        class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        class="ml-2 flex min-h-12 items-center rounded-md bg-primary px-5 text-sm font-medium text-white transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         {CTA_LABELS[locale]}
       </a>

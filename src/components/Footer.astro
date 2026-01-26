@@ -295,13 +295,14 @@ const copyrightText = footerData.copyrightText.replace('{year}', String(currentY
           Employment infrastructure. RH pour tous.
         </p>
         <!-- Social Links -->
-        <div class="flex gap-4">
+        <!-- G15: Touch targets minimum 48x48px for mobile accessibility -->
+        <div class="flex gap-2">
           {SOCIAL_LINKS.map((social) => (
             <a
               href={social.href}
               target="_blank"
               rel="noopener noreferrer"
-              class="text-gray-500 transition-colors hover:text-primary"
+              class="flex min-h-12 min-w-12 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               aria-label={`Follow us on ${social.name}`}
               set:html={social.icon}
             />
@@ -315,12 +316,13 @@ const copyrightText = footerData.copyrightText.replace('{year}', String(currentY
           <h3 class="mb-4 text-sm font-semibold text-foreground">
             {column.title}
           </h3>
-          <ul class="space-y-3 text-sm">
+          <!-- G15: Touch targets minimum 48x48px for mobile accessibility -->
+          <ul class="space-y-1 text-sm">
             {column.links.map((link) => (
               <li>
                 <a
                   href={buildHref(link.href)}
-                  class="text-gray-600 hover:text-primary"
+                  class="-ml-3 inline-flex min-h-12 items-center rounded-md px-3 text-gray-600 transition-colors hover:bg-gray-100 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   {link.label}
                 </a>
