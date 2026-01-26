@@ -31,15 +31,19 @@ jobs:
           PUBLIC_SANITY_PROJECT_ID: tbkdha33
           PUBLIC_SANITY_DATASET: production
 
-      - name: Deploy to Bunny Edge Storage
-        uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
+      - name: Deploy to Bunny Storage via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          source: ./dist
-          destination: /
-          storageZoneName: ${{ secrets.BUNNY_STORAGE_ZONE }}
-          storagePassword: ${{ secrets.BUNNY_STORAGE_KEY }}
-          accessKey: ${{ secrets.BUNNY_API_KEY }}
-          pullZoneId: ${{ secrets.BUNNY_PULL_ZONE_ID }}
-          upload: true
-          remove: true
-          purgePullZone: true
+          server: storage.bunnycdn.com
+          username: ${{ secrets.BUNNY_STORAGE_ZONE }}
+          password: ${{ secrets.BUNNY_STORAGE_KEY }}
+          local-dir: ./dist/
+          dangerous-clean-slate: true
+
+      - name: Purge Bunny CDN Cache
+        run: |
+          curl -X POST \
+            "https://api.bunny.net/pullzone/${{ secrets.BUNNY_PULL_ZONE_ID }}/purgeCache" \
+            -H "AccessKey: ${{ secrets.BUNNY_API_KEY }}" \
+            -H "Content-Type: application/json"
+          echo "Cache purged successfully"
