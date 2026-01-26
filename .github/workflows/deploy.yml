@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    timeout-minutes: 30
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -35,23 +35,82 @@ jobs:
           PUBLIC_SANITY_DATASET: production
 
       - name: Deploy to Bunny Storage
-        uses: R-J-dev/bunny-deploy@v2.0.2
-        with:
-          # Storage zone credentials
-          storage-zone-name: ${{ secrets.BUNNY_STORAGE_ZONE }}
-          storage-zone-password: ${{ secrets.BUNNY_STORAGE_KEY }}
-          storage-endpoint: "https://storage.bunnycdn.com"
+        env:
+          BUNNY_STORAGE_ZONE: ${{ secrets.BUNNY_STORAGE_ZONE }}
+          BUNNY_STORAGE_KEY: ${{ secrets.BUNNY_STORAGE_KEY }}
+        run: |
+          set -e
 
-          # Upload configuration
-          directory-to-upload: "./dist"
-          concurrency: "50"
+          # Storage endpoint (Frankfurt region - per Context7 docs)
+          STORAGE_URL="https://storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}"
 
-          # Delete remote files not in local build
-          enable-delete-action: true
+          echo "=== Deploying to Bunny Storage Zone ==="
+          echo "Zone: ${BUNNY_STORAGE_ZONE}"
+          echo "Endpoint: ${STORAGE_URL}"
 
-          # Cache purge configuration
-          access-key: ${{ secrets.BUNNY_API_KEY }}
-          enable-purge-pull-zone: true
-          pull-zone-id: ${{ secrets.BUNNY_PULL_ZONE_ID }}
-          replication-timeout: "15000"
+          # Upload all files from dist/
+          # Bunny creates directories automatically on file upload
+          cd ./dist
 
+          uploaded=0
+          failed=0
+
+          for file in $(find . -type f); do
+            # Remove leading ./
+            rel_path="${file#./}"
+
+            # Upload file
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" -X PUT \
+              "${STORAGE_URL}/${rel_path}" \
+              -H "AccessKey: ${BUNNY_STORAGE_KEY}" \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary "@${file}")
+
+            if [ "$http_code" = "201" ] || [ "$http_code" = "200" ]; then
+              uploaded=$((uploaded + 1))
+            else
+              echo "WARN: Failed to upload ${rel_path} (HTTP ${http_code})"
+              failed=$((failed + 1))
+            fi
+          done
+
+          echo ""
+          echo "=== Upload Complete ==="
+          echo "Uploaded: ${uploaded} files"
+          echo "Failed: ${failed} files"
+
+          if [ "$failed" -gt 0 ]; then
+            echo "ERROR: Some files failed to upload"
+            exit 1
+          fi
+
+      - name: Purge CDN Cache
+        env:
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+          BUNNY_PULL_ZONE_ID: ${{ secrets.BUNNY_PULL_ZONE_ID }}
+        run: |
+          set -e
+
+          echo "Waiting 15s for storage zone replication..."
+          sleep 15
+
+          echo "Purging pull zone ${BUNNY_PULL_ZONE_ID}..."
+
+          response=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST \
+            "https://api.bunny.net/pullzone/${BUNNY_PULL_ZONE_ID}/purgeCache" \
+            -H "AccessKey: ${BUNNY_API_KEY}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | grep "HTTP_CODE:" | cut -d: -f2)
+          body=$(echo "$response" | grep -v "HTTP_CODE:")
+
+          echo "Response: HTTP ${http_code}"
+
+          # Per Context7: 204 = success, no content returned
+          if [ "$http_code" != "204" ] && [ "$http_code" != "200" ]; then
+            echo "ERROR: Cache purge failed"
+            echo "Body: ${body}"
+            exit 1
+          fi
+
+          echo "Cache purged successfully."
