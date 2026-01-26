@@ -42,8 +42,17 @@ jobs:
 
       - name: Purge Bunny CDN Cache
         run: |
-          curl -X POST \
+          echo "Purging pull zone ${{ secrets.BUNNY_PULL_ZONE_ID }}..."
+          RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST \
             "https://api.bunny.net/pullzone/${{ secrets.BUNNY_PULL_ZONE_ID }}/purgeCache" \
             -H "AccessKey: ${{ secrets.BUNNY_API_KEY }}" \
-            -H "Content-Type: application/json"
+            -H "Content-Type: application/json")
+          HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | grep -v "HTTP_CODE:")
+          echo "Response code: $HTTP_CODE"
+          echo "Response body: $BODY"
+          if [ "$HTTP_CODE" != "204" ] && [ "$HTTP_CODE" != "200" ]; then
+            echo "ERROR: Cache purge failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
           echo "Cache purged successfully"
