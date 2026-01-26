@@ -1,0 +1,156 @@
+---
+/**
+ * Hero Mockup Section
+ *
+ * Split-layout hero with text content on one side and a device mockup on the other.
+ * Used for landing pages where visual app demonstration is key.
+ *
+ * Design Direction: Dr. Dietrich Claude, CDO
+ * - Asymmetric balance: 60% text / 40% device
+ * - Device tilted slightly for dynamism
+ * - Mobile: device above text, centered
+ *
+ * Mockup Modes:
+ * - If mockupImage is provided from Sanity, uses static image
+ * - Otherwise, embeds live i18n mockup via iframe (default: dashboard)
+ */
+
+import Mark from '@/components/Mark.astro';
+import DeviceFrame from '@/components/DeviceFrame.astro';
+import { RichText } from './RichText';
+import { getBackgroundClass, type SectionProps } from './types';
+
+type MockupScreen = 'dashboard' | 'questionnaire' | 'invite' | 'completion';
+
+interface Props extends Partial<SectionProps> {
+  /** Mockup image URL from Sanity */
+  mockupImage?: {
+    asset?: {
+      url?: string;
+    };
+    alt?: string;
+  };
+  /** Which mockup screen to show when no CMS image (default: dashboard) */
+  mockupScreen?: MockupScreen;
+}
+
+const {
+  heading,
+  subheading,
+  eyebrow,
+  body,
+  ctaText,
+  ctaLink,
+  ctaSecondaryText,
+  ctaSecondaryLink,
+  backgroundStyle,
+  mockupImage,
+  mockupScreen = 'dashboard',
+  language = 'fr',
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+const mockupUrl = mockupImage?.asset?.url;
+const mockupAlt = mockupImage?.alt || 'Open HR app screenshot';
+
+// Build iframe URL for dynamic mockup (when no CMS image)
+const mockupIframeSrc = !mockupUrl ? `/mockups/${language}/${mockupScreen}/` : undefined;
+---
+
+<section class:list={['py-16 md:py-24 lg:py-32 overflow-hidden', bgClass, className]}>
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col items-center gap-12 lg:flex-row lg:gap-16">
+      {/* Text Content - 60% on desktop */}
+      <div class="flex-1 text-center lg:text-left">
+        {/* The Mark */}
+        <div class="mb-8 flex justify-center lg:justify-start">
+          <Mark size="hero" class="text-openhr-teal-900 md:h-20" />
+        </div>
+
+        {/* Eyebrow */}
+        {eyebrow && (
+          <p class="mb-4 text-sm font-medium uppercase tracking-wider text-openhr-teal-900">
+            {eyebrow}
+          </p>
+        )}
+
+        {/* Heading */}
+        {heading && (
+          <h1 class="mb-6 font-display text-display-2 font-extrabold text-foreground md:text-display-1">
+            {heading}
+          </h1>
+        )}
+
+        {/* Subheading */}
+        {subheading && (
+          <p class="mb-8 font-body text-lg text-gray-600 md:text-xl md:leading-relaxed">
+            {subheading}
+          </p>
+        )}
+
+        {/* Rich text body */}
+        {body && body.length > 0 && (
+          <div class="mb-8">
+            <RichText content={body} className="text-gray-600" />
+          </div>
+        )}
+
+        {/* CTA Buttons */}
+        {(ctaText || ctaSecondaryText) && (
+          <div class="flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
+            {ctaText && ctaLink && (
+              <a
+                href={ctaLink}
+                class="btn btn-primary rounded-md bg-openhr-teal-900 px-8 py-3 font-medium text-white transition-all hover:bg-openhr-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+              >
+                {ctaText}
+              </a>
+            )}
+            {ctaSecondaryText && ctaSecondaryLink && (
+              <a
+                href={ctaSecondaryLink}
+                class="btn btn-secondary rounded-md border border-gray-300 bg-white px-8 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+              >
+                {ctaSecondaryText}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Device Mockup - 40% on desktop */}
+      <div class="relative flex-shrink-0 lg:flex-initial">
+        {/* Decorative background blur */}
+        <div class="absolute -inset-8 -z-10 rounded-full bg-openhr-teal-900/5 blur-3xl" />
+
+        {/* Device with slight rotation for dynamism */}
+        <div class="device-wrapper transform rotate-2 transition-transform hover:rotate-0">
+          <DeviceFrame
+            screenSrc={mockupUrl}
+            iframeSrc={mockupIframeSrc}
+            screenAlt={mockupAlt}
+            size="lg"
+            variant="mobile"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .device-wrapper {
+    transform-origin: center center;
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .device-wrapper {
+      transform: none !important;
+    }
+    .device-wrapper:hover {
+      transform: none !important;
+    }
+  }
+</style>

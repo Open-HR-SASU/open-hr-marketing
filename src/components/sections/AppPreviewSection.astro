@@ -1,0 +1,242 @@
+---
+/**
+ * App Preview Section
+ *
+ * Showcases multiple app screens in a carousel/grid layout.
+ * Used to demonstrate the full app experience with multiple mockups.
+ *
+ * Design Direction: Dr. Dietrich Claude, CDO
+ * - Staggered device layout for visual interest
+ * - Three-device composition: main center, supporting sides
+ * - Automatic fallback to single/dual when fewer images provided
+ *
+ * Disclosure Guidance: Dr. Sarah Sapiens, R&D
+ * - GREEN level: Can show request flow, profile layout, questionnaire interface
+ * - Must use generic placeholder questions, not actual RefScore items
+ *
+ * Mockup Modes:
+ * - If mockupImages provided from Sanity, uses static images
+ * - Otherwise, embeds live i18n mockups via iframe
+ */
+
+import DeviceFrame from '@/components/DeviceFrame.astro';
+import { RichText } from './RichText';
+import { getBackgroundClass, type SectionProps } from './types';
+
+type MockupScreen = 'dashboard' | 'questionnaire' | 'invite' | 'completion';
+
+interface MockupImage {
+  asset?: {
+    url?: string;
+  };
+  alt?: string;
+  caption?: string;
+}
+
+interface Props extends Partial<SectionProps> {
+  /** Array of mockup images from Sanity */
+  mockupImages?: MockupImage[];
+  /** Which mockup screens to show when no CMS images (default: invite, dashboard, questionnaire) */
+  defaultScreens?: MockupScreen[];
+}
+
+const {
+  heading,
+  subheading,
+  eyebrow,
+  body,
+  ctaText,
+  ctaLink,
+  ctaSecondaryText,
+  ctaSecondaryLink,
+  backgroundStyle,
+  mockupImages = [],
+  defaultScreens = ['invite', 'dashboard', 'questionnaire'],
+  language = 'fr',
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+
+// Extract images (up to 3 for the layout)
+const images = mockupImages.slice(0, 3);
+const hasImages = images.length > 0;
+
+// Build iframe URLs for dynamic mockups (when no CMS images)
+const mockupIframeUrls = defaultScreens.map(screen => `/mockups/${language}/${screen}/`);
+---
+
+<section class:list={['py-16 md:py-24 lg:py-32 overflow-hidden', bgClass, className]}>
+  <div class="container mx-auto px-4">
+    {/* Text Content - Centered */}
+    <div class="mx-auto max-w-3xl text-center mb-12 md:mb-16">
+      {/* Eyebrow */}
+      {eyebrow && (
+        <p class="mb-4 text-sm font-medium uppercase tracking-wider text-openhr-teal-900">
+          {eyebrow}
+        </p>
+      )}
+
+      {/* Heading */}
+      {heading && (
+        <h2 class="mb-6 font-display text-display-3 font-bold text-foreground md:text-display-2">
+          {heading}
+        </h2>
+      )}
+
+      {/* Subheading */}
+      {subheading && (
+        <p class="mb-8 font-body text-lg text-gray-600 md:text-xl md:leading-relaxed">
+          {subheading}
+        </p>
+      )}
+
+      {/* Rich text body */}
+      {body && body.length > 0 && (
+        <div class="mb-8">
+          <RichText content={body} className="text-gray-600" />
+        </div>
+      )}
+    </div>
+
+    {/* Device Mockups Grid */}
+    {hasImages && (
+      <div class="relative">
+        {/* Decorative background */}
+        <div class="absolute inset-0 -z-10 mx-auto max-w-4xl rounded-full bg-openhr-teal-900/5 blur-3xl" />
+
+        {/* Three-device layout */}
+        {images.length >= 3 && (
+          <div class="flex items-center justify-center gap-4 md:gap-8">
+            {/* Left device - smaller, rotated */}
+            <div class="hidden md:block transform -rotate-6 translate-y-8 opacity-80">
+              <DeviceFrame
+                screenSrc={images[0]?.asset?.url}
+                screenAlt={images[0]?.alt || 'App screen 1'}
+                size="sm"
+                variant="mobile"
+              />
+            </div>
+
+            {/* Center device - prominent */}
+            <div class="z-10 transform scale-110">
+              <DeviceFrame
+                screenSrc={images[1]?.asset?.url}
+                screenAlt={images[1]?.alt || 'App screen 2'}
+                size="lg"
+                variant="mobile"
+              />
+            </div>
+
+            {/* Right device - smaller, rotated opposite */}
+            <div class="hidden md:block transform rotate-6 translate-y-8 opacity-80">
+              <DeviceFrame
+                screenSrc={images[2]?.asset?.url}
+                screenAlt={images[2]?.alt || 'App screen 3'}
+                size="sm"
+                variant="mobile"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Two-device layout */}
+        {images.length === 2 && (
+          <div class="flex items-center justify-center gap-4 md:gap-8">
+            <div class="transform -rotate-3">
+              <DeviceFrame
+                screenSrc={images[0]?.asset?.url}
+                screenAlt={images[0]?.alt || 'App screen 1'}
+                size="md"
+                variant="mobile"
+              />
+            </div>
+            <div class="transform rotate-3">
+              <DeviceFrame
+                screenSrc={images[1]?.asset?.url}
+                screenAlt={images[1]?.alt || 'App screen 2'}
+                size="md"
+                variant="mobile"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Single device layout */}
+        {images.length === 1 && (
+          <div class="flex justify-center">
+            <DeviceFrame
+              screenSrc={images[0]?.asset?.url}
+              screenAlt={images[0]?.alt || 'App screenshot'}
+              size="lg"
+              variant="mobile"
+            />
+          </div>
+        )}
+
+        {/* Captions */}
+        {images.some(img => img.caption) && (
+          <div class="mt-8 flex flex-wrap justify-center gap-4 text-center">
+            {images.map((img, i) => img.caption && (
+              <p key={i} class="text-sm text-gray-500 max-w-xs">
+                {img.caption}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* Dynamic mockups: No CMS images provided - embed live i18n mockups */}
+    {!hasImages && (
+      <div class="flex items-center justify-center gap-4 md:gap-8">
+        <div class="hidden md:block transform -rotate-6 translate-y-8 opacity-80">
+          <DeviceFrame
+            iframeSrc={mockupIframeUrls[0]}
+            screenAlt={`${defaultScreens[0]} screen`}
+            size="sm"
+            variant="mobile"
+          />
+        </div>
+        <div class="z-10 transform scale-110">
+          <DeviceFrame
+            iframeSrc={mockupIframeUrls[1]}
+            screenAlt={`${defaultScreens[1]} screen`}
+            size="lg"
+            variant="mobile"
+          />
+        </div>
+        <div class="hidden md:block transform rotate-6 translate-y-8 opacity-80">
+          <DeviceFrame
+            iframeSrc={mockupIframeUrls[2]}
+            screenAlt={`${defaultScreens[2]} screen`}
+            size="sm"
+            variant="mobile"
+          />
+        </div>
+      </div>
+    )}
+
+    {/* CTA Buttons */}
+    {(ctaText || ctaSecondaryText) && (
+      <div class="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
+        {ctaText && ctaLink && (
+          <a
+            href={ctaLink}
+            class="btn btn-primary rounded-md bg-openhr-teal-900 px-8 py-3 font-medium text-white transition-all hover:bg-openhr-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+          >
+            {ctaText}
+          </a>
+        )}
+        {ctaSecondaryText && ctaSecondaryLink && (
+          <a
+            href={ctaSecondaryLink}
+            class="btn btn-secondary rounded-md border border-gray-300 bg-white px-8 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+          >
+            {ctaSecondaryText}
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</section>

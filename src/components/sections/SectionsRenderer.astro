@@ -15,9 +15,12 @@ import { sectionToProps } from './types';
 
 // Section Components
 import HeroSection from './HeroSection.astro';
+import HeroMockupSection from './HeroMockupSection.astro';
 import FeaturesSection from './FeaturesSection.astro';
 import CTASection from './CTASection.astro';
 import ContentSection from './ContentSection.astro';
+import AppPreviewSection from './AppPreviewSection.astro';
+import ReferenceExperienceSection from './ReferenceExperienceSection.astro';
 import FallbackSection from './FallbackSection.astro';
 
 interface Props {
@@ -40,7 +43,7 @@ const { sections, locale, className } = Astro.props;
       return (
         <Fragment>
           {type === 'hero' && <HeroSection {...props} />}
-          {type === 'heroMockup' && <HeroSection {...props} />}
+          {type === 'heroMockup' && <HeroMockupSection {...props} mockupImage={section.mockupImage} />}
           {type === 'features' && <FeaturesSection {...props} />}
           {type === 'cta' && <CTASection {...props} />}
           {type === 'content' && <ContentSection {...props} />}
@@ -48,10 +51,12 @@ const { sections, locale, className } = Astro.props;
           {type === 'testimonials' && <ContentSection {...props} />}
           {type === 'faq' && <ContentSection {...props} />}
           {type === 'stats' && <ContentSection {...props} />}
-          {type === 'process' && <ContentSection {...props} />}
-          {type === 'howItWorks' && <ContentSection {...props} />}
-          {type === 'referenceExperience' && <ContentSection {...props} />}
-          {type === 'appPreview' && <ContentSection {...props} />}
+          {/* Process/HowItWorks sections use ReferenceExperienceSection for mockup support */}
+          {/* CMS may store steps as flowSteps or features - support both */}
+          {type === 'process' && <ReferenceExperienceSection {...props} mockupImages={section.mockupImages ?? []} flowSteps={section.flowSteps ?? section.features?.map((f, i) => ({ _key: f._key, stepNumber: i + 1, title: f.heading, description: f.description })) ?? []} />}
+          {type === 'howItWorks' && <ReferenceExperienceSection {...props} mockupImages={section.mockupImages ?? []} flowSteps={section.flowSteps ?? section.features?.map((f, i) => ({ _key: f._key, stepNumber: i + 1, title: f.heading, description: f.description })) ?? []} />}
+          {type === 'referenceExperience' && <ReferenceExperienceSection {...props} mockupImages={section.mockupImages ?? []} flowSteps={section.flowSteps ?? section.features?.map((f, i) => ({ _key: f._key, stepNumber: i + 1, title: f.heading, description: f.description })) ?? []} />}
+          {type === 'appPreview' && <AppPreviewSection {...props} mockupImages={section.mockupImages ?? []} />}
           {!['hero', 'heroMockup', 'features', 'cta', 'content', 'pricing', 'testimonials', 'faq', 'stats', 'process', 'howItWorks', 'referenceExperience', 'appPreview'].includes(type) && (
             <FallbackSection {...props} />
           )}
