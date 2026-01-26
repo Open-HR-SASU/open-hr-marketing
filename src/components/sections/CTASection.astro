@@ -4,10 +4,16 @@
  *
  * Call-to-action banner with prominent buttons.
  * Used for conversion-focused messaging.
+ *
+ * When showPilotSignup is true, renders the PilotSignupForm React island
+ * instead of CTA buttons. This provides GDPR-compliant form with consent checkbox.
+ *
+ * @see OPE-426 - GDPR Consent Checkbox Implementation
  */
 
 import { RichText } from './RichText';
-import { getBackgroundClass, type SectionProps } from './types';
+import { getBackgroundClass, type SectionProps, type Locale } from './types';
+import PilotSignupForm from '@/components/islands/PilotSignupForm';
 
 interface Props extends Partial<SectionProps> {}
 
@@ -21,10 +27,13 @@ const {
   ctaSecondaryLink,
   backgroundStyle,
   className = '',
+  showPilotSignup,
+  language,
 } = Astro.props;
 
 const bgClass = getBackgroundClass(backgroundStyle ?? 'light');
 const isOnDarkBg = backgroundStyle === 'brand' || backgroundStyle === 'dark';
+const locale = (language || 'fr') as Locale;
 ---
 
 <section class:list={['py-16 md:py-20', bgClass, className]}>
@@ -44,8 +53,15 @@ const isOnDarkBg = backgroundStyle === 'brand' || backgroundStyle === 'dark';
         </div>
       )}
 
-      <!-- CTA Buttons -->
-      {(ctaText || ctaSecondaryText) && (
+      {/* Pilot Signup Form (when showPilotSignup is enabled) */}
+      {showPilotSignup && (
+        <div class="mt-8">
+          <PilotSignupForm client:load locale={locale} />
+        </div>
+      )}
+
+      {/* CTA Buttons (default behavior when showPilotSignup is false) */}
+      {!showPilotSignup && (ctaText || ctaSecondaryText) && (
         <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
           {ctaText && ctaLink && (
             <a
