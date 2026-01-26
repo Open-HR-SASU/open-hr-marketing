@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,6 +10,20 @@ export default defineConfig({
   integrations: [
     react(),
     // Tailwind v4 uses CSS import + @tailwindcss/postcss, not @astrojs/tailwind
+    sitemap({
+      i18n: {
+        defaultLocale: 'fr',
+        locales: {
+          fr: 'fr-FR',
+          'en-GB': 'en-GB',
+          'en-US': 'en-US',
+          de: 'de-DE',
+          es: 'es-ES',
+          it: 'it-IT',
+        },
+      },
+      filter: (page) => !page.includes('/mockups/'),
+    }),
   ],
 
   i18n: {

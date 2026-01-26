@@ -20,6 +20,7 @@ import '@fontsource/jetbrains-mono/700.css';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '../styles/globals.css';
+import AnalyticsBanner from '@/components/AnalyticsBanner.astro';
 
 interface Props {
   title: string;
@@ -94,5 +95,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body class="antialiased min-h-screen flex flex-col">
     <slot />
+    <AnalyticsBanner locale={locale} />
   </body>
 </html>

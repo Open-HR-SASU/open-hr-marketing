@@ -34,6 +34,12 @@ jobs:
           PUBLIC_SANITY_PROJECT_ID: tbkdha33
           PUBLIC_SANITY_DATASET: production
 
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+
+      - name: Run accessibility tests
+        run: npx playwright test
+
       - name: Deploy to Bunny Storage
         env:
           BUNNY_STORAGE_ZONE: ${{ secrets.BUNNY_STORAGE_ZONE }}

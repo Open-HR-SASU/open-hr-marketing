@@ -1,0 +1,187 @@
+---
+/**
+ * Analytics Consent Banner (Astro)
+ *
+ * GDPR-compliant cookie consent disclosure for Plausible Analytics.
+ * - Fixed position at bottom of viewport
+ * - Equal-prominence Accept/Decline buttons (EU/UK compliance)
+ * - localStorage persistence
+ * - i18n translations for all 6 locales
+ *
+ * @see OPE-416 - GDPR cookie consent banner
+ */
+import { type Locale, locales } from '@/lib/i18n';
+
+interface Props {
+  locale: string;
+}
+
+const { locale: localeParam } = Astro.props;
+
+// Safely cast to Locale type with fallback
+const locale: Locale = locales.includes(localeParam as Locale)
+  ? (localeParam as Locale)
+  : 'en-US';
+
+// i18n translations for all supported locales
+const translations: Record<Locale, {
+  message: string;
+  accept: string;
+  decline: string;
+  learnMore: string;
+}> = {
+  fr: {
+    message: 'Nous utilisons des analyses respectueuses de la vie privee pour ameliorer votre experience. Aucun cookie de suivi.',
+    accept: 'Accepter',
+    decline: 'Refuser',
+    learnMore: 'En savoir plus',
+  },
+  'en-GB': {
+    message: 'We use privacy-friendly analytics to improve your experience. No tracking cookies.',
+    accept: 'Accept',
+    decline: 'Decline',
+    learnMore: 'Learn more',
+  },
+  'en-US': {
+    message: 'We use privacy-friendly analytics to improve your experience. No tracking cookies.',
+    accept: 'Accept',
+    decline: 'Decline',
+    learnMore: 'Learn more',
+  },
+  de: {
+    message: 'Wir verwenden datenschutzfreundliche Analysen, um Ihre Erfahrung zu verbessern. Keine Tracking-Cookies.',
+    accept: 'Akzeptieren',
+    decline: 'Ablehnen',
+    learnMore: 'Mehr erfahren',
+  },
+  es: {
+    message: 'Utilizamos analisis respetuosos con la privacidad para mejorar su experiencia. Sin cookies de seguimiento.',
+    accept: 'Aceptar',
+    decline: 'Rechazar',
+    learnMore: 'Mas informacion',
+  },
+  it: {
+    message: 'Utilizziamo analisi rispettose della privacy per migliorare la tua esperienza. Nessun cookie di tracciamento.',
+    accept: 'Accetta',
+    decline: 'Rifiuta',
+    learnMore: 'Scopri di piu',
+  },
+};
+
+const t = translations[locale] || translations['en-US'];
+
+// Build locale-prefixed cookie policy URL
+const cookiePolicyUrl = `/${locale}/legal/cookies/`;
+---
+
+<div
+  id="analytics-banner"
+  class="fixed bottom-0 left-0 right-0 z-50 hidden"
+  role="dialog"
+  aria-labelledby="analytics-banner-title"
+  aria-describedby="analytics-banner-description"
+>
+  <div class="bg-gray-900 border-t border-gray-800">
+    <div class="container mx-auto px-4 py-4 sm:px-6">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <!-- Message -->
+        <div class="flex-1">
+          <p
+            id="analytics-banner-description"
+            class="text-sm text-gray-300 font-body"
+          >
+            {t.message}
+            <a
+              href={cookiePolicyUrl}
+              class="ml-1 text-openhr-teal-400 underline underline-offset-2 hover:text-openhr-teal-300 transition-colors"
+            >
+              {t.learnMore}
+            </a>
+          </p>
+        </div>
+
+        <!-- Buttons - Equal prominence for GDPR compliance -->
+        <div class="flex gap-3 shrink-0">
+          <button
+            id="analytics-decline"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-gray-300 bg-transparent border border-gray-600 rounded-md hover:bg-gray-800 hover:border-gray-500 transition-colors focus-visible:ring-2 focus-visible:ring-openhr-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          >
+            {t.decline}
+          </button>
+          <button
+            id="analytics-accept"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-white bg-openhr-teal-900 border border-openhr-teal-900 rounded-md hover:bg-openhr-teal-700 transition-colors focus-visible:ring-2 focus-visible:ring-openhr-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          >
+            {t.accept}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /**
+   * Analytics Banner Controller
+   *
+   * Manages consent state via localStorage.
+   * Key: 'openhr_analytics_consent'
+   * Values: 'accepted' | 'declined' | null (not yet chosen)
+   */
+  const STORAGE_KEY = 'openhr_analytics_consent';
+  const banner = document.getElementById('analytics-banner');
+  const acceptBtn = document.getElementById('analytics-accept');
+  const declineBtn = document.getElementById('analytics-decline');
+
+  function getConsent(): string | null {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch {
+      // localStorage not available (private browsing, etc.)
+      return null;
+    }
+  }
+
+  function setConsent(value: 'accepted' | 'declined'): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch {
+      // Silently fail if localStorage not available
+    }
+  }
+
+  function hideBanner(): void {
+    if (banner) {
+      banner.classList.add('hidden');
+      banner.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function showBanner(): void {
+    if (banner) {
+      banner.classList.remove('hidden');
+      banner.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  // Check consent on page load
+  const consent = getConsent();
+  if (!consent) {
+    // No consent recorded yet - show banner
+    showBanner();
+  }
+
+  // Handle accept
+  acceptBtn?.addEventListener('click', () => {
+    setConsent('accepted');
+    hideBanner();
+  });
+
+  // Handle decline
+  declineBtn?.addEventListener('click', () => {
+    setConsent('declined');
+    hideBanner();
+  });
+</script>
