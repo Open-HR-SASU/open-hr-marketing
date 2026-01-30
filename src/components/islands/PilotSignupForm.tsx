@@ -42,6 +42,13 @@ const translations = {
     lastName: 'Nom',
     email: 'Email',
     reason: 'Pourquoi souhaitez-vous participer ? (optionnel)',
+    devicePreference: {
+      label: 'Quelle plateforme mobile utilisez-vous ?',
+      ios: 'iOS (iPhone/iPad)',
+      android: 'Android',
+      both: 'Les deux',
+      neither: 'Aucune / Web uniquement',
+    },
     submit: 'S\'inscrire',
     submitting: 'Inscription en cours...',
     success: 'Inscription réussie ! Vous recevrez un email de confirmation.',
@@ -68,6 +75,13 @@ const translations = {
     lastName: 'Last Name',
     email: 'Email',
     reason: 'Why do you want to participate? (optional)',
+    devicePreference: {
+      label: 'Which mobile platform do you use?',
+      ios: 'iOS (iPhone/iPad)',
+      android: 'Android',
+      both: 'Both',
+      neither: 'Neither / Web only',
+    },
     submit: 'Sign Up',
     submitting: 'Signing up...',
     success: 'Sign up successful! You will receive a confirmation email.',
@@ -94,6 +108,13 @@ const translations = {
     lastName: 'Last Name',
     email: 'Email',
     reason: 'Why do you want to participate? (optional)',
+    devicePreference: {
+      label: 'Which mobile platform do you use?',
+      ios: 'iOS (iPhone/iPad)',
+      android: 'Android',
+      both: 'Both',
+      neither: 'Neither / Web only',
+    },
     submit: 'Sign Up',
     submitting: 'Signing up...',
     success: 'Sign up successful! You will receive a confirmation email.',
@@ -120,6 +141,13 @@ const translations = {
     lastName: 'Nachname',
     email: 'E-Mail',
     reason: 'Warum möchten Sie teilnehmen? (optional)',
+    devicePreference: {
+      label: 'Welche mobile Plattform nutzen Sie?',
+      ios: 'iOS (iPhone/iPad)',
+      android: 'Android',
+      both: 'Beide',
+      neither: 'Keine / Nur Web',
+    },
     submit: 'Anmelden',
     submitting: 'Anmeldung...',
     success: 'Anmeldung erfolgreich! Sie erhalten eine Bestätigungs-E-Mail.',
@@ -147,6 +175,13 @@ const translations = {
     lastName: 'Apellido',
     email: 'Correo electrónico',
     reason: '¿Por qué quieres participar? (opcional)',
+    devicePreference: {
+      label: '¿Qué plataforma móvil usas?',
+      ios: 'iOS (iPhone/iPad)',
+      android: 'Android',
+      both: 'Ambas',
+      neither: 'Ninguna / Solo web',
+    },
     submit: 'Inscribirse',
     submitting: 'Inscribiendo...',
     success: '¡Inscripción exitosa! Recibirás un correo de confirmación.',
@@ -173,6 +208,13 @@ const translations = {
     lastName: 'Cognome',
     email: 'Email',
     reason: 'Perché vuoi partecipare? (opzionale)',
+    devicePreference: {
+      label: 'Quale piattaforma mobile usi?',
+      ios: 'iOS (iPhone/iPad)',
+      android: 'Android',
+      both: 'Entrambe',
+      neither: 'Nessuna / Solo web',
+    },
     submit: 'Iscriviti',
     submitting: 'Iscrizione in corso...',
     success: 'Iscrizione riuscita! Riceverai un\'email di conferma.',
@@ -194,6 +236,9 @@ const translations = {
   },
 };
 
+// Device preference options type
+type DevicePreferenceValue = 'ios' | 'android' | 'both' | 'neither' | '';
+
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
 export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
@@ -212,6 +257,7 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
     lastName: '',
     email: '',
     reason: '',
+    devicePreference: '' as DevicePreferenceValue,
     gdprConsent: false,
   });
   const [fieldErrors, setFieldErrors] = useState<{
@@ -324,7 +370,7 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
 
         setFormState('success');
         // Reset form
-        setFormData({ firstName: '', lastName: '', email: '', reason: '', gdprConsent: false });
+        setFormData({ firstName: '', lastName: '', email: '', reason: '', devicePreference: '', gdprConsent: false });
       } else if (response.status === 409) {
         // Handle specific 409 errors
         const data = await response.json().catch(() => ({}));
@@ -498,6 +544,40 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-openhr-teal-500 focus:outline-none focus:ring-1 focus:ring-openhr-teal-500 disabled:bg-gray-100"
         />
       </div>
+
+      {/* Device Preference (DL-42) */}
+      <fieldset className="space-y-3">
+        <legend id="devicePreference-label" className="block text-sm font-medium text-gray-700">
+          {t.devicePreference.label}
+        </legend>
+        <div
+          role="radiogroup"
+          aria-labelledby="devicePreference-label"
+          className="mt-2 space-y-2"
+        >
+          {(['ios', 'android', 'both', 'neither'] as const).map((option) => (
+            <label
+              key={option}
+              className={`flex cursor-pointer items-center gap-3 rounded-md border px-4 py-3 transition-colors ${
+                formData.devicePreference === option
+                  ? 'border-openhr-teal-500 bg-openhr-teal-50'
+                  : 'border-gray-300 hover:border-gray-400'
+              } ${formState === 'submitting' ? 'cursor-not-allowed opacity-60' : ''}`}
+            >
+              <input
+                type="radio"
+                name="devicePreference"
+                value={option}
+                checked={formData.devicePreference === option}
+                onChange={handleChange}
+                disabled={formState === 'submitting'}
+                className="h-4 w-4 border-gray-300 text-openhr-teal-900 focus:ring-2 focus:ring-openhr-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed"
+              />
+              <span className="text-sm text-gray-700">{t.devicePreference[option]}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       {/* GDPR Consent */}
       <div>
