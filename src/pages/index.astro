@@ -1,4 +1,97 @@
 ---
-// Redirect root to default locale
-return Astro.redirect('/fr/');
+/**
+ * Root Index — Language Detector
+ *
+ * Lightweight page that detects the visitor's browser language and redirects
+ * to the appropriate locale. Replaces the previous server-side redirect to /fr/.
+ *
+ * Since this is a static site (Bunny CDN), detection must happen client-side.
+ * Includes fallbacks for bots (meta refresh) and no-JS browsers (noscript links).
+ *
+ * @see DL-26 — Global access enabled 2026-02-11
+ */
 ---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open HR — Redirecting</title>
+    <meta name="description" content="Open HR — The HR infrastructure of tomorrow. Redirecting to your language." />
+
+    <!-- SEO: hreflang alternate tags for all supported locales -->
+    <link rel="alternate" hreflang="fr" href="https://open-hr.work/fr/" />
+    <link rel="alternate" hreflang="en-GB" href="https://open-hr.work/en-GB/" />
+    <link rel="alternate" hreflang="en-US" href="https://open-hr.work/en-US/" />
+    <link rel="alternate" hreflang="de" href="https://open-hr.work/de/" />
+    <link rel="alternate" hreflang="es" href="https://open-hr.work/es/" />
+    <link rel="alternate" hreflang="it" href="https://open-hr.work/it/" />
+    <link rel="alternate" hreflang="x-default" href="https://open-hr.work/en-GB/" />
+
+    <!-- Ultimate fallback for bots and no-JS environments -->
+    <meta http-equiv="refresh" content="0;url=/en-GB/" />
+
+    <!-- Prevent indexing this redirect page; localized pages are the canonical targets -->
+    <meta name="robots" content="noindex, follow" />
+
+    <style>
+      /* Hide everything — redirect should feel instant with no flash */
+      body { display: none; }
+    </style>
+
+    <script is:inline>
+      (function () {
+        var langs = navigator.languages || [navigator.language || 'en'];
+        var dest = '/en-GB/';
+
+        for (var i = 0; i < langs.length; i++) {
+          var lang = langs[i].toLowerCase();
+
+          if (lang === 'en-us') {
+            dest = '/en-US/';
+            break;
+          }
+          if (lang.indexOf('fr') === 0) {
+            dest = '/fr/';
+            break;
+          }
+          if (lang.indexOf('de') === 0) {
+            dest = '/de/';
+            break;
+          }
+          if (lang.indexOf('es') === 0) {
+            dest = '/es/';
+            break;
+          }
+          if (lang.indexOf('it') === 0) {
+            dest = '/it/';
+            break;
+          }
+          if (lang.indexOf('en') === 0) {
+            dest = '/en-GB/';
+            break;
+          }
+        }
+
+        window.location.replace(dest);
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; text-align: center; line-height: 1.6;">
+        <h1 style="font-size: 1.5rem; margin-bottom: 1rem;">Open HR</h1>
+        <p style="margin-bottom: 1.5rem;">Please select your language / Veuillez choisir votre langue:</p>
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin: 0.5rem 0;"><a href="/fr/">Francais</a></li>
+          <li style="margin: 0.5rem 0;"><a href="/en-GB/">English (UK)</a></li>
+          <li style="margin: 0.5rem 0;"><a href="/en-US/">English (US)</a></li>
+          <li style="margin: 0.5rem 0;"><a href="/de/">Deutsch</a></li>
+          <li style="margin: 0.5rem 0;"><a href="/es/">Espanol</a></li>
+          <li style="margin: 0.5rem 0;"><a href="/it/">Italiano</a></li>
+        </ul>
+      </div>
+    </noscript>
+  </body>
+</html>

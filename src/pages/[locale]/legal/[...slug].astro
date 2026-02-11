@@ -6,6 +6,9 @@
  * - /[locale]/legal/mentions-legales/
  * - /[locale]/legal/confidentialite/
  * - /[locale]/legal/cookies/
+ * - /de/legal/datenschutz/, /de/legal/cookie-richtlinie/
+ * - /es/legal/politica-privacidad/, /es/legal/politica-cookies/
+ * - /it/legal/informativa-privacy/, /it/legal/informativa-cookie/
  * - etc.
  *
  * Falls back to legacy page type if legalDocument not found.
@@ -38,8 +41,16 @@ export async function getStaticPaths() {
 
   // Also add legacy slugs for backwards compatibility
   const legacySlugs = ['privacy', 'terms', 'cookies', 'refscore'];
+  // Locale-specific legal document slugs (DE, ES, IT, FR)
+  const localeSpecificSlugs: Partial<Record<Locale, string[]>> = {
+    fr: ['confidentialite'],
+    de: ['datenschutz', 'cookie-richtlinie'],
+    es: ['politica-privacidad', 'politica-cookies'],
+    it: ['informativa-privacy', 'informativa-cookie'],
+  };
   for (const locale of locales) {
-    for (const slug of legacySlugs) {
+    const slugsForLocale = [...legacySlugs, ...(localeSpecificSlugs[locale] || [])];
+    for (const slug of slugsForLocale) {
       // Check if this slug is already added from Sanity
       const exists = paths.some(
         (p) => p.params.locale === locale && p.params.slug === slug
@@ -123,6 +134,57 @@ const fallbackTitles: Record<string, Record<Locale, string>> = {
     'es': 'Politica de Privacidad - Open HR',
     'it': 'Informativa sulla Privacy - Open HR',
   },
+  // DE locale-specific slugs
+  'datenschutz': {
+    'fr': 'Politique de confidentialite - Open HR',
+    'en-GB': 'Privacy Policy - Open HR',
+    'en-US': 'Privacy Policy - Open HR',
+    'de': 'Datenschutzerklaerung - Open HR',
+    'es': 'Politica de privacidad - Open HR',
+    'it': 'Informativa sulla privacy - Open HR',
+  },
+  'cookie-richtlinie': {
+    'fr': 'Politique de cookies - Open HR',
+    'en-GB': 'Cookie Policy - Open HR',
+    'en-US': 'Cookie Policy - Open HR',
+    'de': 'Cookie-Richtlinie - Open HR',
+    'es': 'Politica de cookies - Open HR',
+    'it': 'Informativa sui cookie - Open HR',
+  },
+  // ES locale-specific slugs
+  'politica-privacidad': {
+    'fr': 'Politique de confidentialite - Open HR',
+    'en-GB': 'Privacy Policy - Open HR',
+    'en-US': 'Privacy Policy - Open HR',
+    'de': 'Datenschutzerklaerung - Open HR',
+    'es': 'Politica de Privacidad - Open HR',
+    'it': 'Informativa sulla privacy - Open HR',
+  },
+  'politica-cookies': {
+    'fr': 'Politique de cookies - Open HR',
+    'en-GB': 'Cookie Policy - Open HR',
+    'en-US': 'Cookie Policy - Open HR',
+    'de': 'Cookie-Richtlinie - Open HR',
+    'es': 'Politica de Cookies - Open HR',
+    'it': 'Informativa sui cookie - Open HR',
+  },
+  // IT locale-specific slugs
+  'informativa-privacy': {
+    'fr': 'Politique de confidentialite - Open HR',
+    'en-GB': 'Privacy Policy - Open HR',
+    'en-US': 'Privacy Policy - Open HR',
+    'de': 'Datenschutzerklaerung - Open HR',
+    'es': 'Politica de privacidad - Open HR',
+    'it': 'Informativa sulla Privacy - Open HR',
+  },
+  'informativa-cookie': {
+    'fr': 'Politique de cookies - Open HR',
+    'en-GB': 'Cookie Policy - Open HR',
+    'en-US': 'Cookie Policy - Open HR',
+    'de': 'Cookie-Richtlinie - Open HR',
+    'es': 'Politica de cookies - Open HR',
+    'it': 'Informativa sui Cookie - Open HR',
+  },
 };
 
 const fallbackHeadings: Record<string, Record<Locale, string>> = {
@@ -173,6 +235,57 @@ const fallbackHeadings: Record<string, Record<Locale, string>> = {
     'de': 'Datenschutzrichtlinie',
     'es': 'Politica de Privacidad',
     'it': 'Informativa sulla Privacy',
+  },
+  // DE locale-specific slugs
+  'datenschutz': {
+    'fr': 'Politique de confidentialite',
+    'en-GB': 'Privacy Policy',
+    'en-US': 'Privacy Policy',
+    'de': 'Datenschutzerklaerung',
+    'es': 'Politica de privacidad',
+    'it': 'Informativa sulla privacy',
+  },
+  'cookie-richtlinie': {
+    'fr': 'Politique de cookies',
+    'en-GB': 'Cookie Policy',
+    'en-US': 'Cookie Policy',
+    'de': 'Cookie-Richtlinie',
+    'es': 'Politica de cookies',
+    'it': 'Informativa sui cookie',
+  },
+  // ES locale-specific slugs
+  'politica-privacidad': {
+    'fr': 'Politique de confidentialite',
+    'en-GB': 'Privacy Policy',
+    'en-US': 'Privacy Policy',
+    'de': 'Datenschutzerklaerung',
+    'es': 'Politica de Privacidad',
+    'it': 'Informativa sulla privacy',
+  },
+  'politica-cookies': {
+    'fr': 'Politique de cookies',
+    'en-GB': 'Cookie Policy',
+    'en-US': 'Cookie Policy',
+    'de': 'Cookie-Richtlinie',
+    'es': 'Politica de Cookies',
+    'it': 'Informativa sui cookie',
+  },
+  // IT locale-specific slugs
+  'informativa-privacy': {
+    'fr': 'Politique de confidentialite',
+    'en-GB': 'Privacy Policy',
+    'en-US': 'Privacy Policy',
+    'de': 'Datenschutzerklaerung',
+    'es': 'Politica de privacidad',
+    'it': 'Informativa sulla Privacy',
+  },
+  'informativa-cookie': {
+    'fr': 'Politique de cookies',
+    'en-GB': 'Cookie Policy',
+    'en-US': 'Cookie Policy',
+    'de': 'Cookie-Richtlinie',
+    'es': 'Politica de cookies',
+    'it': 'Informativa sui Cookie',
   },
 };
 

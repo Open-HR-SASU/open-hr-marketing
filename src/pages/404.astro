@@ -3,25 +3,32 @@
  * 404 Not Found Page
  *
  * Static 404 page served by Bunny Edge Storage when a route is not found.
- * Uses fr locale as default (matches Bunny geo-restriction to France).
+ * Defaults to en-GB as the international language, with links to all locales.
+ *
+ * @see DL-26 — Global access enabled 2026-02-11
  */
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import Mark from '@/components/Mark.astro';
 
-const locale = 'fr';
+const locale = 'en-GB';
 
-// Localized content for common visitor locales
 const content = {
-  title: 'Page non trouvée - Open HR',
-  heading: 'Page non trouvée',
-  message: 'Désolé, la page que vous recherchez n\'existe pas ou a été déplacée.',
-  cta: 'Retour à l\'accueil',
-  altHeading: 'Page not found',
-  altMessage: 'Sorry, the page you are looking for does not exist or has been moved.',
-  altCta: 'Back to Home',
+  title: 'Page Not Found - Open HR',
+  heading: 'Page not found',
+  message: 'Sorry, the page you are looking for does not exist or has been moved.',
+  cta: 'Back to Home',
 };
+
+const localeLinks = [
+  { code: 'en-GB', label: 'English (UK)', href: '/en-GB/' },
+  { code: 'en-US', label: 'English (US)', href: '/en-US/' },
+  { code: 'fr', label: 'Francais', href: '/fr/' },
+  { code: 'de', label: 'Deutsch', href: '/de/' },
+  { code: 'es', label: 'Espanol', href: '/es/' },
+  { code: 'it', label: 'Italiano', href: '/it/' },
+];
 ---
 
 <Layout
@@ -41,7 +48,6 @@ const content = {
         404
       </h1>
 
-      <!-- French (primary) -->
       <div class="mb-8">
         <h2 class="mb-2 text-2xl font-bold text-gray-700">
           {content.heading}
@@ -51,29 +57,28 @@ const content = {
         </p>
       </div>
 
-      <!-- English (secondary) -->
-      <div class="mb-8 border-t border-gray-200 pt-6 text-gray-500">
-        <p class="mb-1 text-sm">
-          {content.altHeading}
-        </p>
-        <p class="text-sm">
-          {content.altMessage}
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-4 sm:flex-row">
+      <div class="mb-8">
         <a
-          href="/fr/"
+          href="/en-GB/"
           class="rounded-lg bg-openhr-teal-900 px-6 py-3 font-medium text-white transition-colors hover:bg-openhr-teal-800"
         >
           {content.cta}
         </a>
-        <a
-          href="/en-GB/"
-          class="rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          {content.altCta}
-        </a>
+      </div>
+
+      <!-- Language switcher -->
+      <div class="border-t border-gray-200 pt-6">
+        <p class="mb-3 text-sm text-gray-500">Or choose your language:</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          {localeLinks.map((l) => (
+            <a
+              href={l.href}
+              class="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50"
+            >
+              {l.label}
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   </main>
