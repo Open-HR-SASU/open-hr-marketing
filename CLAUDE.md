@@ -93,7 +93,7 @@ Content is fetched at build time. All pages use `getPage(slug, locale)` to retri
 
 Supports 6 locales: `fr`, `en-GB`, `en-US`, `de`, `es`, `it`
 
-Default locale: `fr` (France-first per DL-26 geo-restriction)
+Default locale: `fr`
 
 ## Commands
 
@@ -148,6 +148,14 @@ npx bunny-storage-deploy \
 | Linear | [open-hr.linear.app](https://linear.app/open-hr) |
 | Sanity Studio | [open-hr.sanity.studio](https://open-hr.sanity.studio) |
 
-## Geo-Restriction (DL-26)
+## Geo-Restriction (DL-26 → Global, 2026-02-11)
 
-Site is France-only during pilot phase. Bunny CDN Edge Rules handle geo-restriction automatically. Token bypass available for foreign references via `?geo_bypass={token}` parameter.
+**Global access enabled.** CEO decision (2026-02-11) supersedes France-only pilot restriction.
+- France-only Bunny CDN Edge Rule: **DISABLED**
+- All Bunny geo zones enabled (US, EU, ASIA, SA, AF)
+- Sanctions blocklist enforced at platform application layer only
+
+## Identity Verification (CEO Decision, 2026-02-11)
+
+**Yoti is the sole IDV provider** for all regions. Legal docs updated to reflect this.
+Supersedes previous split: IDnow (EU), Yoti (UK), Persona (US).

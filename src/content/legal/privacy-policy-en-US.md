@@ -36,7 +36,7 @@ Email: dpo@open-hr.work
 - **Identification data:** name, email address, telephone number
 - **Professional data:** career history, positions held, skills
 - **Connection data:** login credentials, connection history
-- **Identity verification data:** identity document (as part of IDnow verification)
+- **Identity verification data:** identity document (as part of Yoti verification)
 
 ### 3.2 Data Collected from Employers
 
@@ -119,7 +119,7 @@ We engage the following service providers, who act as data processors:
 | **OVHcloud** | MongoDB database hosting | France (EU) | EU data sovereignty, GDPR, ISO certifications |
 | **Brevo** (Sendinblue SAS) | Transactional email delivery | France (EU) | GDPR compliant, EU data |
 | **Plausible Analytics** | Web analytics (cookieless) | EU | GDPR compliant, no personal data |
-| **IDnow GmbH** | Identity verification | Germany (EU) | GDPR compliant, eIDAS certified |
+| **Yoti Ltd** | Identity verification | United Kingdom | DIATF-certified, GDPR compliant |
 | **Stripe** | Payment processing | Ireland (EU) / USA | Standard Contractual Clauses, EU-US Data Privacy Framework |
 
 ### 6.3 Recipients of Reference Data

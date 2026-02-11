@@ -96,13 +96,13 @@ When you make a payment on our platform, our payment processor **Stripe** may pl
 
 These cookies are strictly necessary for payment processing.
 
-### 5.2 Identity Verification (IDnow)
+### 5.2 Identity Verification (Yoti)
 
-During the identity verification process, our provider **IDnow** may use technical cookies necessary for the verification service to function.
+During the identity verification process, our provider **Yoti** may use technical cookies necessary for the verification service to function.
 
 | Provider | Purpose | Privacy Policy |
 |----------|---------|----------------|
-| IDnow | Secure identity verification | https://www.idnow.io/privacy-policy |
+| Yoti | Secure identity verification | https://www.yoti.com/privacy/ |
 
 ---
 
@@ -134,7 +134,7 @@ Refusing strictly necessary cookies may prevent access to certain Site features,
 
 ## 8. Data Transfers
 
-Cookies placed by third-party services (Stripe, IDnow) may involve transfers of data to countries outside the European Union. These transfers are governed by appropriate safeguards (standard contractual clauses, certifications) in accordance with GDPR.
+Cookies placed by third-party services (Stripe, Yoti) may involve transfers of data to countries outside the European Union. These transfers are governed by appropriate safeguards (standard contractual clauses, certifications) in accordance with GDPR.
 
 For more information, see our [Privacy Policy](/en-US/legal/privacy/).
 

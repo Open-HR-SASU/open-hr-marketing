@@ -96,13 +96,13 @@ Lorsque vous effectuez un paiement sur notre plateforme, notre prestataire de pa
 
 Ces cookies sont strictement necessaires au traitement des paiements et sont couverts par l'exemption au consentement prevue par la CNIL.
 
-### 5.2 Verification d'identite (IDnow)
+### 5.2 Verification d'identite (Yoti)
 
-Lors du processus de verification d'identite, notre prestataire **IDnow** peut utiliser des cookies techniques necessaires au fonctionnement du service de verification.
+Lors du processus de verification d'identite, notre prestataire **Yoti** peut utiliser des cookies techniques necessaires au fonctionnement du service de verification.
 
 | Fournisseur | Finalite | Politique de confidentialite |
 |-------------|----------|------------------------------|
-| IDnow | Verification d'identite securisee | https://www.idnow.io/privacy-policy |
+| Yoti | Verification d'identite securisee | https://www.yoti.com/privacy/ |
 
 ---
 
@@ -144,7 +144,7 @@ Le refus des cookies strictement necessaires peut empecher l'acces a certaines f
 
 ## 8. Transferts de donnees
 
-Les cookies deposes par des services tiers (Stripe, IDnow) peuvent impliquer des transferts de donnees vers des pays situes hors de l'Union europeenne. Ces transferts sont encadres par des garanties appropriees (clauses contractuelles types, certifications) conformement au RGPD.
+Les cookies deposes par des services tiers (Stripe, Yoti) peuvent impliquer des transferts de donnees vers des pays situes hors de l'Union europeenne. Ces transferts sont encadres par des garanties appropriees (clauses contractuelles types, certifications) conformement au RGPD.
 
 Pour plus d'informations, consultez notre [Politique de confidentialite](/fr/legal/privacy).
 

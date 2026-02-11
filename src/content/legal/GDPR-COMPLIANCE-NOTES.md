@@ -66,7 +66,7 @@ Created comprehensive cookie policy documents for EN-GB and EN-US locales.
 | Service | Purpose | Legal Basis |
 |---------|---------|-------------|
 | **Stripe** | Payment processing | Strictly necessary (contract performance) |
-| **IDnow** | Identity verification | Strictly necessary (legitimate interest) |
+| **Yoti** | Identity verification | Strictly necessary (legitimate interest) |
 
 ### GDPR/ePrivacy Compliance
 - **Article 5(3) ePrivacy Directive:** No consent required for strictly necessary cookies

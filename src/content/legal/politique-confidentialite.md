@@ -36,7 +36,7 @@ Email : dpo@open-hr.work
 - **Donnees d'identification :** nom, prenom, adresse email, numero de telephone
 - **Donnees professionnelles :** parcours professionnel, postes occupes, competences
 - **Donnees de connexion :** identifiants, historique de connexion
-- **Donnees de verification d'identite :** piece d'identite (dans le cadre de la verification IDnow)
+- **Donnees de verification d'identite :** piece d'identite (dans le cadre de la verification Yoti)
 
 ### 3.2 Donnees collectees aupres des employeurs
 
@@ -119,7 +119,7 @@ Nous faisons appel aux prestataires suivants, qui agissent en qualite de sous-tr
 | **OVHcloud** | Hebergement base de donnees MongoDB | France (UE) | Souverainete donnees UE, RGPD, certifications ISO |
 | **Brevo** (Sendinblue SAS) | Envoi d'emails transactionnels | France (UE) | RGPD, donnees UE |
 | **Plausible Analytics** | Analytique web (sans cookies) | UE | RGPD, aucune donnee personnelle |
-| **IDnow GmbH** | Verification d'identite | Allemagne (UE) | RGPD, certifications eIDAS |
+| **Yoti Ltd** | Verification d'identite | Royaume-Uni | Certifie DIATF, RGPD |
 | **Stripe** | Traitement des paiements | Irlande (UE) / USA | Clauses contractuelles types, Privacy Shield |
 
 ### 6.3 Destinataires des donnees de reference
