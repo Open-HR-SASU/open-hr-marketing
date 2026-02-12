@@ -44,6 +44,8 @@ const content: Record<Locale, {
   };
   perMonth: string;
   billedAnnually: string;
+  renewalDisclosure: string;
+  cancelInfo: string;
 }> = {
   fr: {
     toggle: { monthly: 'Mensuel', annual: 'Annuel', discount: '-20%' },
@@ -74,6 +76,8 @@ const content: Record<Locale, {
     },
     perMonth: '/mois',
     billedAnnually: 'Facturé annuellement',
+    renewalDisclosure: 'Les abonnements se renouvellent automatiquement à la fin de chaque période de facturation (mensuelle ou annuelle) au tarif en vigueur, sauf annulation préalable.',
+    cancelInfo: 'Vous pouvez annuler à tout moment depuis votre espace personnel. L\'annulation prend effet à la fin de la période de facturation en cours.',
   },
   'en-GB': {
     toggle: { monthly: 'Monthly', annual: 'Annual', discount: 'Save 20%' },
@@ -104,6 +108,8 @@ const content: Record<Locale, {
     },
     perMonth: '/month',
     billedAnnually: 'Billed annually',
+    renewalDisclosure: 'Subscriptions automatically renew at the end of each billing period (monthly or annual) at the then-current rate, unless cancelled in advance.',
+    cancelInfo: 'You may cancel at any time from your account settings. Cancellation takes effect at the end of the current billing period.',
   },
   'en-US': {
     toggle: { monthly: 'Monthly', annual: 'Annual', discount: 'Save 20%' },
@@ -134,6 +140,8 @@ const content: Record<Locale, {
     },
     perMonth: '/month',
     billedAnnually: 'Billed annually',
+    renewalDisclosure: 'Subscriptions automatically renew at the end of each billing period (monthly or annual) at the then-current rate, unless cancelled in advance.',
+    cancelInfo: 'You may cancel at any time from your account settings. Cancellation takes effect at the end of the current billing period.',
   },
   de: {
     toggle: { monthly: 'Monatlich', annual: 'Jährlich', discount: '-20%' },
@@ -164,6 +172,8 @@ const content: Record<Locale, {
     },
     perMonth: '/Monat',
     billedAnnually: 'Jährlich abgerechnet',
+    renewalDisclosure: 'Abonnements verlängern sich automatisch am Ende jedes Abrechnungszeitraums (monatlich oder jährlich) zum jeweils gültigen Tarif, sofern nicht vorher gekündigt wird.',
+    cancelInfo: 'Sie können jederzeit über Ihre Kontoeinstellungen kündigen. Die Kündigung wird zum Ende des laufenden Abrechnungszeitraums wirksam.',
   },
   es: {
     toggle: { monthly: 'Mensual', annual: 'Anual', discount: '-20%' },
@@ -194,6 +204,8 @@ const content: Record<Locale, {
     },
     perMonth: '/mes',
     billedAnnually: 'Facturado anualmente',
+    renewalDisclosure: 'Las suscripciones se renuevan automáticamente al final de cada período de facturación (mensual o anual) a la tarifa vigente, salvo cancelación previa.',
+    cancelInfo: 'Puede cancelar en cualquier momento desde la configuración de su cuenta. La cancelación se hace efectiva al final del período de facturación en curso.',
   },
   it: {
     toggle: { monthly: 'Mensile', annual: 'Annuale', discount: '-20%' },
@@ -224,6 +236,8 @@ const content: Record<Locale, {
     },
     perMonth: '/mese',
     billedAnnually: 'Fatturato annualmente',
+    renewalDisclosure: 'Gli abbonamenti si rinnovano automaticamente alla fine di ogni periodo di fatturazione (mensile o annuale) alla tariffa in vigore, salvo disdetta preventiva.',
+    cancelInfo: 'È possibile annullare in qualsiasi momento dalle impostazioni del proprio account. L\'annullamento ha effetto alla fine del periodo di fatturazione in corso.',
   },
 };
 
@@ -381,6 +395,12 @@ export function PricingSection({ locale }: PricingSectionProps) {
             {t.tiers.refscoreVerified.cta}
           </a>
         </div>
+      </div>
+
+      {/* Auto-Renewal Disclosure — EU Consumer Rights Directive Art. 8(2), FR Code de la consommation Art. L215-1 */}
+      <div className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
+        <p>{t.renewalDisclosure}</p>
+        <p className="mt-1">{t.cancelInfo}</p>
       </div>
     </div>
   );

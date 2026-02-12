@@ -1,9 +1,9 @@
 # Mentions Legales
 
-**Version:** 1.0
+**Version:** 1.1
 **Statut:** En vigueur
 **Date d'entree en vigueur:** 26 janvier 2026
-**Derniere mise a jour:** 26 janvier 2026
+**Derniere mise a jour:** 12 fevrier 2026
 
 ---
 
@@ -156,15 +156,46 @@ Le Site utilise des cookies et technologies similaires. Pour plus d'informations
 
 ---
 
-## 9. Droit applicable et juridiction competente
+## 9. Mediation de la consommation
 
-Les presentes mentions legales sont regies par le droit francais.
+Conformement aux articles L611-1 et suivants et R612-1 et suivants du Code de la consommation, Open HR SASU informe ses utilisateurs consommateurs de leur droit de recourir gratuitement a un mediateur de la consommation en vue de la resolution amiable de tout litige les opposant a Open HR SASU.
 
-En cas de litige, et apres tentative de resolution amiable, competence exclusive est attribuee aux tribunaux de Paris, nonobstant pluralite de defendeurs ou appel en garantie.
+### 9.1 Reclamation prealable obligatoire
+
+Prealablement a toute saisine du mediateur, le consommateur doit avoir tente de resoudre son litige directement aupres d'Open HR SASU en adressant une reclamation ecrite :
+
+- **Par email :** support@open-hr.work
+- **Par courrier :** Open HR, 60 rue Francois Ier, 75008 Paris, France
+
+Open HR s'engage a accuser reception de toute reclamation dans un delai de cinq (5) jours ouvrables et a fournir une reponse substantielle dans un delai raisonnable.
+
+### 9.2 Saisine du mediateur
+
+A defaut de reponse satisfaisante dans un delai de deux (2) mois a compter de la date de la reclamation ecrite, le consommateur peut saisir gratuitement le mediateur de la consommation suivant :
+
+**Mediateur designe :** [En cours de designation — sera mis a jour avant le lancement commercial]
+
+<!-- ACTION REQUISE AVANT LANCEMENT : Souscrire aupres d'un mediateur agree CECMC (ex. Medicys, CM2C, CMAP) et mettre a jour cette section avec les coordonnees completes du mediateur. Obligation legale : Art. L612-1 Code de la consommation. Sanction : jusqu'a 15 000 EUR d'amende (Art. L641-1). -->
+
+Le mediateur rend son avis dans un delai de quatre-vingt-dix (90) jours a compter de la notification de la saisine. La mediation est entierement gratuite pour le consommateur.
+
+### 9.3 Plateforme de reglement en ligne des litiges
+
+Conformement au reglement (UE) n 524/2013, la Commission europeenne met a disposition une plateforme de reglement en ligne des litiges : [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
+
+*Note : Le statut de cette plateforme est a verifier — la plateforme ODR europeenne a ete desactivee en juillet 2025 conformement au reglement (UE) 2025/40. Cette reference sera mise a jour en fonction de l'evolution reglementaire.*
 
 ---
 
-## 10. Mise a jour des mentions legales
+## 10. Droit applicable et juridiction competente
+
+Les presentes mentions legales sont regies par le droit francais.
+
+En cas de litige ne relevant pas de la mediation de la consommation visee a l'article 9 ci-dessus, et apres tentative de resolution amiable, competence exclusive est attribuee aux tribunaux de Paris, nonobstant pluralite de defendeurs ou appel en garantie.
+
+---
+
+## 11. Mise a jour des mentions legales
 
 Open HR se reserve le droit de modifier les presentes mentions legales a tout moment. Les utilisateurs sont invites a les consulter regulierement.
 
