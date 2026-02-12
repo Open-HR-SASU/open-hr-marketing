@@ -84,6 +84,7 @@ const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
           { _key: 'legal-notice', label: 'Mentions légales', href: 'legal/notice' },
           { _key: 'privacy', label: 'Confidentialité', href: 'legal/privacy' },
           { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+          { _key: 'manage-cookies', label: 'Gérer les cookies', href: '#manage-cookies' },
         ],
       },
     ],
@@ -115,6 +116,7 @@ const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
           { _key: 'legal-notice', label: 'Legal Notice', href: 'legal/notice' },
           { _key: 'privacy', label: 'Privacy Policy', href: 'legal/privacy' },
           { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+          { _key: 'manage-cookies', label: 'Manage cookies', href: '#manage-cookies' },
         ],
       },
     ],
@@ -146,6 +148,7 @@ const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
           { _key: 'legal-notice', label: 'Legal Notice', href: 'legal/notice' },
           { _key: 'privacy', label: 'Privacy Policy', href: 'legal/privacy' },
           { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+          { _key: 'manage-cookies', label: 'Manage cookies', href: '#manage-cookies' },
         ],
       },
     ],
@@ -177,6 +180,7 @@ const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
           { _key: 'legal-notice', label: 'Impressum', href: 'legal/notice' },
           { _key: 'privacy', label: 'Datenschutz', href: 'legal/privacy' },
           { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+          { _key: 'manage-cookies', label: 'Cookies verwalten', href: '#manage-cookies' },
         ],
       },
     ],
@@ -208,6 +212,7 @@ const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
           { _key: 'legal-notice', label: 'Aviso legal', href: 'legal/notice' },
           { _key: 'privacy', label: 'Privacidad', href: 'legal/privacy' },
           { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+          { _key: 'manage-cookies', label: 'Gestionar cookies', href: '#manage-cookies' },
         ],
       },
     ],
@@ -239,6 +244,7 @@ const FALLBACK_FOOTERS: Record<Locale, FooterData> = {
           { _key: 'legal-notice', label: 'Note legali', href: 'legal/notice' },
           { _key: 'privacy', label: 'Privacy', href: 'legal/privacy' },
           { _key: 'cookies', label: 'Cookies', href: 'legal/cookies' },
+          { _key: 'manage-cookies', label: 'Gestisci cookie', href: '#manage-cookies' },
         ],
       },
     ],
@@ -344,3 +350,27 @@ const copyrightText = footerData.copyrightText.replace('{year}', String(currentY
     </div>
   </div>
 </footer>
+
+<script>
+  /**
+   * Cookie Consent Withdrawal Handler (OPE-357 / ePrivacy Art. 5(3))
+   *
+   * CNIL requires consent withdrawal to be as easy as granting consent.
+   * Clicking "Manage cookies" clears stored preference and re-shows the banner.
+   */
+  document.querySelectorAll('a[href="#manage-cookies"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      try {
+        localStorage.removeItem('openhr_analytics_consent');
+      } catch {
+        // localStorage unavailable
+      }
+      const banner = document.getElementById('analytics-banner');
+      if (banner) {
+        banner.classList.remove('hidden');
+        banner.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+</script>
