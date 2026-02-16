@@ -48,7 +48,7 @@ export const seoFragment = /* groq */ `
 export const featureFragment = /* groq */ `
   _key,
   icon,
-  heading,
+  "heading": coalesce(title, heading),
   description,
   link,
   linkLabel

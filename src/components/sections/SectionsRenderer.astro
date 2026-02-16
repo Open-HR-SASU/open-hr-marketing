@@ -25,6 +25,8 @@ import CTASection from './CTASection.astro';
 import ContentSection from './ContentSection.astro';
 import AppPreviewSection from './AppPreviewSection.astro';
 import ReferenceExperienceSection from './ReferenceExperienceSection.astro';
+import FAQSection from './FAQSection.astro';
+import InlinePricingCTA from './InlinePricingCTA.astro';
 import FallbackSection from './FallbackSection.astro';
 
 interface Props {
@@ -51,9 +53,9 @@ const { sections, locale, className } = Astro.props;
           {type === 'features' && <FeaturesSection {...props} />}
           {type === 'cta' && <CTASection {...props} />}
           {type === 'content' && <ContentSection {...props} />}
-          {type === 'pricing' && <ContentSection {...props} />}
+          {type === 'pricing' && <InlinePricingCTA {...props} />}
           {type === 'testimonials' && <ContentSection {...props} />}
-          {type === 'faq' && <ContentSection {...props} />}
+          {type === 'faq' && <FAQSection {...props} />}
           {type === 'stats' && <ContentSection {...props} />}
           {/* Process/HowItWorks sections use ReferenceExperienceSection for mockup support */}
           {/* CMS may store steps as flowSteps or features - support both */}

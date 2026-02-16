@@ -1,0 +1,186 @@
+---
+/**
+ * Inline Pricing CTA
+ *
+ * Lightweight static 2-card pricing display for homepage.
+ * Uses shared pricing.ts for source-of-truth pricing data.
+ * Static Astro component (server-rendered, no JS bundle impact).
+ *
+ * NOT the full PricingSection.tsx with monthly/annual toggle —
+ * this is a simplified CTA-focused display showing monthly prices only.
+ */
+
+import { PRICING, PRICING_US, formatPrice, type Locale } from '@/lib/pricing';
+import { getBackgroundClass, type SectionProps } from './types';
+
+interface Props extends Partial<SectionProps> {}
+
+const {
+  heading,
+  subheading,
+  backgroundStyle,
+  anchor,
+  language = 'en-GB',
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+const locale = (language ?? 'en-GB') as Locale;
+
+// Get locale-appropriate prices
+const prices = locale === 'en-US' ? PRICING_US : PRICING;
+const refscorePrice = formatPrice(prices.refscore.monthly, locale);
+const verifiePrice = formatPrice(prices.verifie.monthly, locale);
+
+// Localized content
+const labels: Record<string, {
+  refscore: { subtitle: string; feature: string; cta: string };
+  verifie: { subtitle: string; feature: string; cta: string };
+  perMonth: string;
+}> = {
+  fr: {
+    refscore: {
+      subtitle: 'Pour construire votre premier credential',
+      feature: "Jusqu'a 6 references verifiees",
+      cta: 'Commencer',
+    },
+    verifie: {
+      subtitle: 'Pour les professionnels qui construisent une reputation a long terme',
+      feature: 'References verifiees illimitees',
+      cta: 'Obtenir Verifie',
+    },
+    perMonth: '/mois',
+  },
+  'en-GB': {
+    refscore: {
+      subtitle: 'Perfect for building your first credential',
+      feature: 'Up to 6 verified references',
+      cta: 'Get Started',
+    },
+    verifie: {
+      subtitle: 'For professionals building a career-long reputation',
+      feature: 'Unlimited verified references',
+      cta: 'Get Verifie',
+    },
+    perMonth: '/month',
+  },
+  'en-US': {
+    refscore: {
+      subtitle: 'Perfect for building your first credential',
+      feature: 'Up to 6 verified references',
+      cta: 'Get Started',
+    },
+    verifie: {
+      subtitle: 'For professionals building a career-long reputation',
+      feature: 'Unlimited verified references',
+      cta: 'Get Verifie',
+    },
+    perMonth: '/month',
+  },
+  de: {
+    refscore: {
+      subtitle: 'Ideal zum Aufbau Ihres ersten Credentials',
+      feature: 'Bis zu 6 verifizierte Referenzen',
+      cta: 'Loslegen',
+    },
+    verifie: {
+      subtitle: 'Fur Fachleute, die eine langfristige Reputation aufbauen',
+      feature: 'Unbegrenzte verifizierte Referenzen',
+      cta: 'Verifie erhalten',
+    },
+    perMonth: '/Monat',
+  },
+  es: {
+    refscore: {
+      subtitle: 'Perfecto para construir tu primer credential',
+      feature: 'Hasta 6 referencias verificadas',
+      cta: 'Empezar',
+    },
+    verifie: {
+      subtitle: 'Para profesionales que construyen una reputacion a largo plazo',
+      feature: 'Referencias verificadas ilimitadas',
+      cta: 'Obtener Verifie',
+    },
+    perMonth: '/mes',
+  },
+  it: {
+    refscore: {
+      subtitle: 'Perfetto per costruire il tuo primo credential',
+      feature: 'Fino a 6 referenze verificate',
+      cta: 'Inizia',
+    },
+    verifie: {
+      subtitle: 'Per professionisti che costruiscono una reputazione a lungo termine',
+      feature: 'Referenze verificate illimitate',
+      cta: 'Ottieni Verifie',
+    },
+    perMonth: '/mese',
+  },
+};
+
+const t = labels[locale] ?? labels['en-GB'];
+const pilotUrl = `/${locale}/pilot/`;
+---
+
+<section class:list={['py-16 md:py-24', bgClass, className]} id={anchor ?? undefined}>
+  <div class="container mx-auto px-4">
+    <!-- Optional Section Header -->
+    {heading && (
+      <div class="mx-auto mb-12 max-w-3xl text-center">
+        <h2 class="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">
+          {heading}
+        </h2>
+        {subheading && (
+          <p class="text-lg text-gray-600">{subheading}</p>
+        )}
+      </div>
+    )}
+
+    <!-- Pricing Cards -->
+    <div class="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
+      <!-- RefScore -->
+      <div class="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+        <h3 class="text-xl font-bold text-gray-900">RefScore</h3>
+        <p class="mt-2 text-sm text-gray-600">{t.refscore.subtitle}</p>
+        <div class="mt-6">
+          <span class="text-4xl font-bold text-gray-900">{refscorePrice}</span>
+          <span class="text-gray-600">{t.perMonth}</span>
+        </div>
+        <div class="mt-6 flex items-start gap-3">
+          <svg class="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span class="text-gray-700">{t.refscore.feature}</span>
+        </div>
+        <a
+          href={pilotUrl}
+          class="mt-8 block w-full rounded-lg border border-openhr-teal-900 bg-white px-4 py-3 text-center font-medium text-openhr-teal-900 transition-colors hover:bg-openhr-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+        >
+          {t.refscore.cta}
+        </a>
+      </div>
+
+      <!-- Verifie -->
+      <div class="relative flex flex-col rounded-2xl border-2 border-openhr-teal-900 bg-white p-8 shadow-lg">
+        <h3 class="text-xl font-bold text-gray-900">Verifie</h3>
+        <p class="mt-2 text-sm text-gray-600">{t.verifie.subtitle}</p>
+        <div class="mt-6">
+          <span class="text-4xl font-bold text-gray-900">{verifiePrice}</span>
+          <span class="text-gray-600">{t.perMonth}</span>
+        </div>
+        <div class="mt-6 flex items-start gap-3">
+          <svg class="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span class="text-gray-700">{t.verifie.feature}</span>
+        </div>
+        <a
+          href={pilotUrl}
+          class="mt-8 block w-full rounded-lg bg-openhr-teal-900 px-4 py-3 text-center font-medium text-white transition-colors hover:bg-openhr-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+        >
+          {t.verifie.cta}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

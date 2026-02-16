@@ -132,7 +132,7 @@ export default defineType({
           ],
         },
       ],
-      hidden: ({document}) => !['features', 'process', 'howItWorks'].includes(document?.sectionType as string),
+      hidden: ({document}) => !['features', 'process', 'howItWorks', 'faq'].includes(document?.sectionType as string),
     }),
     defineField({
       name: 'anchor',
