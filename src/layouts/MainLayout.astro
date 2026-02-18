@@ -27,9 +27,11 @@ interface Props {
   noIndex?: boolean;
   /** Additional JSON-LD schemas for page-specific structured data */
   additionalSchemas?: Schema[];
+  /** Page path for hreflang generation (e.g. '/', '/about/') */
+  pagePath?: string;
 }
 
-const { title, description, locale, ogImage, noIndex, additionalSchemas } = Astro.props;
+const { title, description, locale, ogImage, noIndex, additionalSchemas, pagePath } = Astro.props;
 ---
 
 <Layout
@@ -39,6 +41,7 @@ const { title, description, locale, ogImage, noIndex, additionalSchemas } = Astr
   ogImage={ogImage}
   noIndex={noIndex}
   additionalSchemas={additionalSchemas}
+  pagePath={pagePath}
 >
   <SkipLink locale={locale} />
   <Header locale={locale} />

@@ -9,6 +9,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
 import { locales, type Locale } from '@/lib/i18n';
 import { getPage, getPageMetadata } from '@/lib/sanity';
+import { generateHowToSchema, generateBreadcrumbSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -33,22 +34,40 @@ const fallbackTitle = {
 }[locale];
 
 const fallbackDescription = {
-  'fr': 'Découvrez comment Open HR fonctionne pour vous.',
-  'en-GB': 'Discover how Open HR works for you.',
-  'en-US': 'Discover how Open HR works for you.',
-  'de': 'Erfahren Sie, wie Open HR für Sie funktioniert.',
-  'es': 'Descubre cómo funciona Open HR para ti.',
-  'it': 'Scopri come funziona Open HR per te.',
+  'fr': 'Trois étapes pour obtenir une accréditation reconnue par les employeurs. Invitez vos références, elles répondent anonymement, vous recevez une note vérifiée.',
+  'en-GB': 'Three steps to a credential employers trust. Invite references, they answer anonymously, you get a verified rating.',
+  'en-US': 'Three steps to a credential employers trust. Invite references, they answer anonymously, you get a verified rating.',
+  'de': 'Drei Schritte zu einer Akkreditierung, der Arbeitgeber vertrauen. Laden Sie Referenzen ein, sie antworten anonym, Sie erhalten eine verifizierte Bewertung.',
+  'es': 'Tres pasos para una acreditación en la que confían los empleadores. Invita referencias, responden de forma anónima, obtienes una calificación verificada.',
+  'it': 'Tre passaggi per una credenziale di cui i datori di lavoro si fidano. Invita referenze, rispondono in modo anonimo, ottieni una valutazione verificata.',
 }[locale];
 
 const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle;
 const description = metadata?.seo?.metaDescription || fallbackDescription;
+
+// Structured data (OPE-698)
+const howToSchema = generateHowToSchema(locale);
+
+const breadcrumbNames: Record<Locale, string> = {
+  'fr': 'Comment ça marche',
+  'en-GB': 'How It Works',
+  'en-US': 'How It Works',
+  'de': 'So funktioniert es',
+  'es': 'Cómo funciona',
+  'it': 'Come funziona',
+};
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Open HR', url: `/${locale}/` },
+  { name: breadcrumbNames[locale], url: `/${locale}/how-it-works/` },
+]);
 ---
 
 <MainLayout
   title={title}
   description={description}
   locale={locale}
+  additionalSchemas={[howToSchema, breadcrumbSchema]}
+  pagePath="/how-it-works/"
 >
   {page?.sections && page.sections.length > 0 ? (
     <SectionsRenderer sections={page.sections} locale={locale} />

@@ -9,7 +9,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import Mark from '@/components/Mark.astro';
 import PricingSection from '@/components/islands/PricingSection';
 import { locales, type Locale } from '@/lib/i18n';
-import { generateProductSchema } from '@/lib/seo';
+import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -61,13 +61,28 @@ const content = {
 
 // Generate Product schema for pricing page (OPE-421)
 const productSchema = generateProductSchema(locale);
+
+// Breadcrumb structured data (OPE-698)
+const breadcrumbNames: Record<Locale, string> = {
+  'fr': 'Tarifs',
+  'en-GB': 'Pricing',
+  'en-US': 'Pricing',
+  'de': 'Preise',
+  'es': 'Precios',
+  'it': 'Prezzi',
+};
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Open HR', url: `/${locale}/` },
+  { name: breadcrumbNames[locale], url: `/${locale}/pricing/` },
+]);
 ---
 
 <MainLayout
   title={content.title}
   description={content.description}
   locale={locale}
-  additionalSchemas={[productSchema]}
+  additionalSchemas={[productSchema, breadcrumbSchema]}
+  pagePath="/pricing/"
 >
   <section class="container py-16 md:py-24">
     <!-- Header -->

@@ -9,6 +9,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
 import { locales, type Locale } from '@/lib/i18n';
 import { getPage, getPageMetadata } from '@/lib/sanity';
+import { generateBreadcrumbSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -33,22 +34,38 @@ const fallbackTitle = {
 }[locale];
 
 const fallbackDescription = {
-  'fr': 'Controlez votre identite professionnelle avec Open HR.',
-  'en-GB': 'Control your professional identity with Open HR.',
-  'en-US': 'Control your professional identity with Open HR.',
-  'de': 'Kontrollieren Sie Ihre berufliche Identitat mit Open HR.',
-  'es': 'Controla tu identidad profesional con Open HR.',
-  'it': 'Controlla la tua identita professionale con Open HR.',
+  'fr': 'Construisez une accréditation professionnelle vérifiée avec RefScore. Des références anonymes prouvent comment vous travaillez vraiment.',
+  'en-GB': 'Build a verified professional credential with RefScore. Anonymous references prove how you really work.',
+  'en-US': 'Build a verified professional credential with RefScore. Anonymous references prove how you really work.',
+  'de': 'Erstellen Sie eine verifizierte berufliche Akkreditierung mit RefScore. Anonyme Referenzen beweisen, wie Sie wirklich arbeiten.',
+  'es': 'Construye una acreditación profesional verificada con RefScore. Las referencias anónimas demuestran cómo trabajas realmente.',
+  'it': 'Costruisci una credenziale professionale verificata con RefScore. Le referenze anonime dimostrano come lavori davvero.',
 }[locale];
 
 const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle;
 const description = metadata?.seo?.metaDescription || fallbackDescription;
+
+// Breadcrumb structured data (OPE-698)
+const breadcrumbNames: Record<Locale, string> = {
+  'fr': 'Pour les travailleurs',
+  'en-GB': 'For Workers',
+  'en-US': 'For Workers',
+  'de': 'Für Arbeitnehmer',
+  'es': 'Para trabajadores',
+  'it': 'Per i lavoratori',
+};
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Open HR', url: `/${locale}/` },
+  { name: breadcrumbNames[locale], url: `/${locale}/workers/` },
+]);
 ---
 
 <MainLayout
   title={title}
   description={description}
   locale={locale}
+  additionalSchemas={[breadcrumbSchema]}
+  pagePath="/workers/"
 >
   {page?.sections && page.sections.length > 0 ? (
     <SectionsRenderer sections={page.sections} locale={locale} />

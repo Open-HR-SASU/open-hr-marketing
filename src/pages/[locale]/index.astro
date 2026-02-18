@@ -23,23 +23,23 @@ const { locale } = Astro.params as { locale: Locale };
 const page = await getPage('home', locale);
 const metadata = await getPageMetadata('home', locale);
 
-// Fallback content (used when Sanity is unavailable)
+// Fallback content aligned with OPE-698 v2 value proposition
 const fallbackTitle: Record<Locale, string> = {
-  'fr': 'Open HR - L\'infrastructure RH de demain',
-  'en-GB': 'Open HR - Tomorrow\'s HR Infrastructure',
-  'en-US': 'Open HR - Tomorrow\'s HR Infrastructure',
-  'de': 'Open HR - Die HR-Infrastruktur von morgen',
-  'es': 'Open HR - La infraestructura de RRHH del mañana',
-  'it': 'Open HR - L\'infrastruttura HR di domani',
+  'fr': 'Open HR — Votre CV dit ce que vous avez fait. Nous prouvons comment vous l\'avez fait.',
+  'en-GB': 'Open HR — Your CV says what you did. We prove how well you did it.',
+  'en-US': 'Open HR — Your resume says what you did. We prove how well you did it.',
+  'de': 'Open HR — Ihr Lebenslauf sagt, was Sie getan haben. Wir beweisen, wie gut Sie es getan haben.',
+  'es': 'Open HR — Tu CV dice lo que hiciste. Nosotros demostramos lo bien que lo hiciste.',
+  'it': 'Open HR — Il tuo CV dice cosa hai fatto. Noi dimostriamo quanto bene lo hai fatto.',
 };
 
 const fallbackDescription: Record<Locale, string> = {
-  'fr': 'Open HR construit l\'infrastructure RH de demain. Rejoignez notre programme pilote.',
-  'en-GB': 'Open HR is building tomorrow\'s HR infrastructure. Join our pilot programme.',
-  'en-US': 'Open HR is building tomorrow\'s HR infrastructure. Join our pilot program.',
-  'de': 'Open HR baut die HR-Infrastruktur von morgen. Nehmen Sie an unserem Pilotprogramm teil.',
-  'es': 'Open HR está construyendo la infraestructura de RRHH del mañana. Únete a nuestro programa piloto.',
-  'it': 'Open HR sta costruendo l\'infrastruttura HR di domani. Unisciti al nostro programma pilota.',
+  'fr': 'Construisez une accréditation vérifiée à partir de références anonymes. Joignez votre RefScore à vos candidatures, LinkedIn et plus encore.',
+  'en-GB': 'Build a verified credential from anonymous references. Attach your RefScore to job applications, LinkedIn, and more.',
+  'en-US': 'Build a verified credential from anonymous references. Attach your RefScore to job applications, LinkedIn, and more.',
+  'de': 'Erstellen Sie eine verifizierte Akkreditierung aus anonymen Referenzen. Fügen Sie Ihren RefScore Bewerbungen, LinkedIn und mehr bei.',
+  'es': 'Construye una acreditación verificada a partir de referencias anónimas. Adjunta tu RefScore a solicitudes de empleo, LinkedIn y más.',
+  'it': 'Costruisci una credenziale verificata da referenze anonime. Allega il tuo RefScore alle candidature, LinkedIn e altro.',
 };
 
 const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle[locale];
@@ -54,6 +54,7 @@ const webSiteSchema = generateWebSiteSchema(locale);
   description={description}
   locale={locale}
   additionalSchemas={[webSiteSchema]}
+  pagePath="/"
 >
   {page?.sections && page.sections.length > 0 ? (
     <SectionsRenderer sections={page.sections} locale={locale} />

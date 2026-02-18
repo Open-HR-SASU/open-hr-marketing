@@ -49,7 +49,14 @@ export function generateOrganizationSchema(): OrganizationSchema {
     name: 'Open HR',
     url: BASE_URL,
     logo: `${BASE_URL}/logo.png`,
-    sameAs: ['https://linkedin.com/company/open-hr-sasu'],
+    sameAs: [
+      'https://linkedin.com/company/open-hr-sasu',
+      'https://www.facebook.com/share/1C39EpDkkj/',
+      'https://www.instagram.com/open_hr.work',
+      'https://x.com/open_hr_work',
+      'https://bsky.app/profile/open-hr.work',
+      'https://youtube.com/@open-hr',
+    ],
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Bordeaux',
@@ -321,12 +328,105 @@ export function generateBreadcrumbSchema(
   };
 }
 
+/**
+ * HowTo Schema for the RefScore process
+ */
+export interface HowToSchema {
+  '@context': 'https://schema.org';
+  '@type': 'HowTo';
+  name: string;
+  description: string;
+  step: Array<{
+    '@type': 'HowToStep';
+    position: number;
+    name: string;
+    text: string;
+  }>;
+}
+
+const howToContent: Record<
+  Locale,
+  { name: string; description: string; steps: Array<{ name: string; text: string }> }
+> = {
+  fr: {
+    name: 'Comment obtenir votre RefScore',
+    description: 'Trois étapes pour obtenir une accréditation vérifiée que les employeurs reconnaissent.',
+    steps: [
+      { name: 'Invitez vos références', text: 'Envoyez une invitation à vos anciens collègues ou managers. Ils répondent de manière anonyme.' },
+      { name: 'Ils remplissent le questionnaire', text: 'Vos références répondent à un questionnaire structuré conçu par des psychologues I-O. Leurs réponses restent anonymes.' },
+      { name: 'Recevez votre accréditation vérifiée', text: 'Vous obtenez un RefScore vérifié que vous pouvez joindre à vos candidatures, votre profil LinkedIn et plus encore.' },
+    ],
+  },
+  'en-GB': {
+    name: 'How to get your RefScore',
+    description: 'Three steps to a credential employers trust.',
+    steps: [
+      { name: 'Invite your references', text: 'Send an invitation to former colleagues or managers. They respond anonymously.' },
+      { name: 'They complete the questionnaire', text: 'Your references answer a structured questionnaire designed by I-O psychologists. Their responses remain anonymous.' },
+      { name: 'Receive your verified credential', text: 'You get a verified RefScore you can attach to job applications, your LinkedIn profile, and more.' },
+    ],
+  },
+  'en-US': {
+    name: 'How to get your RefScore',
+    description: 'Three steps to a credential employers trust.',
+    steps: [
+      { name: 'Invite your references', text: 'Send an invitation to former colleagues or managers. They respond anonymously.' },
+      { name: 'They complete the questionnaire', text: 'Your references answer a structured questionnaire designed by I-O psychologists. Their responses remain anonymous.' },
+      { name: 'Receive your verified credential', text: 'You get a verified RefScore you can attach to job applications, your LinkedIn profile, and more.' },
+    ],
+  },
+  de: {
+    name: 'So erhalten Sie Ihren RefScore',
+    description: 'Drei Schritte zu einer verifizierten Akkreditierung, der Arbeitgeber vertrauen.',
+    steps: [
+      { name: 'Laden Sie Ihre Referenzen ein', text: 'Senden Sie eine Einladung an ehemalige Kollegen oder Vorgesetzte. Sie antworten anonym.' },
+      { name: 'Sie füllen den Fragebogen aus', text: 'Ihre Referenzen beantworten einen strukturierten Fragebogen, der von I-O-Psychologen entwickelt wurde. Ihre Antworten bleiben anonym.' },
+      { name: 'Erhalten Sie Ihre verifizierte Akkreditierung', text: 'Sie erhalten einen verifizierten RefScore, den Sie Ihren Bewerbungen, Ihrem LinkedIn-Profil und mehr beifügen können.' },
+    ],
+  },
+  es: {
+    name: 'Cómo obtener tu RefScore',
+    description: 'Tres pasos para obtener una acreditación verificada en la que confían los empleadores.',
+    steps: [
+      { name: 'Invita a tus referencias', text: 'Envía una invitación a antiguos colegas o jefes. Responden de forma anónima.' },
+      { name: 'Completan el cuestionario', text: 'Tus referencias responden a un cuestionario estructurado diseñado por psicólogos I-O. Sus respuestas permanecen anónimas.' },
+      { name: 'Recibe tu acreditación verificada', text: 'Obtienes un RefScore verificado que puedes adjuntar a tus solicitudes de empleo, tu perfil de LinkedIn y más.' },
+    ],
+  },
+  it: {
+    name: 'Come ottenere il tuo RefScore',
+    description: 'Tre passaggi per ottenere una credenziale verificata di cui i datori di lavoro si fidano.',
+    steps: [
+      { name: 'Invita le tue referenze', text: 'Invia un invito a ex colleghi o responsabili. Rispondono in modo anonimo.' },
+      { name: 'Completano il questionario', text: 'Le tue referenze rispondono a un questionario strutturato progettato da psicologi I-O. Le loro risposte rimangono anonime.' },
+      { name: 'Ricevi la tua credenziale verificata', text: 'Ottieni un RefScore verificato che puoi allegare alle candidature, al tuo profilo LinkedIn e altro.' },
+    ],
+  },
+};
+
+export function generateHowToSchema(locale: Locale): HowToSchema {
+  const content = howToContent[locale];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: content.name,
+    description: content.description,
+    step: content.steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
+  };
+}
+
 export type Schema =
   | OrganizationSchema
   | WebSiteSchema
   | ProductSchema
   | FAQPageSchema
-  | BreadcrumbListSchema;
+  | BreadcrumbListSchema
+  | HowToSchema;
 
 export function combineSchemas(schemas: Schema[]): string {
   if (schemas.length === 1) {

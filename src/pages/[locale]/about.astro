@@ -9,6 +9,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
 import { locales, type Locale } from '@/lib/i18n';
 import { getPage, getPageMetadata } from '@/lib/sanity';
+import { generateBreadcrumbSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -33,22 +34,38 @@ const fallbackTitle = {
 }[locale];
 
 const fallbackDescription = {
-  'fr': 'Découvrez Open HR, l\'infrastructure RH de demain.',
-  'en-GB': 'Discover Open HR, tomorrow\'s HR infrastructure.',
-  'en-US': 'Discover Open HR, tomorrow\'s HR infrastructure.',
-  'de': 'Entdecken Sie Open HR, die HR-Infrastruktur von morgen.',
-  'es': 'Descubre Open HR, la infraestructura de RRHH del mañana.',
-  'it': 'Scopri Open HR, l\'infrastruttura HR di domani.',
+  'fr': 'Découvrez Open HR, la plateforme qui transforme les références professionnelles en accréditations vérifiées.',
+  'en-GB': 'Discover Open HR, the platform turning professional references into verified credentials.',
+  'en-US': 'Discover Open HR, the platform turning professional references into verified credentials.',
+  'de': 'Entdecken Sie Open HR, die Plattform, die berufliche Referenzen in verifizierte Akkreditierungen verwandelt.',
+  'es': 'Descubre Open HR, la plataforma que transforma las referencias profesionales en acreditaciones verificadas.',
+  'it': 'Scopri Open HR, la piattaforma che trasforma le referenze professionali in credenziali verificate.',
 }[locale];
 
 const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle;
 const description = metadata?.seo?.metaDescription || fallbackDescription;
+
+// Breadcrumb structured data (OPE-698)
+const breadcrumbNames: Record<Locale, string> = {
+  'fr': 'À propos',
+  'en-GB': 'About',
+  'en-US': 'About',
+  'de': 'Über uns',
+  'es': 'Acerca de',
+  'it': 'Chi siamo',
+};
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Open HR', url: `/${locale}/` },
+  { name: breadcrumbNames[locale], url: `/${locale}/about/` },
+]);
 ---
 
 <MainLayout
   title={title}
   description={description}
   locale={locale}
+  additionalSchemas={[breadcrumbSchema]}
+  pagePath="/about/"
 >
   {page?.sections && page.sections.length > 0 ? (
     <SectionsRenderer sections={page.sections} locale={locale} />

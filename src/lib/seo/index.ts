@@ -8,11 +8,13 @@ export {
   generateProductSchema,
   generateFAQPageSchema,
   generateBreadcrumbSchema,
+  generateHowToSchema,
   combineSchemas,
   type OrganizationSchema,
   type WebSiteSchema,
   type ProductSchema,
   type FAQPageSchema,
   type BreadcrumbListSchema,
+  type HowToSchema,
   type Schema,
 } from './schemas';

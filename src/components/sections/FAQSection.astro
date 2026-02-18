@@ -9,6 +9,7 @@
 
 import FAQAccordion from '@/components/islands/FAQAccordion';
 import { getBackgroundClass, type SectionProps } from './types';
+import { generateFAQPageSchema } from '@/lib/seo';
 
 interface Props extends Partial<SectionProps> {}
 
@@ -52,6 +53,9 @@ const collapseLabels: Record<string, string> = {
 const locale = language ?? 'en-GB';
 const expandLabel = expandLabels[locale] ?? 'Expand';
 const collapseLabel = collapseLabels[locale] ?? 'Collapse';
+
+// Generate FAQPage JSON-LD for rich snippets (OPE-698)
+const faqSchema = faqItems.length > 0 ? generateFAQPageSchema(faqItems) : null;
 ---
 
 <section class:list={['py-16 md:py-24', bgClass, className]} id={anchor ?? undefined}>
@@ -80,4 +84,9 @@ const collapseLabel = collapseLabels[locale] ?? 'Collapse';
       </div>
     )}
   </div>
+
+  {/* FAQPage JSON-LD for rich snippets (OPE-698) */}
+  {faqSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  )}
 </section>

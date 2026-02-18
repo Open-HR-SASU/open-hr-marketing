@@ -35,6 +35,8 @@ interface Props {
   noIndex?: boolean;
   /** Additional JSON-LD schemas to include alongside Organization */
   additionalSchemas?: Schema[];
+  /** Page path for hreflang generation (e.g. '/', '/about/', '/pricing/') */
+  pagePath?: string;
 }
 
 const {
@@ -43,7 +45,8 @@ const {
   locale = 'fr',
   ogImage = '/og-image.png',
   noIndex = false,
-  additionalSchemas = []
+  additionalSchemas = [],
+  pagePath
 } = Astro.props;
 
 // Map locale codes to HTML lang attributes
@@ -55,6 +58,18 @@ const localeToLang: Record<string, string> = {
   'es': 'es',
   'it': 'it'
 };
+
+// Map locale codes to hreflang values
+const localeToHreflang: Record<string, string> = {
+  'fr': 'fr',
+  'en-GB': 'en-GB',
+  'en-US': 'en-US',
+  'de': 'de',
+  'es': 'es',
+  'it': 'it'
+};
+
+const allLocales = ['fr', 'en-GB', 'en-US', 'de', 'es', 'it'];
 
 const htmlLang = localeToLang[locale] || 'fr';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -91,9 +106,18 @@ const allSchemas = [organizationSchema, ...additionalSchemas];
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@open_hr_work" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+
+    <!-- Hreflang (OPE-698) -->
+    {pagePath && allLocales.map((loc) => (
+      <link rel="alternate" hreflang={localeToHreflang[loc]} href={`https://open-hr.work/${loc}${pagePath === '/' ? '/' : pagePath}`} />
+    ))}
+    {pagePath && (
+      <link rel="alternate" hreflang="x-default" href={`https://open-hr.work/en-GB${pagePath === '/' ? '/' : pagePath}`} />
+    )}
 
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
