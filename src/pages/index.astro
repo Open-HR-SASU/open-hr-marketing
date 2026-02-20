@@ -1,13 +1,19 @@
 ---
 /**
- * Root Index — Language Detector
+ * Root Index — Locale Redirect Fallback
  *
- * Lightweight page that detects the visitor's browser language and redirects
- * to the appropriate locale. Replaces the previous server-side redirect to /fr/.
+ * Locale detection is handled at the Bunny CDN edge layer via Edge Rules
+ * (OPE-726). The edge rules read Accept-Language and issue a 302 redirect
+ * before this HTML is ever served to the browser.
  *
- * Since this is a static site (Bunny CDN), detection must happen client-side.
- * Includes fallbacks for bots (meta refresh) and no-JS browsers (noscript links).
+ * This page exists as an ultimate fallback only — it is served if edge rules
+ * fail or are bypassed (e.g. direct storage access, edge rule misconfiguration).
  *
+ * - meta http-equiv refresh: redirects to /en-GB/ after 0ms (bot/no-JS fallback)
+ * - noscript links: manual locale selection for no-JS browsers
+ * - noindex: prevents this redirect page from being indexed
+ *
+ * @see OPE-726 — Edge-level locale detection
  * @see DL-26 — Global access enabled 2026-02-11
  */
 ---
@@ -29,7 +35,7 @@
     <link rel="alternate" hreflang="it" href="https://open-hr.work/it/" />
     <link rel="alternate" hreflang="x-default" href="https://open-hr.work/en-GB/" />
 
-    <!-- Ultimate fallback for bots and no-JS environments -->
+    <!-- Fallback redirect for when edge rules are bypassed -->
     <meta http-equiv="refresh" content="0;url=/en-GB/" />
 
     <!-- Prevent indexing this redirect page; localized pages are the canonical targets -->
@@ -39,44 +45,6 @@
       /* Hide everything — redirect should feel instant with no flash */
       body { display: none; }
     </style>
-
-    <script is:inline>
-      (function () {
-        var langs = navigator.languages || [navigator.language || 'en'];
-        var dest = '/en-GB/';
-
-        for (var i = 0; i < langs.length; i++) {
-          var lang = langs[i].toLowerCase();
-
-          if (lang === 'en-us') {
-            dest = '/en-US/';
-            break;
-          }
-          if (lang.indexOf('fr') === 0) {
-            dest = '/fr/';
-            break;
-          }
-          if (lang.indexOf('de') === 0) {
-            dest = '/de/';
-            break;
-          }
-          if (lang.indexOf('es') === 0) {
-            dest = '/es/';
-            break;
-          }
-          if (lang.indexOf('it') === 0) {
-            dest = '/it/';
-            break;
-          }
-          if (lang.indexOf('en') === 0) {
-            dest = '/en-GB/';
-            break;
-          }
-        }
-
-        window.location.replace(dest);
-      })();
-    </script>
   </head>
   <body>
     <noscript>
