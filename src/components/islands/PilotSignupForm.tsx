@@ -1,5 +1,5 @@
 /**
- * Pilot Signup Form (React Island)
+ * Pilot Signup Form (React Island) — Pricing Pivot Update
  *
  * Interactive form that POSTs to the platform API for Stripe Checkout.
  * Uses client:load for immediate hydration.
@@ -7,24 +7,35 @@
  * API: POST https://app.open-hr.work/api/pilot/checkout
  * Returns: { checkoutUrl: string } for redirect to Stripe Checkout
  *
+ * Changes (OPE-719, OPE-721):
+ * - Removed devicePreference field (moved to post-payment success page survey)
+ * - Added hidden tier field (founding | standard)
+ * - Added currency derived from locale
+ * - Added founding_cap_reached error handling
+ *
  * CORS: Configured in platform (OPE-369)
  * @see OPE-388 - Pilot Stripe Checkout Integration
  * @see OPE-419 - Form validation and error handling audit
- * @see DL-33 - Pilot Pricing Decision (€5/month grandfathered)
+ * @see OPE-719 - Pricing Pivot
+ * @see OPE-721 - Post-payment device survey
+ * @see DL-34   - Annual pricing model
  */
 
-import { useState, useRef, type FormEvent } from 'react';
+import { useState, useRef, useEffect, type FormEvent } from 'react';
+import { getCurrencyForLocale, type Locale } from '@/lib/pricing';
 
 // Request timeout in milliseconds (15 seconds) - OPE-419
 const REQUEST_TIMEOUT_MS = 15000;
 
 interface PilotSignupFormProps {
-  locale: 'fr' | 'en-GB' | 'en-US' | 'de' | 'es' | 'it';
+  locale: Locale;
   apiUrl?: string;
+  /** Force a specific tier; falls back to URL param ?tier= then "founding" */
+  defaultTier?: 'founding' | 'standard';
 }
 
 // Privacy policy URL paths per locale (OPE-437: GDPR-compliant locale-specific links)
-const privacyPolicyPaths: Record<PilotSignupFormProps['locale'], string> = {
+const privacyPolicyPaths: Record<Locale, string> = {
   fr: '/fr/legal/confidentialite/',
   'en-GB': '/en-GB/legal/privacy/',
   'en-US': '/en-US/legal/privacy/',
@@ -36,28 +47,23 @@ const privacyPolicyPaths: Record<PilotSignupFormProps['locale'], string> = {
 // Localized strings
 const translations = {
   fr: {
-    title: 'Rejoignez le programme pilote',
-    subtitle: 'Soyez parmi les premiers à découvrir Open HR.',
+    title: 'Obtenez votre RefScore',
+    subtitle: 'Rejoignez les premiers membres fondateurs d\'Open HR.',
     firstName: 'Prénom',
     lastName: 'Nom',
     email: 'Email',
     reason: 'Pourquoi souhaitez-vous participer ? (optionnel)',
-    devicePreference: {
-      label: 'Quelle plateforme mobile utilisez-vous ?',
-      ios: 'iOS (iPhone/iPad)',
-      android: 'Android',
-      both: 'Les deux',
-      neither: 'Aucune / Web uniquement',
-    },
-    submit: 'S\'inscrire',
-    submitting: 'Inscription en cours...',
-    success: 'Inscription réussie ! Vous recevrez un email de confirmation.',
-    errorDuplicate: 'Cette adresse email est déjà inscrite.',
-    errorCapacity: 'Le programme pilote a atteint sa capacité. Veuillez rejoindre la liste d\'attente.',
-    errorAlreadyPaid: 'Cette adresse email a déjà complété l\'inscription pilote.',
+    submit: 'Obtenir mon RefScore',
+    submitting: 'Redirection en cours...',
+    success: 'Inscription réussie ! Vous allez être redirigé(e) vers le paiement.',
+    errorDuplicate: 'Cette adresse email a déjà complété l\'inscription.',
+    errorCapacityFounding: 'Les places Membre Fondateur sont complètes. Vous pouvez rejoindre en tant que membre Standard.',
+    errorCapacity: 'Le programme a atteint sa capacité. Veuillez rejoindre la liste d\'attente.',
+    errorAlreadyPaid: 'Cette adresse email a déjà complété l\'inscription.',
     errorGeneric: 'Une erreur est survenue. Veuillez réessayer.',
     errorNetwork: 'Erreur de connexion. Vérifiez votre connexion internet.',
     errorTimeout: 'La requête a expiré. Veuillez réessayer.',
+    switchToStandard: 'Continuer en Standard →',
     gdprConsent: 'J\'accepte que mes données soient traitées conformément à la',
     gdprConsentLink: 'politique de confidentialité',
     validation: {
@@ -69,28 +75,23 @@ const translations = {
     },
   },
   'en-GB': {
-    title: 'Join the Pilot Programme',
-    subtitle: 'Be among the first to discover Open HR.',
+    title: 'Get Your RefScore',
+    subtitle: 'Join the first Founding Members of Open HR.',
     firstName: 'First Name',
     lastName: 'Last Name',
     email: 'Email',
     reason: 'Why do you want to participate? (optional)',
-    devicePreference: {
-      label: 'Which mobile platform do you use?',
-      ios: 'iOS (iPhone/iPad)',
-      android: 'Android',
-      both: 'Both',
-      neither: 'Neither / Web only',
-    },
-    submit: 'Sign Up',
-    submitting: 'Signing up...',
-    success: 'Sign up successful! You will receive a confirmation email.',
-    errorDuplicate: 'This email address is already registered.',
-    errorCapacity: 'The pilot programme has reached capacity. Please join the waitlist.',
-    errorAlreadyPaid: 'This email address has already completed pilot registration.',
+    submit: 'Get My RefScore',
+    submitting: 'Redirecting...',
+    success: 'Sign up successful! Redirecting to payment.',
+    errorDuplicate: 'This email address has already completed registration.',
+    errorCapacityFounding: 'Founding Member spots are full. You can join as a Standard member.',
+    errorCapacity: 'The programme has reached capacity. Please join the waitlist.',
+    errorAlreadyPaid: 'This email address has already completed registration.',
     errorGeneric: 'An error occurred. Please try again.',
     errorNetwork: 'Connection error. Check your internet connection.',
     errorTimeout: 'The request timed out. Please try again.',
+    switchToStandard: 'Continue as Standard →',
     gdprConsent: 'I agree that my data will be processed in accordance with the',
     gdprConsentLink: 'privacy policy',
     validation: {
@@ -102,28 +103,23 @@ const translations = {
     },
   },
   'en-US': {
-    title: 'Join the Pilot Program',
-    subtitle: 'Be among the first to discover Open HR.',
+    title: 'Get Your RefScore',
+    subtitle: 'Join the first Founding Members of Open HR.',
     firstName: 'First Name',
     lastName: 'Last Name',
     email: 'Email',
     reason: 'Why do you want to participate? (optional)',
-    devicePreference: {
-      label: 'Which mobile platform do you use?',
-      ios: 'iOS (iPhone/iPad)',
-      android: 'Android',
-      both: 'Both',
-      neither: 'Neither / Web only',
-    },
-    submit: 'Sign Up',
-    submitting: 'Signing up...',
-    success: 'Sign up successful! You will receive a confirmation email.',
-    errorDuplicate: 'This email address is already registered.',
-    errorCapacity: 'The pilot program has reached capacity. Please join the waitlist.',
-    errorAlreadyPaid: 'This email address has already completed pilot registration.',
+    submit: 'Get My RefScore',
+    submitting: 'Redirecting...',
+    success: 'Sign up successful! Redirecting to payment.',
+    errorDuplicate: 'This email address has already completed registration.',
+    errorCapacityFounding: 'Founding Member spots are full. You can join as a Standard member.',
+    errorCapacity: 'The program has reached capacity. Please join the waitlist.',
+    errorAlreadyPaid: 'This email address has already completed registration.',
     errorGeneric: 'An error occurred. Please try again.',
     errorNetwork: 'Connection error. Check your internet connection.',
     errorTimeout: 'The request timed out. Please try again.',
+    switchToStandard: 'Continue as Standard →',
     gdprConsent: 'I agree that my data will be processed in accordance with the',
     gdprConsentLink: 'privacy policy',
     validation: {
@@ -135,28 +131,23 @@ const translations = {
     },
   },
   de: {
-    title: 'Am Pilotprogramm teilnehmen',
-    subtitle: 'Gehören Sie zu den Ersten, die Open HR entdecken.',
+    title: 'Holen Sie sich Ihren RefScore',
+    subtitle: 'Werden Sie eines der ersten Gründungsmitglieder von Open HR.',
     firstName: 'Vorname',
     lastName: 'Nachname',
     email: 'E-Mail',
     reason: 'Warum möchten Sie teilnehmen? (optional)',
-    devicePreference: {
-      label: 'Welche mobile Plattform nutzen Sie?',
-      ios: 'iOS (iPhone/iPad)',
-      android: 'Android',
-      both: 'Beide',
-      neither: 'Keine / Nur Web',
-    },
-    submit: 'Anmelden',
-    submitting: 'Anmeldung...',
-    success: 'Anmeldung erfolgreich! Sie erhalten eine Bestätigungs-E-Mail.',
-    errorDuplicate: 'Diese E-Mail-Adresse ist bereits registriert.',
-    errorCapacity: 'Das Pilotprogramm hat seine Kapazität erreicht. Bitte treten Sie der Warteliste bei.',
-    errorAlreadyPaid: 'Diese E-Mail-Adresse hat die Pilotregistrierung bereits abgeschlossen.',
+    submit: 'Meinen RefScore holen',
+    submitting: 'Weiterleitung...',
+    success: 'Anmeldung erfolgreich! Weiterleitung zur Zahlung.',
+    errorDuplicate: 'Diese E-Mail-Adresse hat die Registrierung bereits abgeschlossen.',
+    errorCapacityFounding: 'Alle Gründungsplätze sind vergeben. Sie können als Standard-Mitglied beitreten.',
+    errorCapacity: 'Das Programm hat seine Kapazität erreicht. Bitte treten Sie der Warteliste bei.',
+    errorAlreadyPaid: 'Diese E-Mail-Adresse hat die Registrierung bereits abgeschlossen.',
     errorGeneric: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
     errorNetwork: 'Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung.',
     errorTimeout: 'Die Anfrage ist abgelaufen. Bitte versuchen Sie es erneut.',
+    switchToStandard: 'Als Standard fortfahren →',
     gdprConsent: 'Ich stimme zu, dass meine Daten gemäß der',
     gdprConsentLink: 'Datenschutzerklärung',
     gdprConsentSuffix: 'verarbeitet werden',
@@ -169,28 +160,23 @@ const translations = {
     },
   },
   es: {
-    title: 'Únete al programa piloto',
-    subtitle: 'Sé de los primeros en descubrir Open HR.',
+    title: 'Obtén tu RefScore',
+    subtitle: 'Sé uno de los primeros Miembros Fundadores de Open HR.',
     firstName: 'Nombre',
     lastName: 'Apellido',
     email: 'Correo electrónico',
     reason: '¿Por qué quieres participar? (opcional)',
-    devicePreference: {
-      label: '¿Qué plataforma móvil usas?',
-      ios: 'iOS (iPhone/iPad)',
-      android: 'Android',
-      both: 'Ambas',
-      neither: 'Ninguna / Solo web',
-    },
-    submit: 'Inscribirse',
-    submitting: 'Inscribiendo...',
-    success: '¡Inscripción exitosa! Recibirás un correo de confirmación.',
-    errorDuplicate: 'Esta dirección de correo ya está registrada.',
-    errorCapacity: 'El programa piloto ha alcanzado su capacidad. Por favor, únete a la lista de espera.',
-    errorAlreadyPaid: 'Esta dirección de correo ya ha completado el registro piloto.',
+    submit: 'Obtener mi RefScore',
+    submitting: 'Redirigiendo...',
+    success: '¡Inscripción exitosa! Redirigiendo al pago.',
+    errorDuplicate: 'Esta dirección de correo ya ha completado el registro.',
+    errorCapacityFounding: 'Las plazas de Miembro Fundador están completas. Puedes unirte como miembro Standard.',
+    errorCapacity: 'El programa ha alcanzado su capacidad. Por favor, únete a la lista de espera.',
+    errorAlreadyPaid: 'Esta dirección de correo ya ha completado el registro.',
     errorGeneric: 'Ocurrió un error. Por favor, inténtalo de nuevo.',
     errorNetwork: 'Error de conexión. Verifica tu conexión a internet.',
     errorTimeout: 'La solicitud ha expirado. Por favor, inténtalo de nuevo.',
+    switchToStandard: 'Continuar como Standard →',
     gdprConsent: 'Acepto que mis datos sean tratados de acuerdo con la',
     gdprConsentLink: 'política de privacidad',
     validation: {
@@ -202,28 +188,23 @@ const translations = {
     },
   },
   it: {
-    title: 'Unisciti al programma pilota',
-    subtitle: 'Sii tra i primi a scoprire Open HR.',
+    title: 'Ottieni il tuo RefScore',
+    subtitle: 'Unisciti ai primi Membri Fondatori di Open HR.',
     firstName: 'Nome',
     lastName: 'Cognome',
     email: 'Email',
     reason: 'Perché vuoi partecipare? (opzionale)',
-    devicePreference: {
-      label: 'Quale piattaforma mobile usi?',
-      ios: 'iOS (iPhone/iPad)',
-      android: 'Android',
-      both: 'Entrambe',
-      neither: 'Nessuna / Solo web',
-    },
-    submit: 'Iscriviti',
-    submitting: 'Iscrizione in corso...',
-    success: 'Iscrizione riuscita! Riceverai un\'email di conferma.',
-    errorDuplicate: 'Questo indirizzo email è già registrato.',
-    errorCapacity: 'Il programma pilota ha raggiunto la capacità. Per favore unisciti alla lista d\'attesa.',
-    errorAlreadyPaid: 'Questo indirizzo email ha già completato la registrazione pilota.',
+    submit: 'Ottieni il mio RefScore',
+    submitting: 'Reindirizzamento...',
+    success: 'Iscrizione riuscita! Reindirizzamento al pagamento.',
+    errorDuplicate: 'Questo indirizzo email ha già completato la registrazione.',
+    errorCapacityFounding: 'I posti fondatori sono esauriti. Puoi iscriverti come membro Standard.',
+    errorCapacity: 'Il programma ha raggiunto la capacità. Per favore unisciti alla lista d\'attesa.',
+    errorAlreadyPaid: 'Questo indirizzo email ha già completato la registrazione.',
     errorGeneric: 'Si è verificato un errore. Per favore riprova.',
     errorNetwork: 'Errore di connessione. Verifica la tua connessione internet.',
     errorTimeout: 'La richiesta è scaduta. Per favore riprova.',
+    switchToStandard: 'Continua come Standard →',
     gdprConsent: 'Accetto che i miei dati siano trattati in conformità con la',
     gdprConsentLink: 'informativa sulla privacy',
     validation: {
@@ -236,13 +217,11 @@ const translations = {
   },
 };
 
-// Device preference options type
-type DevicePreferenceValue = 'ios' | 'android' | 'both' | 'neither' | '';
-
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
-export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
+export function PilotSignupForm({ locale, apiUrl, defaultTier }: PilotSignupFormProps) {
   const t = translations[locale] || translations['en-US'];
+  const currency = getCurrencyForLocale(locale);
 
   // Refs for focus management (accessibility) - OPE-419
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -252,12 +231,29 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
 
   const [formState, setFormState] = useState<FormState>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [showSwitchToStandard, setShowSwitchToStandard] = useState(false);
+
+  // Tier: URL param → prop → default "founding"
+  const [tier, setTier] = useState<'founding' | 'standard'>(() => {
+    if (defaultTier) return defaultTier;
+    return 'founding';
+  });
+
+  // Read ?tier= URL param on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlTier = new URLSearchParams(window.location.search).get('tier');
+      if (urlTier === 'standard') {
+        setTier('standard');
+      }
+    }
+  }, []);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     reason: '',
-    devicePreference: '' as DevicePreferenceValue,
     gdprConsent: false,
   });
   const [fieldErrors, setFieldErrors] = useState<{
@@ -267,7 +263,7 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
     gdprConsent?: string;
   }>({});
 
-  // Determine API URL - uses checkout endpoint for Stripe payment flow (OPE-388)
+  // Determine API URL — uses checkout endpoint for Stripe payment flow (OPE-388)
   const api = apiUrl || (
     typeof window !== 'undefined' && window.location.hostname === 'localhost'
       ? 'http://localhost:3000/api/pilot/checkout'
@@ -282,20 +278,14 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
   const validateForm = (): boolean => {
     const errors: typeof fieldErrors = {};
 
-    if (!formData.firstName.trim()) {
-      errors.firstName = t.validation.firstNameRequired;
-    }
-    if (!formData.lastName.trim()) {
-      errors.lastName = t.validation.lastNameRequired;
-    }
+    if (!formData.firstName.trim()) errors.firstName = t.validation.firstNameRequired;
+    if (!formData.lastName.trim()) errors.lastName = t.validation.lastNameRequired;
     if (!formData.email.trim()) {
       errors.email = t.validation.emailRequired;
     } else if (!isValidEmail(formData.email)) {
       errors.email = t.validation.emailInvalid;
     }
-    if (!formData.gdprConsent) {
-      errors.gdprConsent = t.validation.gdprRequired;
-    }
+    if (!formData.gdprConsent) errors.gdprConsent = t.validation.gdprRequired;
 
     setFieldErrors(errors);
 
@@ -316,39 +306,31 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
       }
       return false;
     }
-
     return true;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+    setShowSwitchToStandard(false);
 
-    // Prevent double submission (OPE-419)
-    if (formState === 'submitting') {
-      return;
-    }
-
-    // Validate before submitting
-    if (!validateForm()) {
-      return;
-    }
+    if (formState === 'submitting') return;
+    if (!validateForm()) return;
 
     setFormState('submitting');
 
-    // Set up request timeout with AbortController (OPE-419)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
       const response = await fetch(api, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           locale,
+          tier,
+          currency,
           source: typeof window !== 'undefined'
             ? new URLSearchParams(window.location.search).get('utm_source') || 'organic'
             : 'organic',
@@ -361,21 +343,22 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
       if (response.ok) {
         const data = await response.json().catch(() => ({}));
 
-        // If API returns a checkout URL, redirect to Stripe Checkout
-        // This enables future payment integration (OPE-388)
+        // Redirect to Stripe Checkout
         if (data.checkoutUrl) {
           window.location.href = data.checkoutUrl;
           return;
         }
 
         setFormState('success');
-        // Reset form
-        setFormData({ firstName: '', lastName: '', email: '', reason: '', devicePreference: '', gdprConsent: false });
+        setFormData({ firstName: '', lastName: '', email: '', reason: '', gdprConsent: false });
       } else if (response.status === 409) {
-        // Handle specific 409 errors
         const data = await response.json().catch(() => ({}));
         setFormState('error');
-        if (data.error === 'capacity_reached') {
+
+        if (data.error === 'founding_cap_reached') {
+          setErrorMessage(t.errorCapacityFounding);
+          setShowSwitchToStandard(true);
+        } else if (data.error === 'capacity_reached') {
           setErrorMessage(t.errorCapacity);
         } else if (data.error === 'already_paid') {
           setErrorMessage(t.errorAlreadyPaid);
@@ -391,7 +374,6 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
       clearTimeout(timeoutId);
       setFormState('error');
 
-      // Check if error was caused by timeout (abort) - OPE-419
       if (error instanceof Error && error.name === 'AbortError') {
         setErrorMessage(t.errorTimeout);
       } else {
@@ -404,7 +386,6 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
     const { name, value, type } = e.target;
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
     setFormData((prev) => ({ ...prev, [name]: newValue }));
-    // Clear field error when user starts typing or checks
     if (fieldErrors[name as keyof typeof fieldErrors]) {
       setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -429,10 +410,25 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
         <p className="mt-2 text-gray-600">{t.subtitle}</p>
       </div>
 
-      {/* Error message - OPE-419: Added role="alert" for screen readers */}
+      {/* Error message */}
       {formState === 'error' && errorMessage && (
         <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="assertive">
           <p className="text-sm text-red-700">{errorMessage}</p>
+          {/* Offer switch to standard if founding is full */}
+          {showSwitchToStandard && (
+            <button
+              type="button"
+              onClick={() => {
+                setTier('standard');
+                setFormState('idle');
+                setErrorMessage('');
+                setShowSwitchToStandard(false);
+              }}
+              className="mt-2 text-sm font-medium text-openhr-teal-700 underline hover:text-openhr-teal-900"
+            >
+              {t.switchToStandard}
+            </button>
+          )}
         </div>
       )}
 
@@ -544,40 +540,6 @@ export function PilotSignupForm({ locale, apiUrl }: PilotSignupFormProps) {
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-openhr-teal-500 focus:outline-none focus:ring-1 focus:ring-openhr-teal-500 disabled:bg-gray-100"
         />
       </div>
-
-      {/* Device Preference (DL-42) */}
-      <fieldset className="space-y-3">
-        <legend id="devicePreference-label" className="block text-sm font-medium text-gray-700">
-          {t.devicePreference.label}
-        </legend>
-        <div
-          role="radiogroup"
-          aria-labelledby="devicePreference-label"
-          className="mt-2 space-y-2"
-        >
-          {(['ios', 'android', 'both', 'neither'] as const).map((option) => (
-            <label
-              key={option}
-              className={`flex cursor-pointer items-center gap-3 rounded-md border px-4 py-3 transition-colors ${
-                formData.devicePreference === option
-                  ? 'border-openhr-teal-500 bg-openhr-teal-50'
-                  : 'border-gray-300 hover:border-gray-400'
-              } ${formState === 'submitting' ? 'cursor-not-allowed opacity-60' : ''}`}
-            >
-              <input
-                type="radio"
-                name="devicePreference"
-                value={option}
-                checked={formData.devicePreference === option}
-                onChange={handleChange}
-                disabled={formState === 'submitting'}
-                className="h-4 w-4 border-gray-300 text-openhr-teal-900 focus:ring-2 focus:ring-openhr-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed"
-              />
-              <span className="text-sm text-gray-700">{t.devicePreference[option]}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
 
       {/* GDPR Consent */}
       <div>

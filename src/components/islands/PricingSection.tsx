@@ -1,342 +1,440 @@
 /**
- * Pricing Section (React Island)
+ * Pricing Section (React Island) — Annual Flat-Fee Model
  *
- * Interactive pricing display with monthly/annual toggle.
- * Uses client:load for immediate hydration.
+ * Founding Member + Standard two-card display.
+ * Live slot counter fetched from /api/founding/slots-remaining.
  *
- * Pricing data imported from shared src/lib/pricing.ts (single source of truth).
+ * CTA language LOCKED: "Get Your RefScore" / "Claim Your Profile" — NOT "Subscribe"
+ *
+ * @see OPE-719 - Pricing Pivot
+ * @see OPE-722 - Founding Member atomic counter
+ * @see DL-34   - Annual pricing model
+ * @see DL-35   - Psychological rounding multi-currency
  */
 
-import { useState } from 'react';
-import { PRICING, PRICING_US, formatPrice, type Locale } from '@/lib/pricing';
+import { useState, useEffect } from 'react';
+import { TIERS, formatAnnualPrice, getCurrencyForLocale, getAnnualLabel, type Locale } from '@/lib/pricing';
 
 interface PricingSectionProps {
   locale: Locale;
 }
 
-// Localized content
+interface SlotsData {
+  remaining: number;
+  isFull: boolean;
+}
+
 const content: Record<Locale, {
-  toggle: { monthly: string; annual: string; discount: string };
-  tiers: {
-    refscore: { name: string; description: string; features: string[]; cta: string };
-    verifie: { name: string; description: string; features: string[]; cta: string };
+  founding: {
+    badge: ((n: number) => string) | string;
+    badgeFull: string;
+    description: string;
+    features: string[];
+    cta: string;
+    ctaFull: string;
+    monthlyEquiv: string;
+    anchor: string;
   };
-  perMonth: string;
-  billedAnnually: string;
+  standard: {
+    badge: string;
+    description: string;
+    features: string[];
+    cta: string;
+    monthlyEquiv: string;
+    anchor: string;
+  };
+  perYear: string;
   renewalDisclosure: string;
   cancelInfo: string;
+  capDisclosure: string;
 }> = {
   fr: {
-    toggle: { monthly: 'Mensuel', annual: 'Annuel', discount: '-20%' },
-    tiers: {
-      refscore: {
-        name: 'RefScore',
-        description: 'Pour les individus qui construisent leur carrière.',
-        features: [
-          'Jusqu\'à 6 références vérifiées',
-          'Vérification du parcours professionnel',
-          'Lien de profil partageable',
-          'Support par email',
-        ],
-        cta: 'Commencer gratuitement',
-      },
-      verifie: {
-        name: 'Verifie',
-        description: 'Pour les professionnels qui construisent une réputation à long terme.',
-        features: [
-          'Références vérifiées illimitées',
-          'Profil détaillé de vos compétences',
-          'Vérification prioritaire (24h)',
-          'Support prioritaire',
-          'Rapports avancés',
-        ],
-        cta: 'Obtenir Verifie',
-      },
+    founding: {
+      badge: (n: number) => `${n} places fondateurs restantes`,
+      badgeFull: 'Places fondateurs épuisées',
+      description: 'Accès à vie au tarif fondateur. Votre RefScore, pour toujours.',
+      features: [
+        'Accès au RefScore annuel',
+        'Références vérifiées illimitées',
+        'Profil professionnel partageable',
+        'Tarif fondateur garanti à vie',
+        'Support prioritaire',
+      ],
+      cta: 'Obtenir mon RefScore',
+      ctaFull: 'Rejoindre en Standard',
+      monthlyEquiv: 'Moins d\'€1/mois',
+      anchor: 'Réservé aux 100 premiers membres.',
     },
-    perMonth: '/mois',
-    billedAnnually: 'Facturé annuellement',
-    renewalDisclosure: 'Les abonnements se renouvellent automatiquement à la fin de chaque période de facturation (mensuelle ou annuelle) au tarif en vigueur, sauf annulation préalable.',
-    cancelInfo: 'Vous pouvez annuler à tout moment depuis votre espace personnel. L\'annulation prend effet à la fin de la période de facturation en cours.',
+    standard: {
+      badge: 'Standard',
+      description: 'Le tarif après les places fondateurs. Rejoignez à tout moment.',
+      features: [
+        'Accès au RefScore annuel',
+        'Références vérifiées illimitées',
+        'Profil professionnel partageable',
+        'Support par email',
+      ],
+      cta: 'Obtenir mon RefScore',
+      monthlyEquiv: '~€2/mois',
+      anchor: 'Accès illimité.',
+    },
+    perYear: '/an',
+    renewalDisclosure: 'Votre abonnement se renouvelle automatiquement chaque année au même tarif. Annulation possible à tout moment depuis votre espace personnel. L\'annulation prend effet à la fin de la période en cours.',
+    cancelInfo: 'Conformément à la Directive 2011/83/UE, en finalisant votre paiement pour un service numérique, vous reconnaissez expressément renoncer à votre droit de rétractation de 14 jours.',
+    capDisclosure: 'Limité aux 100 premiers membres fondateurs. Plafond appliqué à la commande.',
   },
   'en-GB': {
-    toggle: { monthly: 'Monthly', annual: 'Annual', discount: 'Save 20%' },
-    tiers: {
-      refscore: {
-        name: 'RefScore',
-        description: 'For individuals building their career.',
-        features: [
-          'Up to 6 verified references',
-          'Work history verification',
-          'Shareable profile link',
-          'Email support',
-        ],
-        cta: 'Start Free',
-      },
-      verifie: {
-        name: 'Verifie',
-        description: 'For professionals building a career-long reputation.',
-        features: [
-          'Unlimited verified references',
-          'Detailed skills profile',
-          'Priority verification (24h)',
-          'Priority support',
-          'Advanced reporting',
-        ],
-        cta: 'Get Verifie',
-      },
+    founding: {
+      badge: (n: number) => `${n} founding spots remaining`,
+      badgeFull: 'Founding spots filled',
+      description: 'Lifetime access at the founding rate. Your RefScore, forever.',
+      features: [
+        'Annual RefScore access',
+        'Unlimited verified references',
+        'Shareable professional profile',
+        'Founding rate locked for life',
+        'Priority support',
+      ],
+      cta: 'Get Your RefScore',
+      ctaFull: 'Join as Standard',
+      monthlyEquiv: 'Less than £1/month',
+      anchor: 'Reserved for the first 100 members.',
     },
-    perMonth: '/month',
-    billedAnnually: 'Billed annually',
-    renewalDisclosure: 'Subscriptions automatically renew at the end of each billing period (monthly or annual) at the then-current rate, unless cancelled in advance.',
-    cancelInfo: 'You may cancel at any time from your account settings. Cancellation takes effect at the end of the current billing period.',
+    standard: {
+      badge: 'Standard',
+      description: 'The rate after founding spots are gone. Join any time.',
+      features: [
+        'Annual RefScore access',
+        'Unlimited verified references',
+        'Shareable professional profile',
+        'Email support',
+      ],
+      cta: 'Get Your RefScore',
+      monthlyEquiv: '~£1.67/month',
+      anchor: 'Unlimited access.',
+    },
+    perYear: '/year',
+    renewalDisclosure: 'Your membership renews automatically each year at the same rate. Cancel any time from your account. Cancellation takes effect at the end of the current period.',
+    cancelInfo: 'Under Consumer Rights Directive 2011/83/EU, by completing payment for a digital service, you expressly acknowledge waiving your 14-day right of withdrawal.',
+    capDisclosure: 'Limited to the first 100 founding members. Cap enforced at checkout.',
   },
   'en-US': {
-    toggle: { monthly: 'Monthly', annual: 'Annual', discount: 'Save 20%' },
-    tiers: {
-      refscore: {
-        name: 'RefScore',
-        description: 'For individuals building their career.',
-        features: [
-          'Up to 6 verified references',
-          'Work history verification',
-          'Shareable profile link',
-          'Email support',
-        ],
-        cta: 'Start Free',
-      },
-      verifie: {
-        name: 'Verifie',
-        description: 'For professionals building a career-long reputation.',
-        features: [
-          'Unlimited verified references',
-          'Detailed skills profile',
-          'Priority verification (24h)',
-          'Priority support',
-          'Advanced reporting',
-        ],
-        cta: 'Get Verifie',
-      },
+    founding: {
+      badge: (n: number) => `${n} founding spots remaining`,
+      badgeFull: 'Founding spots filled',
+      description: 'Lifetime access at the founding rate. Your RefScore, forever.',
+      features: [
+        'Annual RefScore access',
+        'Unlimited verified references',
+        'Shareable professional profile',
+        'Founding rate locked for life',
+        'Priority support',
+      ],
+      cta: 'Get Your RefScore',
+      ctaFull: 'Join as Standard',
+      monthlyEquiv: 'Less than $1/month',
+      anchor: 'Reserved for the first 100 members.',
     },
-    perMonth: '/month',
-    billedAnnually: 'Billed annually',
-    renewalDisclosure: 'Subscriptions automatically renew at the end of each billing period (monthly or annual) at the then-current rate, unless cancelled in advance.',
-    cancelInfo: 'You may cancel at any time from your account settings. Cancellation takes effect at the end of the current billing period.',
+    standard: {
+      badge: 'Standard',
+      description: 'The rate after founding spots are gone. Join any time.',
+      features: [
+        'Annual RefScore access',
+        'Unlimited verified references',
+        'Shareable professional profile',
+        'Email support',
+      ],
+      cta: 'Get Your RefScore',
+      monthlyEquiv: '~$2/month',
+      anchor: 'Unlimited access.',
+    },
+    perYear: '/year',
+    renewalDisclosure: 'Your membership renews automatically each year at the same rate. Cancel any time from your account. Cancellation takes effect at the end of the current period.',
+    cancelInfo: '',
+    capDisclosure: 'Limited to the first 100 founding members. Cap enforced at checkout.',
   },
   de: {
-    toggle: { monthly: 'Monatlich', annual: 'Jährlich', discount: '-20%' },
-    tiers: {
-      refscore: {
-        name: 'RefScore',
-        description: 'Für Einzelpersonen, die ihre Karriere aufbauen.',
-        features: [
-          'Bis zu 6 verifizierte Referenzen',
-          'Überprüfung des Berufswegs',
-          'Teilbarer Profillink',
-          'E-Mail-Support',
-        ],
-        cta: 'Kostenlos starten',
-      },
-      verifie: {
-        name: 'Verifie',
-        description: 'Für Fachleute, die eine langfristige Reputation aufbauen.',
-        features: [
-          'Unbegrenzte verifizierte Referenzen',
-          'Detailliertes Kompetenzprofil',
-          'Prioritäts-Verifizierung (24h)',
-          'Prioritäts-Support',
-          'Erweiterte Berichte',
-        ],
-        cta: 'Verifie erhalten',
-      },
+    founding: {
+      badge: (n: number) => `Noch ${n} Gründungsplätze verfügbar`,
+      badgeFull: 'Gründungsplätze vergeben',
+      description: 'Lebenslanger Zugang zum Gründungstarif. Ihr RefScore, für immer.',
+      features: [
+        'Jährlicher RefScore-Zugang',
+        'Unbegrenzte verifizierte Referenzen',
+        'Teilbares Berufsprofil',
+        'Gründungstarif dauerhaft gesichert',
+        'Prioritäts-Support',
+      ],
+      cta: 'RefScore holen',
+      ctaFull: 'Als Standard beitreten',
+      monthlyEquiv: 'Weniger als €1/Monat',
+      anchor: 'Reserviert für die ersten 100 Mitglieder.',
     },
-    perMonth: '/Monat',
-    billedAnnually: 'Jährlich abgerechnet',
-    renewalDisclosure: 'Abonnements verlängern sich automatisch am Ende jedes Abrechnungszeitraums (monatlich oder jährlich) zum jeweils gültigen Tarif, sofern nicht vorher gekündigt wird.',
-    cancelInfo: 'Sie können jederzeit über Ihre Kontoeinstellungen kündigen. Die Kündigung wird zum Ende des laufenden Abrechnungszeitraums wirksam.',
+    standard: {
+      badge: 'Standard',
+      description: 'Der Tarif nach den Gründungsplätzen. Jederzeit beitreten.',
+      features: [
+        'Jährlicher RefScore-Zugang',
+        'Unbegrenzte verifizierte Referenzen',
+        'Teilbares Berufsprofil',
+        'E-Mail-Support',
+      ],
+      cta: 'RefScore holen',
+      monthlyEquiv: '~€2/Monat',
+      anchor: 'Unbegrenzter Zugang.',
+    },
+    perYear: '/Jahr',
+    renewalDisclosure: 'Ihre Mitgliedschaft verlängert sich automatisch jährlich zum gleichen Preis. Jederzeit kündbar über Ihr Konto. Die Kündigung wird zum Ende der laufenden Periode wirksam.',
+    cancelInfo: 'Gemäß Verbraucherrechte-Richtlinie 2011/83/EU bestätigen Sie mit Abschluss der Zahlung für einen digitalen Dienst ausdrücklich den Verzicht auf Ihr 14-tägiges Widerrufsrecht.',
+    capDisclosure: 'Begrenzt auf die ersten 100 Gründungsmitglieder. Limit wird beim Bezahlvorgang durchgesetzt.',
   },
   es: {
-    toggle: { monthly: 'Mensual', annual: 'Anual', discount: '-20%' },
-    tiers: {
-      refscore: {
-        name: 'RefScore',
-        description: 'Para quienes construyen su carrera.',
-        features: [
-          'Hasta 6 referencias verificadas',
-          'Verificación del historial laboral',
-          'Enlace de perfil compartible',
-          'Soporte por email',
-        ],
-        cta: 'Empezar gratis',
-      },
-      verifie: {
-        name: 'Verifie',
-        description: 'Para profesionales que construyen una reputación a largo plazo.',
-        features: [
-          'Referencias verificadas ilimitadas',
-          'Perfil detallado de habilidades',
-          'Verificación prioritaria (24h)',
-          'Soporte prioritario',
-          'Informes avanzados',
-        ],
-        cta: 'Obtener Verifie',
-      },
+    founding: {
+      badge: (n: number) => `${n} plazas fundadoras restantes`,
+      badgeFull: 'Plazas fundadoras agotadas',
+      description: 'Acceso de por vida al precio fundador. Tu RefScore, para siempre.',
+      features: [
+        'Acceso anual al RefScore',
+        'Referencias verificadas ilimitadas',
+        'Perfil profesional compartible',
+        'Precio fundador garantizado de por vida',
+        'Soporte prioritario',
+      ],
+      cta: 'Obtener mi RefScore',
+      ctaFull: 'Unirse como Standard',
+      monthlyEquiv: 'Menos de €1/mes',
+      anchor: 'Reservado para los primeros 100 miembros.',
     },
-    perMonth: '/mes',
-    billedAnnually: 'Facturado anualmente',
-    renewalDisclosure: 'Las suscripciones se renuevan automáticamente al final de cada período de facturación (mensual o anual) a la tarifa vigente, salvo cancelación previa.',
-    cancelInfo: 'Puede cancelar en cualquier momento desde la configuración de su cuenta. La cancelación se hace efectiva al final del período de facturación en curso.',
+    standard: {
+      badge: 'Estándar',
+      description: 'El precio después de las plazas fundadoras. Únete cuando quieras.',
+      features: [
+        'Acceso anual al RefScore',
+        'Referencias verificadas ilimitadas',
+        'Perfil profesional compartible',
+        'Soporte por email',
+      ],
+      cta: 'Obtener mi RefScore',
+      monthlyEquiv: '~€2/mes',
+      anchor: 'Acceso ilimitado.',
+    },
+    perYear: '/año',
+    renewalDisclosure: 'Tu membresía se renueva automáticamente cada año al mismo precio. Cancela cuando quieras desde tu cuenta. La cancelación se hace efectiva al final del período en curso.',
+    cancelInfo: 'Conforme a la Directiva de Derechos de los Consumidores 2011/83/UE, al completar el pago por un servicio digital, reconoces expresamente renunciar a tu derecho de desistimiento de 14 días.',
+    capDisclosure: 'Limitado a los primeros 100 miembros fundadores. Límite aplicado en el momento del pago.',
   },
   it: {
-    toggle: { monthly: 'Mensile', annual: 'Annuale', discount: '-20%' },
-    tiers: {
-      refscore: {
-        name: 'RefScore',
-        description: 'Per chi costruisce la propria carriera.',
-        features: [
-          'Fino a 6 referenze verificate',
-          'Verifica della storia lavorativa',
-          'Link profilo condivisibile',
-          'Supporto via email',
-        ],
-        cta: 'Inizia gratis',
-      },
-      verifie: {
-        name: 'Verifie',
-        description: 'Per professionisti che costruiscono una reputazione a lungo termine.',
-        features: [
-          'Referenze verificate illimitate',
-          'Profilo dettagliato delle competenze',
-          'Verifica prioritaria (24h)',
-          'Supporto prioritario',
-          'Report avanzati',
-        ],
-        cta: 'Ottieni Verifie',
-      },
+    founding: {
+      badge: (n: number) => `${n} posti fondatori rimasti`,
+      badgeFull: 'Posti fondatori esauriti',
+      description: 'Accesso a vita alla tariffa fondatrice. Il tuo RefScore, per sempre.',
+      features: [
+        'Accesso annuale al RefScore',
+        'Referenze verificate illimitate',
+        'Profilo professionale condivisibile',
+        'Tariffa fondatrice garantita a vita',
+        'Supporto prioritario',
+      ],
+      cta: 'Ottieni il mio RefScore',
+      ctaFull: 'Iscriviti come Standard',
+      monthlyEquiv: 'Meno di €1/mese',
+      anchor: 'Riservato ai primi 100 membri.',
     },
-    perMonth: '/mese',
-    billedAnnually: 'Fatturato annualmente',
-    renewalDisclosure: 'Gli abbonamenti si rinnovano automaticamente alla fine di ogni periodo di fatturazione (mensile o annuale) alla tariffa in vigore, salvo disdetta preventiva.',
-    cancelInfo: 'È possibile annullare in qualsiasi momento dalle impostazioni del proprio account. L\'annullamento ha effetto alla fine del periodo di fatturazione in corso.',
+    standard: {
+      badge: 'Standard',
+      description: 'La tariffa dopo i posti fondatori. Iscriviti quando vuoi.',
+      features: [
+        'Accesso annuale al RefScore',
+        'Referenze verificate illimitate',
+        'Profilo professionale condivisibile',
+        'Supporto via email',
+      ],
+      cta: 'Ottieni il mio RefScore',
+      monthlyEquiv: '~€2/mese',
+      anchor: 'Accesso illimitato.',
+    },
+    perYear: '/anno',
+    renewalDisclosure: 'La tua iscrizione si rinnova automaticamente ogni anno allo stesso prezzo. Annulla quando vuoi dal tuo account. La cancellazione ha effetto alla fine del periodo in corso.',
+    cancelInfo: 'Ai sensi della Direttiva sui diritti dei consumatori 2011/83/UE, completando il pagamento per un servizio digitale, riconosci espressamente di rinunciare al diritto di recesso di 14 giorni.',
+    capDisclosure: 'Limitato ai primi 100 membri fondatori. Limite applicato al momento dell\'acquisto.',
   },
 };
 
-export function PricingSection({ locale }: PricingSectionProps) {
-  const [isAnnual, setIsAnnual] = useState(false);
-  const t = content[locale] || content['en-US'];
-  const prices = locale === 'en-US' ? PRICING_US : PRICING;
+// Helper to render the scarcity badge text
+function getBadgeText(
+  badge: ((n: number) => string) | string,
+  badgeFull: string,
+  n: number,
+  isFull: boolean,
+): string {
+  if (isFull) return badgeFull;
+  if (typeof badge === 'function') return badge(n);
+  return badge;
+}
 
-  const refscorePrice = isAnnual ? prices.refscore.annualMonthly : prices.refscore.monthly;
-  const verifiePrice = isAnnual ? prices.verifie.annualMonthly : prices.verifie.monthly;
+export function PricingSection({ locale }: PricingSectionProps) {
+  const t = content[locale] || content['en-US'];
+  const currency = getCurrencyForLocale(locale);
+  const perYear = t.perYear;
+
+  const foundingTier = TIERS.founding[currency];
+  const standardTier = TIERS.standard[currency];
+
+  const [slots, setSlots] = useState<SlotsData | null>(null);
+
+  useEffect(() => {
+    const apiBase =
+      typeof window !== 'undefined' && window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://app.open-hr.work';
+
+    fetch(`${apiBase}/api/founding/slots-remaining`)
+      .then((r) => r.json())
+      .then((data: SlotsData) => setSlots(data))
+      .catch(() => null); // Fail silently — don't break the pricing page
+  }, []);
+
+  const foundingIsFull = slots?.isFull ?? false;
+  const slotsRemaining = slots?.remaining ?? foundingTier.cap ?? 100;
+
+  const pilotUrl = `/${locale}/pilot/`;
 
   return (
     <div className="py-12">
-      {/* Toggle */}
-      <div className="mb-12 flex items-center justify-center gap-4">
-        <button
-          type="button"
-          onClick={() => setIsAnnual(false)}
-          className={`min-h-[44px] rounded-full px-6 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-openhr-teal-900 focus:ring-offset-2 ${
-            !isAnnual
-              ? 'bg-openhr-teal-900 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          {t.toggle.monthly}
-        </button>
-        <button
-          type="button"
-          onClick={() => setIsAnnual(true)}
-          className={`flex min-h-[44px] items-center gap-2 rounded-full px-6 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-openhr-teal-900 focus:ring-offset-2 ${
-            isAnnual
-              ? 'bg-openhr-teal-900 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          {t.toggle.annual}
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-              isAnnual
-                ? 'bg-openhr-teal-700 text-white'
-                : 'bg-openhr-teal-50 text-openhr-teal-900'
-            }`}
-          >
-            {t.toggle.discount}
-          </span>
-        </button>
-      </div>
-
       {/* Pricing Cards */}
       <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
-        {/* RefScore */}
-        <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-          <h3 className="text-xl font-bold text-gray-900">{t.tiers.refscore.name}</h3>
-          <p className="mt-2 text-gray-600">{t.tiers.refscore.description}</p>
+
+        {/* ── Founding Member ───────────────────────────────────────────── */}
+        <div className="relative flex flex-col rounded-2xl border-2 border-openhr-teal-900 bg-white p-8 shadow-lg">
+          {/* Scarcity badge */}
+          <div
+            className={`absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-semibold whitespace-nowrap ${
+              foundingIsFull
+                ? 'bg-gray-500 text-white'
+                : 'bg-openhr-teal-900 text-white'
+            }`}
+          >
+            {getBadgeText(t.founding.badge, t.founding.badgeFull, slotsRemaining, foundingIsFull)}
+          </div>
+
+          <h3 className="text-xl font-bold text-gray-900">
+            {TIERS.founding.name[locale]}
+          </h3>
+          <p className="mt-2 text-gray-600">{t.founding.description}</p>
+
+          {/* Price */}
           <div className="mt-6">
             <span className="text-4xl font-bold text-gray-900">
-              {formatPrice(refscorePrice, locale)}
+              {formatAnnualPrice(foundingTier.amount, locale)}
             </span>
-            <span className="text-gray-600">{t.perMonth}</span>
-            {isAnnual && (
-              <p className="mt-1 text-sm text-gray-500">{t.billedAnnually}</p>
-            )}
+            <span className="text-gray-600">{perYear}</span>
+            <p className="mt-1 text-sm text-openhr-teal-700 font-medium">
+              {t.founding.monthlyEquiv}
+            </p>
           </div>
+
+          {/* Features */}
           <ul className="mt-8 flex-grow space-y-4">
-            {t.tiers.refscore.features.map((feature, i) => (
+            {t.founding.features.map((feature, i) => (
               <li key={i} className="flex items-start gap-3">
-                <svg className="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="h-5 w-5 flex-shrink-0 text-openhr-teal-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 <span className="text-gray-700">{feature}</span>
               </li>
             ))}
           </ul>
-          <a
-            href={`/${locale}/pilot/`}
-            className="mt-8 block w-full rounded-lg border border-openhr-teal-900 bg-white px-4 py-3 text-center font-medium text-openhr-teal-900 transition-colors hover:bg-openhr-teal-50"
-          >
-            {t.tiers.refscore.cta}
-          </a>
+
+          {/* CTA */}
+          {foundingIsFull ? (
+            <a
+              href={pilotUrl + '?tier=standard'}
+              className="mt-8 block w-full rounded-lg border border-gray-400 bg-white px-4 py-3 text-center font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              {t.founding.ctaFull}
+            </a>
+          ) : (
+            <a
+              href={pilotUrl}
+              className="mt-8 block w-full rounded-lg bg-openhr-teal-900 px-4 py-3 text-center font-medium text-white transition-colors hover:bg-openhr-teal-800 focus:outline-none focus:ring-2 focus:ring-openhr-teal-500 focus:ring-offset-2"
+            >
+              {t.founding.cta}
+            </a>
+          )}
+
+          <p className="mt-3 text-center text-xs text-gray-500">{t.founding.anchor}</p>
         </div>
 
-        {/* Verifie */}
-        <div className="relative flex flex-col rounded-2xl border-2 border-openhr-teal-900 bg-white p-8 shadow-lg">
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-openhr-teal-900 px-4 py-1 text-sm font-medium text-white">
-            {locale === 'fr' ? 'Recommandé' : locale === 'de' ? 'Empfohlen' : locale === 'es' ? 'Recomendado' : locale === 'it' ? 'Consigliato' : 'Recommended'}
-          </div>
-          <h3 className="text-xl font-bold text-gray-900">{t.tiers.verifie.name}</h3>
-          <p className="mt-2 text-gray-600">{t.tiers.verifie.description}</p>
+        {/* ── Standard ──────────────────────────────────────────────────── */}
+        <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+          <div className="absolute -top-px" /> {/* spacer to align with founding card */}
+          <span className="inline-block self-start rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+            {t.standard.badge}
+          </span>
+
+          <h3 className="mt-4 text-xl font-bold text-gray-900">
+            {TIERS.standard.name[locale]}
+          </h3>
+          <p className="mt-2 text-gray-600">{t.standard.description}</p>
+
+          {/* Price */}
           <div className="mt-6">
             <span className="text-4xl font-bold text-gray-900">
-              {formatPrice(verifiePrice, locale)}
+              {formatAnnualPrice(standardTier.amount, locale)}
             </span>
-            <span className="text-gray-600">{t.perMonth}</span>
-            {isAnnual && (
-              <p className="mt-1 text-sm text-gray-500">{t.billedAnnually}</p>
-            )}
+            <span className="text-gray-600">{perYear}</span>
+            <p className="mt-1 text-sm text-gray-500">{t.standard.monthlyEquiv}</p>
           </div>
+
+          {/* Features */}
           <ul className="mt-8 flex-grow space-y-4">
-            {t.tiers.verifie.features.map((feature, i) => (
+            {t.standard.features.map((feature, i) => (
               <li key={i} className="flex items-start gap-3">
-                <svg className="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="h-5 w-5 flex-shrink-0 text-openhr-teal-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 <span className="text-gray-700">{feature}</span>
               </li>
             ))}
           </ul>
+
+          {/* CTA */}
           <a
-            href={`/${locale}/pilot/`}
-            className="mt-8 block w-full rounded-lg bg-openhr-teal-900 px-4 py-3 text-center font-medium text-white transition-colors hover:bg-openhr-teal-800"
+            href={pilotUrl + '?tier=standard'}
+            className="mt-8 block w-full rounded-lg border border-openhr-teal-900 bg-white px-4 py-3 text-center font-medium text-openhr-teal-900 transition-colors hover:bg-openhr-teal-50 focus:outline-none focus:ring-2 focus:ring-openhr-teal-500 focus:ring-offset-2"
           >
-            {t.tiers.verifie.cta}
+            {t.standard.cta}
           </a>
+
+          <p className="mt-3 text-center text-xs text-gray-500">{t.standard.anchor}</p>
         </div>
       </div>
 
-      {/* Auto-Renewal Disclosure — EU Consumer Rights Directive Art. 8(2), FR Code de la consommation Art. L215-1 */}
-      <div className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
+      {/* Legal disclosures */}
+      <div className="mx-auto mt-8 max-w-2xl space-y-2 text-center text-xs leading-relaxed text-gray-500">
         <p>{t.renewalDisclosure}</p>
-        <p className="mt-1">{t.cancelInfo}</p>
+        {t.cancelInfo && <p>{t.cancelInfo}</p>}
+        <p>{t.capDisclosure}</p>
       </div>
     </div>
   );
