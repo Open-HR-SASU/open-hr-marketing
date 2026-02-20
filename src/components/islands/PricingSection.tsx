@@ -115,7 +115,7 @@ const content: Record<Locale, {
     },
     perYear: '/year',
     renewalDisclosure: 'Your membership renews automatically each year at the same rate. Cancel any time from your account. Cancellation takes effect at the end of the current period.',
-    cancelInfo: 'Under Consumer Rights Directive 2011/83/EU, by completing payment for a digital service, you expressly acknowledge waiving your 14-day right of withdrawal.',
+    cancelInfo: 'Under the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, by completing payment for a digital service and requesting immediate performance, you expressly acknowledge losing your 14-day right to cancel.',
     capDisclosure: 'Limited to the first 100 founding members. Cap enforced at checkout.',
   },
   'en-US': {
@@ -185,7 +185,7 @@ const content: Record<Locale, {
     },
     perYear: '/Jahr',
     renewalDisclosure: 'Ihre Mitgliedschaft verlängert sich automatisch jährlich zum gleichen Preis. Jederzeit kündbar über Ihr Konto. Die Kündigung wird zum Ende der laufenden Periode wirksam.',
-    cancelInfo: 'Gemäß Verbraucherrechte-Richtlinie 2011/83/EU bestätigen Sie mit Abschluss der Zahlung für einen digitalen Dienst ausdrücklich den Verzicht auf Ihr 14-tägiges Widerrufsrecht.',
+    cancelInfo: 'Gemäß § 356 Abs. 5 BGB verlangen Sie mit dem Abschluss der Zahlung für einen digitalen Dienst ausdrücklich die sofortige Ausführung und bestätigen den Verlust Ihres 14-tägigen Widerrufsrechts ab Beginn der Ausführung.',
     capDisclosure: 'Begrenzt auf die ersten 100 Gründungsmitglieder. Limit wird beim Bezahlvorgang durchgesetzt.',
   },
   es: {
@@ -220,7 +220,7 @@ const content: Record<Locale, {
     },
     perYear: '/año',
     renewalDisclosure: 'Tu membresía se renueva automáticamente cada año al mismo precio. Cancela cuando quieras desde tu cuenta. La cancelación se hace efectiva al final del período en curso.',
-    cancelInfo: 'Conforme a la Directiva de Derechos de los Consumidores 2011/83/UE, al completar el pago por un servicio digital, reconoces expresamente renunciar a tu derecho de desistimiento de 14 días.',
+    cancelInfo: 'Conforme al art. 103.m) del Real Decreto Legislativo 1/2007 (TRLGDCU), al solicitar la ejecución inmediata del servicio digital, reconoces expresamente perder tu derecho de desistimiento de 14 días desde el inicio de la ejecución.',
     capDisclosure: 'Limitado a los primeros 100 miembros fundadores. Límite aplicado en el momento del pago.',
   },
   it: {
@@ -255,7 +255,7 @@ const content: Record<Locale, {
     },
     perYear: '/anno',
     renewalDisclosure: 'La tua iscrizione si rinnova automaticamente ogni anno allo stesso prezzo. Annulla quando vuoi dal tuo account. La cancellazione ha effetto alla fine del periodo in corso.',
-    cancelInfo: 'Ai sensi della Direttiva sui diritti dei consumatori 2011/83/UE, completando il pagamento per un servizio digitale, riconosci espressamente di rinunciare al diritto di recesso di 14 giorni.',
+    cancelInfo: 'Ai sensi dell\'art. 59, comma 1, lett. o) del Codice del Consumo (D.Lgs. 206/2005), richiedendo l\'esecuzione immediata del servizio digitale, riconosci espressamente di perdere il diritto di recesso di 14 giorni dall\'inizio dell\'esecuzione.',
     capDisclosure: 'Limitato ai primi 100 membri fondatori. Limite applicato al momento dell\'acquisto.',
   },
 };
