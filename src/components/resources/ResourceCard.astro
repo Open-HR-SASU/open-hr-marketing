@@ -1,0 +1,111 @@
+---
+/**
+ * ResourceCard
+ *
+ * Card component for the downloadable resource library grid.
+ * Links to the resource detail page — download happens on the detail page.
+ *
+ * Design: Dr. Dietrich Claude (CDO)
+ * Teal 900 accent, Bricolage Grotesque headings, type badge taxonomy.
+ */
+
+import type { DownloadableResource, ResourceType } from '@/lib/sanity/fetchers';
+import type { Locale } from '@/lib/i18n';
+import { getResourceLabels } from '@/lib/i18n';
+
+interface Props {
+  resource: DownloadableResource;
+  locale: Locale;
+}
+
+const { resource, locale } = Astro.props;
+const labels = getResourceLabels(locale);
+
+const typeLabel: Record<ResourceType, string> = {
+  'whitepaper': labels.typeWhitepaper,
+  'case-study': labels.typeCaseStudy,
+  'technical-guide': labels.typeTechnicalGuide,
+  'industry-report': labels.typeIndustryReport,
+  'product-sheet': labels.typeProductSheet,
+  'press-release': labels.typePressRelease,
+};
+
+// Type badge accent per Dr. Claude's taxonomy
+const typeBadgeClass: Record<ResourceType, string> = {
+  'whitepaper': 'bg-openhr-teal-900 text-white',
+  'case-study': 'bg-amber-700 text-white',
+  'technical-guide': 'bg-slate-600 text-white',
+  'industry-report': 'bg-blue-900 text-white',
+  'product-sheet': 'bg-openhr-teal-700 text-white',
+  'press-release': 'bg-gray-500 text-white',
+};
+
+const badgeClass = typeBadgeClass[resource.resourceType] ?? 'bg-openhr-teal-900 text-white';
+const label = typeLabel[resource.resourceType] ?? resource.resourceType;
+
+const detailHref = `/${locale}/resources/${resource.slug.current}/`;
+const coverUrl = resource.coverImage?.asset?.url;
+const lqip = resource.coverImage?.asset?.metadata?.lqip;
+
+// Format date for display
+const publishedDate = resource.publishedAt
+  ? new Intl.DateTimeFormat(locale === 'fr' ? 'fr-FR' : locale, {
+      year: 'numeric',
+      month: 'long',
+    }).format(new Date(resource.publishedAt))
+  : null;
+---
+
+<article class="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md">
+  <!-- Cover image -->
+  <a href={detailHref} class="block aspect-[3/2] overflow-hidden bg-openhr-teal-950" aria-tabindex="-1">
+    {coverUrl ? (
+      <img
+        src={coverUrl}
+        alt={resource.title}
+        width={600}
+        height={400}
+        loading="lazy"
+        style={lqip ? `background-image: url(${lqip}); background-size: cover;` : undefined}
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+      />
+    ) : (
+      <!-- Fallback: teal placeholder with ((○)) mark -->
+      <div class="flex h-full w-full items-center justify-center bg-openhr-teal-900">
+        <span class="font-display text-4xl font-bold text-white/20">((○))</span>
+      </div>
+    )}
+  </a>
+
+  <!-- Content -->
+  <div class="flex flex-1 flex-col p-5">
+    <!-- Type badge -->
+    <span class:list={['mb-3 inline-block self-start rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider', badgeClass]}>
+      {label}
+    </span>
+
+    <!-- Title -->
+    <h2 class="mb-2 font-display text-base font-bold leading-snug text-foreground">
+      <a href={detailHref} class="hover:text-openhr-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2">
+        {resource.title}
+      </a>
+    </h2>
+
+    <!-- Description -->
+    <p class="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600">
+      {resource.description}
+    </p>
+
+    <!-- Metadata strip -->
+    <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
+      {publishedDate && <span>{publishedDate}</span>}
+      {resource.pageCount && (
+        <span>{resource.pageCount} {labels.pages}</span>
+      )}
+      {resource.fileSizeLabel && <span>{resource.fileSizeLabel}</span>}
+      {resource.gated && (
+        <span class="ml-auto rounded-full bg-gray-100 px-2 py-0.5 text-gray-500">✉ Email</span>
+      )}
+    </div>
+  </div>
+</article>

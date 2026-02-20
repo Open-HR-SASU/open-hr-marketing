@@ -14,6 +14,9 @@ import {
   PRICING_SECTION_QUERY,
   LEGAL_DOCUMENT_QUERY,
   LEGAL_DOCUMENT_SLUGS_QUERY,
+  RESOURCE_LIST_QUERY,
+  RESOURCE_BY_SLUG_QUERY,
+  RESOURCE_SLUGS_QUERY,
 } from './queries';
 import type { Locale } from '@/lib/i18n';
 
@@ -294,6 +297,66 @@ export async function getPricingSection(
   locale: Locale
 ): Promise<PricingSection | null> {
   return sanityFetch<PricingSection | null>(PRICING_SECTION_QUERY, { locale });
+}
+
+// =============================================================================
+// DOWNLOADABLE RESOURCE TYPES
+// =============================================================================
+
+export type ResourceType =
+  | 'whitepaper'
+  | 'case-study'
+  | 'technical-guide'
+  | 'industry-report'
+  | 'product-sheet'
+  | 'press-release';
+
+export interface DownloadableResource {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  resourceType: ResourceType;
+  description: string;
+  publishedAt: string;
+  authors?: string[];
+  pageCount?: number;
+  fileSizeLabel?: string;
+  tags?: string[];
+  featured: boolean;
+  gated: boolean;
+  coverImage?: SanityImage;
+  bunnyUrl?: string; // only present on detail query
+  seo?: SEO;
+}
+
+// =============================================================================
+// DOWNLOADABLE RESOURCE FETCHERS
+// =============================================================================
+
+/**
+ * Get all downloadable resources for a locale
+ */
+export async function getResources(locale: Locale): Promise<DownloadableResource[]> {
+  return sanityFetch<DownloadableResource[]>(RESOURCE_LIST_QUERY, { locale }) ?? [];
+}
+
+/**
+ * Get a single downloadable resource by slug and locale
+ */
+export async function getResource(
+  slug: string,
+  locale: Locale
+): Promise<DownloadableResource | null> {
+  return sanityFetch<DownloadableResource | null>(RESOURCE_BY_SLUG_QUERY, { slug, locale });
+}
+
+/**
+ * Get all resource slugs for a locale (for static generation)
+ */
+export async function getResourceSlugs(
+  locale: Locale
+): Promise<Array<{ slug: string }>> {
+  return sanityFetch<Array<{ slug: string }>>(RESOURCE_SLUGS_QUERY, { locale }) ?? [];
 }
 
 // =============================================================================

@@ -1,0 +1,163 @@
+---
+/**
+ * ResourceDetailHero
+ *
+ * Full-width hero for the resource detail page.
+ * Shows cover image, metadata, description, and the download CTA.
+ *
+ * Design: Dr. Dietrich Claude (CDO)
+ * Single primary CTA. No decorative noise. The cover image does the work.
+ */
+
+import type { DownloadableResource, ResourceType } from '@/lib/sanity/fetchers';
+import type { Locale } from '@/lib/i18n';
+import { getResourceLabels } from '@/lib/i18n';
+
+interface Props {
+  resource: DownloadableResource;
+  locale: Locale;
+}
+
+const { resource, locale } = Astro.props;
+const labels = getResourceLabels(locale);
+
+const typeLabel: Record<ResourceType, string> = {
+  'whitepaper': labels.typeWhitepaper,
+  'case-study': labels.typeCaseStudy,
+  'technical-guide': labels.typeTechnicalGuide,
+  'industry-report': labels.typeIndustryReport,
+  'product-sheet': labels.typeProductSheet,
+  'press-release': labels.typePressRelease,
+};
+
+const typeBadgeClass: Record<ResourceType, string> = {
+  'whitepaper': 'bg-openhr-teal-900 text-white',
+  'case-study': 'bg-amber-700 text-white',
+  'technical-guide': 'bg-slate-600 text-white',
+  'industry-report': 'bg-blue-900 text-white',
+  'product-sheet': 'bg-openhr-teal-700 text-white',
+  'press-release': 'bg-gray-500 text-white',
+};
+
+const badgeClass = typeBadgeClass[resource.resourceType] ?? 'bg-openhr-teal-900 text-white';
+const label = typeLabel[resource.resourceType] ?? resource.resourceType;
+
+const coverUrl = resource.coverImage?.asset?.url;
+const lqip = resource.coverImage?.asset?.metadata?.lqip;
+
+const publishedDate = resource.publishedAt
+  ? new Intl.DateTimeFormat(locale === 'fr' ? 'fr-FR' : locale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(resource.publishedAt))
+  : null;
+
+const libraryHref = `/${locale}/resources/`;
+---
+
+<article>
+  <!-- Back link -->
+  <div class="container mx-auto px-4 pt-8">
+    <a
+      href={libraryHref}
+      class="inline-flex items-center text-sm text-gray-500 hover:text-openhr-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900"
+    >
+      {labels.backToResources}
+    </a>
+  </div>
+
+  <!-- Hero grid: cover + content -->
+  <div class="container mx-auto px-4 py-10 md:py-16">
+    <div class="mx-auto grid max-w-5xl gap-10 md:grid-cols-2 md:items-start">
+
+      <!-- Cover image -->
+      <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+        {coverUrl ? (
+          <img
+            src={coverUrl}
+            alt={resource.title}
+            width={800}
+            height={533}
+            loading="eager"
+            style={lqip ? `background-image: url(${lqip}); background-size: cover;` : undefined}
+            class="aspect-[3/2] w-full object-cover"
+          />
+        ) : (
+          <div class="flex aspect-[3/2] w-full items-center justify-center bg-openhr-teal-900">
+            <span class="font-display text-6xl font-bold text-white/20">((○))</span>
+          </div>
+        )}
+      </div>
+
+      <!-- Content -->
+      <div class="flex flex-col">
+        <!-- Type badge -->
+        <span class:list={['mb-4 inline-block self-start rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider', badgeClass]}>
+          {label}
+        </span>
+
+        <!-- Title -->
+        <h1 class="mb-4 font-display text-2xl font-extrabold leading-tight text-foreground md:text-3xl">
+          {resource.title}
+        </h1>
+
+        <!-- Metadata strip -->
+        <div class="mb-5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+          {publishedDate && (
+            <span>{labels.published} {publishedDate}</span>
+          )}
+          {resource.authors && resource.authors.length > 0 && (
+            <span>{labels.by} {resource.authors.join(', ')}</span>
+          )}
+          {resource.pageCount && (
+            <span>{resource.pageCount} {labels.pages}</span>
+          )}
+          {resource.fileSizeLabel && (
+            <span>{resource.fileSizeLabel}</span>
+          )}
+        </div>
+
+        <!-- Description -->
+        <p class="mb-8 leading-relaxed text-gray-700">
+          {resource.description}
+        </p>
+
+        <!-- Download CTA -->
+        {resource.bunnyUrl && !resource.gated ? (
+          <a
+            href={resource.bunnyUrl}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${labels.downloadAriaLabel}: ${resource.title}`}
+            class="flex w-full items-center justify-center gap-2 rounded-md bg-openhr-teal-900 px-6 py-3.5 font-medium text-white transition-colors hover:bg-openhr-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            {labels.downloadFree}
+          </a>
+        ) : resource.gated ? (
+          <!-- Gated placeholder — future Go backend integration (see OPE) -->
+          <div class="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">
+            Email capture form — coming soon.
+          </div>
+        ) : null}
+
+        <!-- Tags -->
+        {resource.tags && resource.tags.length > 0 && (
+          <div class="mt-6 flex flex-wrap gap-2">
+            {resource.tags.map((tag) => (
+              <span class="rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-500">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</article>

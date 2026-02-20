@@ -445,3 +445,60 @@ export const LEGAL_DOCUMENT_SLUGS_QUERY = groq`
     documentType
   }
 `;
+
+// =============================================================================
+// DOWNLOADABLE RESOURCE QUERIES
+// =============================================================================
+
+/**
+ * Resource card fragment — lightweight for listing pages
+ */
+export const resourceCardFragment = /* groq */ `
+  _id,
+  title,
+  slug,
+  resourceType,
+  description,
+  publishedAt,
+  authors,
+  pageCount,
+  fileSizeLabel,
+  tags,
+  featured,
+  gated,
+  coverImage {
+    ${imageFragment}
+  }
+`;
+
+/**
+ * Get all downloadable resources for a locale, featured first then newest
+ */
+export const RESOURCE_LIST_QUERY = groq`
+  *[_type == "downloadableResource" && language == $locale]
+  | order(featured desc, publishedAt desc) {
+    ${resourceCardFragment}
+  }
+`;
+
+/**
+ * Get a single downloadable resource by slug and locale
+ */
+export const RESOURCE_BY_SLUG_QUERY = groq`
+  *[_type == "downloadableResource" && slug.current == $slug && language == $locale][0] {
+    ${resourceCardFragment},
+    bunnyUrl,
+    seo {
+      ${seoFragment}
+    }
+  }
+`;
+
+/**
+ * Get all resource slugs for a locale (for static generation)
+ */
+export const RESOURCE_SLUGS_QUERY = groq`
+  *[_type == "downloadableResource" && language == $locale && defined(slug.current)] {
+    "slug": slug.current
+  }
+`;

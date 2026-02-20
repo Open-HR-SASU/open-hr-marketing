@@ -4,6 +4,7 @@ import navigationItem from './navigationItem'
 import footer from './footer'
 import siteSettings from './siteSettings'
 import legalDocument from './legalDocument'
+import downloadableResource from './downloadableResource'
 
 export const schemaTypes = [
   // Documents
@@ -13,4 +14,5 @@ export const schemaTypes = [
   footer,
   siteSettings,
   legalDocument,
+  downloadableResource,
 ]
