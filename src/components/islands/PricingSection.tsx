@@ -80,7 +80,7 @@ const content: Record<Locale, {
     },
     perYear: '/an',
     renewalDisclosure: 'Votre abonnement se renouvelle automatiquement chaque année au même tarif. Annulation possible à tout moment depuis votre espace personnel. L\'annulation prend effet à la fin de la période en cours.',
-    cancelInfo: 'Conformément à la Directive 2011/83/UE, en finalisant votre paiement pour un service numérique, vous reconnaissez expressément renoncer à votre droit de rétractation de 14 jours.',
+    cancelInfo: "Conformément à l'article L221-28 13° du Code de la consommation, en finalisant votre paiement pour un service numérique dont vous demandez l'exécution immédiate, vous reconnaissez expressément perdre votre droit de rétractation de 14 jours dès le début de cette exécution.",
     capDisclosure: 'Limité aux 100 premiers membres fondateurs. Plafond appliqué à la commande.',
   },
   'en-GB': {
@@ -433,7 +433,21 @@ export function PricingSection({ locale }: PricingSectionProps) {
       {/* Legal disclosures */}
       <div className="mx-auto mt-8 max-w-2xl space-y-2 text-center text-xs leading-relaxed text-gray-500">
         <p>{t.renewalDisclosure}</p>
-        {t.cancelInfo && <p>{t.cancelInfo}</p>}
+        {/* California ARL (Bus. & Prof. Code § 17601(c)) requires auto-renewal terms to be
+            "clear and conspicuous" — set off from surrounding text by symbols or marks.
+            EN-US renders in a bordered box to satisfy the visual prominence requirement.
+            All other locales render as plain paragraph text (EU/UK law has no equivalent
+            visual requirement for pricing page disclosures). */}
+        {t.cancelInfo && (
+          locale === 'en-US' ? (
+            <div className="mt-3 rounded-md border border-gray-300 bg-gray-50 px-4 py-3 text-left text-xs leading-relaxed text-gray-700">
+              <p className="font-semibold text-gray-800">Auto-Renewal Terms</p>
+              <p className="mt-1">{t.cancelInfo}</p>
+            </div>
+          ) : (
+            <p>{t.cancelInfo}</p>
+          )
+        )}
         <p>{t.capDisclosure}</p>
       </div>
     </div>
