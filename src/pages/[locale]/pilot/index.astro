@@ -22,49 +22,50 @@ export function getStaticPaths() {
 
 const { locale } = Astro.params as { locale: Locale };
 
-// Localized content
+// Localized content — OPE-719 (2026-02-25): updated for annual pricing pivot (DL-34)
+// Removed stale "February 2026" launch date references; aligned with Founding Member framing
 const content = {
   fr: {
-    title: 'Rejoignez le pilote - Open HR',
-    description: 'Soyez parmi les premiers à découvrir Open HR. Inscrivez-vous au programme pilote.',
-    heading: 'Pilote',
-    subheading: 'L\'infrastructure RH de demain commence ici.',
-    intro: 'Nous lançons notre programme pilote en février 2026. Les places sont limitées. Inscrivez-vous pour être parmi les premiers à découvrir Open HR.',
+    title: 'Obtenez votre RefScore - Open HR',
+    description: 'Rejoignez les 100 premiers membres fondateurs d\'Open HR. Accès annuel complet à partir de 12 €/an.',
+    heading: 'Membre Fondateur',
+    subheading: 'Obtenez votre RefScore. Verrouillez votre tarif fondateur.',
+    intro: 'Votre RefScore est disponible maintenant. Rejoignez les 100 premiers membres fondateurs à 12 €/an — moins d\'1 €/mois.',
   },
   'en-GB': {
-    title: 'Join the Pilot - Open HR',
-    description: 'Be among the first to discover Open HR. Sign up for the pilot programme.',
-    heading: 'Pilot',
-    subheading: 'Tomorrow\'s HR infrastructure starts here.',
-    intro: 'We are launching our pilot programme in February 2026. Places are limited. Sign up to be among the first to discover Open HR.',
+    title: 'Get Your RefScore - Open HR',
+    description: 'Join the first 100 founding members of Open HR. Full annual access from £10/year.',
+    heading: 'Founding Member',
+    subheading: 'Get Your RefScore. Lock in your founding rate.',
+    intro: 'Your RefScore is available now. Join the first 100 founding members for £10/year — less than £1/month.',
   },
   'en-US': {
-    title: 'Join the Pilot - Open HR',
-    description: 'Be among the first to discover Open HR. Sign up for the pilot program.',
-    heading: 'Pilot',
-    subheading: 'Tomorrow\'s HR infrastructure starts here.',
-    intro: 'We are launching our pilot program in February 2026. Places are limited. Sign up to be among the first to discover Open HR.',
+    title: 'Get Your RefScore - Open HR',
+    description: 'Join the first 100 founding members of Open HR. Full annual access from $12/year.',
+    heading: 'Founding Member',
+    subheading: 'Get Your RefScore. Lock in your founding rate.',
+    intro: 'Your RefScore is available now. Join the first 100 founding members for $12/year — less than $1/month.',
   },
   de: {
-    title: 'Am Pilotprogramm teilnehmen - Open HR',
-    description: 'Gehören Sie zu den Ersten, die Open HR entdecken. Melden Sie sich für das Pilotprogramm an.',
-    heading: 'Pilotprogramm',
-    subheading: 'Die HR-Infrastruktur von morgen beginnt hier.',
-    intro: 'Wir starten unser Pilotprogramm im Februar 2026. Die Plätze sind begrenzt. Melden Sie sich an, um zu den Ersten zu gehören, die Open HR entdecken.',
+    title: 'Holen Sie sich Ihren RefScore - Open HR',
+    description: 'Werden Sie eines der ersten 100 Gründungsmitglieder von Open HR. Vollständiger Jahreszugang ab 12 €/Jahr.',
+    heading: 'Gründungsmitglied',
+    subheading: 'Holen Sie sich Ihren RefScore. Sichern Sie sich Ihren Gründungspreis.',
+    intro: 'Ihr RefScore ist jetzt verfügbar. Werden Sie eines der ersten 100 Gründungsmitglieder für 12 €/Jahr — weniger als 1 €/Monat.',
   },
   es: {
-    title: 'Únete al piloto - Open HR',
-    description: 'Sé de los primeros en descubrir Open HR. Inscríbete en el programa piloto.',
-    heading: 'Piloto',
-    subheading: 'La infraestructura de RRHH del mañana comienza aquí.',
-    intro: 'Lanzamos nuestro programa piloto en febrero de 2026. Los lugares son limitados. Inscríbete para estar entre los primeros en descubrir Open HR.',
+    title: 'Obtén tu RefScore - Open HR',
+    description: 'Únete a los primeros 100 miembros fundadores de Open HR. Acceso anual completo desde 12 €/año.',
+    heading: 'Miembro Fundador',
+    subheading: 'Obtén tu RefScore. Bloquea tu tarifa de fundador.',
+    intro: 'Tu RefScore ya está disponible. Únete a los primeros 100 miembros fundadores por 12 €/año — menos de 1 €/mes.',
   },
   it: {
-    title: 'Unisciti al pilota - Open HR',
-    description: 'Sii tra i primi a scoprire Open HR. Iscriviti al programma pilota.',
-    heading: 'Pilota',
-    subheading: 'L\'infrastruttura HR di domani inizia qui.',
-    intro: 'Lanciamo il nostro programma pilota a febbraio 2026. I posti sono limitati. Iscriviti per essere tra i primi a scoprire Open HR.',
+    title: 'Ottieni il tuo RefScore - Open HR',
+    description: 'Unisciti ai primi 100 membri fondatori di Open HR. Accesso annuale completo da 12 €/anno.',
+    heading: 'Membro Fondatore',
+    subheading: 'Ottieni il tuo RefScore. Blocca la tariffa fondatore.',
+    intro: 'Il tuo RefScore è disponibile ora. Unisciti ai primi 100 membri fondatori per 12 €/anno — meno di 1 €/mese.',
   },
 }[locale];
 ---
