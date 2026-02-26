@@ -50,7 +50,8 @@ export function generateOrganizationSchema(): OrganizationSchema {
     url: BASE_URL,
     logo: `${BASE_URL}/logo.png`,
     sameAs: [
-      'https://linkedin.com/company/open-hr-sasu',
+      // Canonical identity URLs — no UTM params (structured data must stay clean)
+      'https://www.linkedin.com/company/110142540',
       'https://www.facebook.com/share/1C39EpDkkj/',
       'https://www.instagram.com/open_hr.work',
       'https://x.com/open_hr_work',
