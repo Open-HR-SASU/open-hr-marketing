@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Open HR — Default OG / Social Card
+  Dimensions: 1200×630px (og:image standard)
+  Used as: default og:image and twitter:image across all marketing pages
+  Brand spec: Teal 900 (#006064), ((○)) mark, open-hr.work domain
+  Generated: 2026-02-26 (OPE-734)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <title>Open HR — RH pour tous</title>
+
+  <!-- Background - White -->
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+
+  <!-- Left accent strip -->
+  <rect x="0" y="0" width="8" height="630" fill="#006064"/>
+
+  <!-- ((○)) mark — top-left, scale 0.28 of master path set -->
+  <g fill="#006064" transform="translate(48, 44) scale(0.28)">
+    <path d="M 70 15 A 95 95 0 0 0 70 185 L 70 174 A 84 84 0 0 1 70 26 Z"/>
+    <path d="M 150 30 A 78 78 0 0 0 150 170 L 150 159 A 67 67 0 0 1 150 41 Z"/>
+    <path d="M 268.94 51.70 A 50 50 0 1 1 243.06 51.70 L 245.91 62.33 A 39 39 0 1 0 266.09 62.33 Z" fill-rule="evenodd"/>
+    <path d="M 362 30 A 78 78 0 0 1 362 170 L 362 159 A 67 67 0 0 0 362 41 Z"/>
+    <path d="M 442 15 A 95 95 0 0 1 442 185 L 442 174 A 84 84 0 0 0 442 26 Z"/>
+  </g>
+
+  <!-- "Open HR" wordmark beside mark -->
+  <text x="178" y="95"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="32"
+        font-weight="700"
+        letter-spacing="-0.5"
+        fill="#006064">Open HR</text>
+
+  <!-- Main headline -->
+  <text x="600" y="258"
+        text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="72"
+        font-weight="700"
+        letter-spacing="-1.5"
+        fill="#1A1A1A">Votre RefScore.</text>
+
+  <!-- Sub-headline line 1 -->
+  <text x="600" y="344"
+        text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="36"
+        font-weight="400"
+        fill="#444444">L'infrastructure RH de demain.</text>
+
+  <!-- Sub-headline line 2 — Early Access call-out -->
+  <text x="600" y="412"
+        text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="28"
+        font-weight="500"
+        fill="#006064">Accès Fondateur · À partir de 12 €/an</text>
+
+  <!-- Large mark as subtle watermark — bottom-right -->
+  <g fill="#006064" opacity="0.055" transform="translate(680, 370) scale(0.92)">
+    <path d="M 70 15 A 95 95 0 0 0 70 185 L 70 174 A 84 84 0 0 1 70 26 Z"/>
+    <path d="M 150 30 A 78 78 0 0 0 150 170 L 150 159 A 67 67 0 0 1 150 41 Z"/>
+    <path d="M 268.94 51.70 A 50 50 0 1 1 243.06 51.70 L 245.91 62.33 A 39 39 0 1 0 266.09 62.33 Z" fill-rule="evenodd"/>
+    <path d="M 362 30 A 78 78 0 0 1 362 170 L 362 159 A 67 67 0 0 0 362 41 Z"/>
+    <path d="M 442 15 A 95 95 0 0 1 442 185 L 442 174 A 84 84 0 0 0 442 26 Z"/>
+  </g>
+
+  <!-- Footer bar -->
+  <rect x="0" y="582" width="1200" height="48" fill="#006064"/>
+  <text x="600" y="614"
+        text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="20"
+        font-weight="500"
+        fill="#FFFFFF">open-hr.work  ·  RH pour tous</text>
+</svg>
