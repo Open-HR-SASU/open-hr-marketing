@@ -48,7 +48,8 @@ export function generateOrganizationSchema(): OrganizationSchema {
     '@type': 'Organization',
     name: 'Open HR',
     url: BASE_URL,
-    logo: `${BASE_URL}/logo.png`,
+    // TODO(OPE-734): Replace with proper logo.png before Product Hunt
+    logo: `${BASE_URL}/icon-512x512.png`,
     sameAs: [
       // Canonical identity URLs — no UTM params (structured data must stay clean)
       'https://www.linkedin.com/company/110142540',
