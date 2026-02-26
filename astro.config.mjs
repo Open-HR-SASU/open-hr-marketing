@@ -47,4 +47,20 @@ export default defineConfig({
       transformer: 'postcss',
     },
   },
+
+  // Permanent redirects for removed pages (pilot page removed, redirecting to pricing)
+  redirects: {
+    '/fr/pilot/': '/fr/pricing/',
+    '/en-GB/pilot/': '/en-GB/pricing/',
+    '/en-US/pilot/': '/en-US/pricing/',
+    '/de/pilot/': '/de/pricing/',
+    '/es/pilot/': '/es/pricing/',
+    '/it/pilot/': '/it/pricing/',
+    '/fr/pilot/success/': '/fr/pricing/',
+    '/en-GB/pilot/success/': '/en-GB/pricing/',
+    '/en-US/pilot/success/': '/en-US/pricing/',
+    '/de/pilot/success/': '/de/pricing/',
+    '/es/pilot/success/': '/es/pricing/',
+    '/it/pilot/success/': '/it/pricing/',
+  },
 });
