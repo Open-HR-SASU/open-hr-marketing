@@ -312,7 +312,8 @@ const copyrightText = footerData.copyrightText.replace('{year}', String(currentY
         </p>
         <!-- Social Links -->
         <!-- G15: Touch targets minimum 48x48px for mobile accessibility -->
-        <div class="flex gap-2">
+        <!-- 3×2 grid prevents icons overflowing into adjacent footer columns -->
+        <div class="grid grid-cols-3 w-fit gap-0">
           {SOCIAL_LINKS.map((social) => (
             <a
               href={social.href}
