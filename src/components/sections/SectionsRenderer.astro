@@ -15,7 +15,8 @@ import { sectionToProps } from './types';
 
 // Mockup screen sequence for process/reference sections
 // Maps step index to the appropriate mockup screen
-const MOCKUP_SCREENS = ['invite', 'questionnaire', 'dashboard', 'completion'] as const;
+// Mockup screens in candidate journey order: IDV → invite reference → reference questionnaire → dashboard
+const MOCKUP_SCREENS = ['idv', 'invite', 'questionnaire', 'dashboard'] as const;
 
 // Section Components
 import HeroSection from './HeroSection.astro';
