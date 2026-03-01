@@ -28,6 +28,7 @@ import AppPreviewSection from './AppPreviewSection.astro';
 import ReferenceExperienceSection from './ReferenceExperienceSection.astro';
 import FAQSection from './FAQSection.astro';
 import InlinePricingCTA from './InlinePricingCTA.astro';
+import SplitMockupSection from './SplitMockupSection.astro';
 import FallbackSection from './FallbackSection.astro';
 
 interface Props {
@@ -64,7 +65,8 @@ const { sections, locale, className } = Astro.props;
           {type === 'howItWorks' && <ReferenceExperienceSection {...props} mockupImages={section.mockupImages ?? []} flowSteps={section.flowSteps ?? section.features?.map((f, i) => ({ _key: f._key, stepNumber: i + 1, title: f.heading, description: f.description, mockupScreen: MOCKUP_SCREENS[i % MOCKUP_SCREENS.length] })) ?? []} />}
           {type === 'referenceExperience' && <ReferenceExperienceSection {...props} mockupImages={section.mockupImages ?? []} flowSteps={section.flowSteps ?? section.features?.map((f, i) => ({ _key: f._key, stepNumber: i + 1, title: f.heading, description: f.description, mockupScreen: MOCKUP_SCREENS[i % MOCKUP_SCREENS.length] })) ?? []} />}
           {type === 'appPreview' && <AppPreviewSection {...props} mockupImages={section.mockupImages ?? []} />}
-          {!['hero', 'heroMockup', 'features', 'cta', 'content', 'pricing', 'testimonials', 'faq', 'stats', 'process', 'howItWorks', 'referenceExperience', 'appPreview'].includes(type) && (
+          {type === 'splitMockup' && <SplitMockupSection {...props} />}
+          {!['hero', 'heroMockup', 'features', 'cta', 'content', 'pricing', 'testimonials', 'faq', 'stats', 'process', 'howItWorks', 'referenceExperience', 'appPreview', 'splitMockup'].includes(type) && (
             <FallbackSection {...props} />
           )}
         </Fragment>

@@ -1,0 +1,96 @@
+---
+/**
+ * Split Mockup Section
+ *
+ * Two side-by-side cards, each with a DeviceFrame + text.
+ * Used for "Split Value Prop" sections showing candidate vs employer views.
+ *
+ * Design Direction: Dr. Dietrich Claude, CDO
+ * - Equal-width cards with subtle background differentiation
+ * - Device mockups centered above feature text
+ * - Mobile: stack vertically
+ */
+
+import DeviceFrame from '@/components/DeviceFrame.astro';
+import { getBackgroundClass, type SectionProps } from './types';
+
+interface Props extends Partial<SectionProps> {}
+
+const {
+  heading,
+  subheading,
+  features,
+  backgroundStyle,
+  language = 'fr',
+  className = '',
+} = Astro.props;
+
+const bgClass = getBackgroundClass(backgroundStyle);
+
+// Use first two features for the split layout
+const leftFeature = features?.[0];
+const rightFeature = features?.[1];
+
+// Map features to mockup screens: first = dashboard (candidate), second = dashboard (employer)
+const leftScreen = `/mockups/mockup-dashboard-fr.png`;
+const rightScreen = `/mockups/mockup-dashboard-fr.png`;
+---
+
+<section class:list={['py-16 md:py-24', bgClass, className]}>
+  <div class="container mx-auto px-4">
+    {/* Section Header */}
+    <div class="mx-auto mb-12 max-w-3xl text-center">
+      {heading && (
+        <h2 class="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">
+          {heading}
+        </h2>
+      )}
+      {subheading && (
+        <p class="text-lg text-gray-600">{subheading}</p>
+      )}
+    </div>
+
+    {/* Split Cards */}
+    <div class="mx-auto grid max-w-5xl gap-8 md:grid-cols-2">
+      {/* Left Card - Candidate View */}
+      {leftFeature && (
+        <div class="flex flex-col items-center rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-md">
+          <div class="mb-6">
+            <DeviceFrame
+              screenSrc={leftScreen}
+              screenAlt={leftFeature.heading || 'Candidate view'}
+              size="sm"
+              variant="mobile"
+            />
+          </div>
+          <h3 class="mb-2 text-center font-display text-xl font-semibold text-foreground">
+            {leftFeature.heading}
+          </h3>
+          {leftFeature.description && (
+            <p class="text-center text-gray-600">{leftFeature.description}</p>
+          )}
+        </div>
+      )}
+
+      {/* Right Card - Employer View */}
+      {rightFeature && (
+        <div class="flex flex-col items-center rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-md">
+          <div class="mb-6">
+            <DeviceFrame
+              screenSrc={rightScreen}
+              screenAlt={rightFeature.heading || 'Employer view'}
+              size="sm"
+              variant="mobile"
+            />
+          </div>
+          <h3 class="mb-2 text-center font-display text-xl font-semibold text-foreground">
+            {rightFeature.heading}
+          </h3>
+          {rightFeature.description && (
+            <p class="text-center text-gray-600">{rightFeature.description}</p>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

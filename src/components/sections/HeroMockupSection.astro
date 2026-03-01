@@ -54,8 +54,8 @@ const bgClass = getBackgroundClass(backgroundStyle);
 const mockupUrl = mockupImage?.asset?.url;
 const mockupAlt = mockupImage?.alt || 'Open HR app screenshot';
 
-// Build iframe URL for dynamic mockup (when no CMS image)
-const mockupIframeSrc = !mockupUrl ? `/mockups/${language}/${mockupScreen}/` : undefined;
+// Build static PNG fallback (when no CMS image) — avoids iframe overhead on homepage
+const mockupStaticFallback = !mockupUrl ? `/mockups/mockup-${mockupScreen}-fr.png` : undefined;
 ---
 
 <section class:list={['py-16 md:py-24 lg:py-32 overflow-hidden', bgClass, className]}>
@@ -127,8 +127,7 @@ const mockupIframeSrc = !mockupUrl ? `/mockups/${language}/${mockupScreen}/` : u
         {/* Device with slight rotation for dynamism */}
         <div class="device-wrapper transform rotate-2 transition-transform hover:rotate-0">
           <DeviceFrame
-            screenSrc={mockupUrl}
-            iframeSrc={mockupIframeSrc}
+            screenSrc={mockupUrl || mockupStaticFallback}
             screenAlt={mockupAlt}
             size="lg"
             variant="mobile"

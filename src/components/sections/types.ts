@@ -26,7 +26,8 @@ export type SectionType =
   | 'process'
   | 'howItWorks'
   | 'referenceExperience'
-  | 'appPreview';
+  | 'appPreview'
+  | 'splitMockup';
 
 /**
  * Background style options
