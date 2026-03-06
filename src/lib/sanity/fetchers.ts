@@ -17,6 +17,9 @@ import {
   RESOURCE_LIST_QUERY,
   RESOURCE_BY_SLUG_QUERY,
   RESOURCE_SLUGS_QUERY,
+  ARTICLE_LIST_QUERY,
+  ARTICLE_BY_SLUG_QUERY,
+  ARTICLE_SLUGS_QUERY,
 } from './queries';
 import type { Locale } from '@/lib/i18n';
 
@@ -488,4 +491,70 @@ export async function getLegalDocumentSlugs(
     LEGAL_DOCUMENT_SLUGS_QUERY,
     { locale }
   );
+}
+
+// =============================================================================
+// INSIGHT ARTICLE TYPES
+// =============================================================================
+
+export interface Author {
+  _id: string;
+  name: string;
+  slug: string;
+  role?: string;
+  bio?: string;
+  photo?: SanityImage;
+}
+
+export interface FaqItem {
+  _key: string;
+  question: string;
+  answer: string;
+}
+
+export interface Citation {
+  _key: string;
+  text: string;
+  doi?: string;
+}
+
+export interface ArticleCard {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  publishedAt: string;
+  author?: Author;
+  coverImage?: SanityImage;
+}
+
+export interface Article extends ArticleCard {
+  language: Locale;
+  reviewedBy?: Author;
+  tldr: string;
+  body: unknown[]; // Portable Text
+  faq?: FaqItem[];
+  references?: Citation[];
+  seo?: SEO;
+}
+
+// =============================================================================
+// INSIGHT ARTICLE FETCHERS
+// =============================================================================
+
+export async function getArticles(locale: Locale): Promise<ArticleCard[]> {
+  return sanityFetch<ArticleCard[]>(ARTICLE_LIST_QUERY, { locale }) ?? [];
+}
+
+export async function getArticle(
+  slug: string,
+  locale: Locale
+): Promise<Article | null> {
+  return sanityFetch<Article | null>(ARTICLE_BY_SLUG_QUERY, { slug, locale });
+}
+
+export async function getArticleSlugs(
+  locale: Locale
+): Promise<Array<{ slug: string }>> {
+  return sanityFetch<Array<{ slug: string }>>(ARTICLE_SLUGS_QUERY, { locale }) ?? [];
 }

@@ -1,0 +1,97 @@
+---
+/**
+ * InsightCard
+ *
+ * Card component for the insight article listing grid.
+ * Links to the article detail page.
+ *
+ * Design: Dr. Dietrich Claude (CDO)
+ * Teal 900 accent, Bricolage Grotesque headings, author attribution.
+ */
+
+import type { ArticleCard } from '@/lib/sanity/fetchers';
+import type { Locale } from '@/lib/i18n';
+import { getInsightLabels } from '@/lib/i18n';
+
+interface Props {
+  article: ArticleCard;
+  locale: Locale;
+}
+
+const { article, locale } = Astro.props;
+const labels = getInsightLabels(locale);
+
+const detailHref = `/${locale}/insights/${article.slug}/`;
+const coverUrl = article.coverImage?.asset?.url;
+const lqip = article.coverImage?.asset?.metadata?.lqip;
+
+const publishedDate = article.publishedAt
+  ? new Intl.DateTimeFormat(locale === 'fr' ? 'fr-FR' : locale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(article.publishedAt))
+  : null;
+---
+
+<article class="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md">
+  <!-- Cover image -->
+  <a href={detailHref} class="block aspect-[3/2] overflow-hidden bg-openhr-teal-950" aria-tabindex="-1">
+    {coverUrl ? (
+      <img
+        src={coverUrl}
+        alt={article.title}
+        width={600}
+        height={400}
+        loading="lazy"
+        style={lqip ? `background-image: url(${lqip}); background-size: cover;` : undefined}
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+      />
+    ) : (
+      <div class="flex h-full w-full items-center justify-center bg-openhr-teal-900">
+        <span class="font-display text-4xl font-bold text-white/20">((○))</span>
+      </div>
+    )}
+  </a>
+
+  <!-- Content -->
+  <div class="flex flex-1 flex-col p-5">
+    <!-- Author + date -->
+    <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
+      {article.author?.photo?.asset?.url && (
+        <img
+          src={article.author.photo.asset.url}
+          alt={article.author.name}
+          width={24}
+          height={24}
+          class="rounded-full object-cover"
+        />
+      )}
+      {article.author?.name && <span class="font-medium text-gray-600">{article.author.name}</span>}
+      {publishedDate && <span>{publishedDate}</span>}
+    </div>
+
+    <!-- Title -->
+    <h2 class="mb-2 font-display text-base font-bold leading-snug text-foreground">
+      <a href={detailHref} class="hover:text-openhr-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2">
+        {article.title}
+      </a>
+    </h2>
+
+    <!-- Excerpt -->
+    <p class="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600">
+      {article.excerpt}
+    </p>
+
+    <!-- Read more -->
+    <a
+      href={detailHref}
+      class="mt-auto inline-flex items-center text-sm font-medium text-openhr-teal-900 hover:text-openhr-teal-700"
+    >
+      {labels.readMore}
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </a>
+  </div>
+</article>

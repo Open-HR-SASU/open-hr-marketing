@@ -22,7 +22,12 @@ export default defineConfig({
           it: 'it-IT',
         },
       },
-      filter: (page) => !page.includes('/mockups/'),
+      filter: (page) =>
+        !page.includes('/mockups/') &&
+        !page.includes('/login/') &&
+        !page.includes('/pilot/') &&
+        !page.includes('/pilot/success/') &&
+        !page.endsWith('/open-hr.work/'),
     }),
   ],
 
@@ -48,8 +53,9 @@ export default defineConfig({
     },
   },
 
-  // Permanent redirects for removed pages (pilot page removed, redirecting to pricing)
+  // Redirects: sitemap alias + removed pages
   redirects: {
+    '/sitemap.xml': '/sitemap-index.xml',
     '/fr/pilot/': '/fr/pricing/',
     '/en-GB/pilot/': '/en-GB/pricing/',
     '/en-US/pilot/': '/en-US/pricing/',

@@ -421,13 +421,152 @@ export function generateHowToSchema(locale: Locale): HowToSchema {
   };
 }
 
+/**
+ * Service Schema for AEO/GEO (AI search engines)
+ *
+ * Helps AI search engines (Google AI Overviews, Perplexity, ChatGPT Search)
+ * understand what Open HR does and generate accurate answers.
+ */
+export interface ServiceSchema {
+  '@context': 'https://schema.org';
+  '@type': 'Service';
+  name: string;
+  description: string;
+  provider: { '@type': 'Organization'; name: string };
+  serviceType: string;
+  areaServed: string[];
+  availableChannel: {
+    '@type': 'ServiceChannel';
+    serviceUrl: string;
+    servicePhone?: string;
+    availableLanguage: string[];
+  };
+}
+
+const serviceDescriptions: Record<
+  Locale,
+  { name: string; description: string; serviceType: string }
+> = {
+  fr: {
+    name: 'Open HR — Vérification de Références Professionnelles',
+    description:
+      "Open HR est une plateforme SaaS qui permet aux travailleurs de collecter des références professionnelles anonymes et vérifiées. Les références remplissent un questionnaire structuré conçu par des psychologues I-O, produisant un RefScore — une accréditation portable que les candidats peuvent joindre à leurs candidatures, profils LinkedIn et CV.",
+    serviceType: 'Vérification de références professionnelles',
+  },
+  'en-GB': {
+    name: 'Open HR — Professional Reference Verification',
+    description:
+      'Open HR is a SaaS platform that enables workers to collect anonymous, verified professional references. References complete a structured questionnaire designed by I-O psychologists, producing a RefScore — a portable credential candidates can attach to job applications, LinkedIn profiles, and CVs.',
+    serviceType: 'Professional reference verification',
+  },
+  'en-US': {
+    name: 'Open HR — Professional Reference Verification',
+    description:
+      'Open HR is a SaaS platform that enables workers to collect anonymous, verified professional references. References complete a structured questionnaire designed by I-O psychologists, producing a RefScore — a portable credential candidates can attach to job applications, LinkedIn profiles, and resumes.',
+    serviceType: 'Professional reference verification',
+  },
+  de: {
+    name: 'Open HR — Professionelle Referenzprüfung',
+    description:
+      'Open HR ist eine SaaS-Plattform, die es Arbeitnehmern ermöglicht, anonyme, verifizierte professionelle Referenzen zu sammeln. Referenzen füllen einen strukturierten Fragebogen aus, der von I-O-Psychologen entwickelt wurde, und erzeugen einen RefScore — eine tragbare Akkreditierung, die Kandidaten ihren Bewerbungen, LinkedIn-Profilen und Lebensläufen beifügen können.',
+    serviceType: 'Professionelle Referenzprüfung',
+  },
+  es: {
+    name: 'Open HR — Verificación de Referencias Profesionales',
+    description:
+      'Open HR es una plataforma SaaS que permite a los trabajadores recopilar referencias profesionales anónimas y verificadas. Las referencias completan un cuestionario estructurado diseñado por psicólogos I-O, produciendo un RefScore — una acreditación portátil que los candidatos pueden adjuntar a sus solicitudes de empleo, perfiles de LinkedIn y CVs.',
+    serviceType: 'Verificación de referencias profesionales',
+  },
+  it: {
+    name: 'Open HR — Verifica Referenze Professionali',
+    description:
+      "Open HR è una piattaforma SaaS che consente ai lavoratori di raccogliere referenze professionali anonime e verificate. Le referenze completano un questionario strutturato progettato da psicologi I-O, producendo un RefScore — una credenziale portatile che i candidati possono allegare alle candidature, profili LinkedIn e CV.",
+    serviceType: 'Verifica referenze professionali',
+  },
+};
+
+export function generateServiceSchema(locale: Locale): ServiceSchema {
+  const content = serviceDescriptions[locale];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: content.name,
+    description: content.description,
+    provider: { '@type': 'Organization', name: 'Open HR' },
+    serviceType: content.serviceType,
+    areaServed: ['FR', 'GB', 'US', 'DE', 'ES', 'IT'],
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      serviceUrl: `${BASE_URL}/${locale}/`,
+      availableLanguage: ['French', 'English', 'German', 'Spanish', 'Italian'],
+    },
+  };
+}
+
+/**
+ * Article Schema (for Insight articles)
+ */
+export interface ArticleSchema {
+  '@context': 'https://schema.org';
+  '@type': 'Article';
+  headline: string;
+  description: string;
+  datePublished: string;
+  image?: string;
+  author?: {
+    '@type': 'Person';
+    name: string;
+    jobTitle?: string;
+    url?: string;
+  };
+  publisher: {
+    '@type': 'Organization';
+    name: string;
+    url: string;
+  };
+}
+
+export function generateArticleSchema(opts: {
+  headline: string;
+  description: string;
+  datePublished: string;
+  image?: string;
+  authorName?: string;
+  authorRole?: string;
+  authorUrl?: string;
+}): ArticleSchema {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: opts.headline,
+    description: opts.description,
+    datePublished: opts.datePublished,
+    image: opts.image,
+    author: opts.authorName
+      ? {
+          '@type': 'Person',
+          name: opts.authorName,
+          jobTitle: opts.authorRole,
+          url: opts.authorUrl,
+        }
+      : undefined,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Open HR',
+      url: BASE_URL,
+    },
+  };
+}
+
 export type Schema =
   | OrganizationSchema
   | WebSiteSchema
   | ProductSchema
   | FAQPageSchema
   | BreadcrumbListSchema
-  | HowToSchema;
+  | HowToSchema
+  | ServiceSchema
+  | ArticleSchema;
 
 export function combineSchemas(schemas: Schema[]): string {
   if (schemas.length === 1) {

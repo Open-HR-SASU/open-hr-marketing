@@ -9,7 +9,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
 import { locales, type Locale } from '@/lib/i18n';
 import { getPage, getPageMetadata } from '@/lib/sanity';
-import { generateWebSiteSchema } from '@/lib/seo';
+import { generateWebSiteSchema, generateServiceSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -45,15 +45,16 @@ const fallbackDescription: Record<Locale, string> = {
 const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle[locale];
 const description = metadata?.seo?.metaDescription || fallbackDescription[locale];
 
-// Generate WebSite schema for homepage (OPE-421)
+// Generate WebSite + Service schemas for homepage (OPE-421, AEO/GEO)
 const webSiteSchema = generateWebSiteSchema(locale);
+const serviceSchema = generateServiceSchema(locale);
 ---
 
 <MainLayout
   title={title}
   description={description}
   locale={locale}
-  additionalSchemas={[webSiteSchema]}
+  additionalSchemas={[webSiteSchema, serviceSchema]}
   pagePath="/"
 >
   {page?.sections && page.sections.length > 0 ? (

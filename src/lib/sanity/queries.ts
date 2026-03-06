@@ -502,3 +502,97 @@ export const RESOURCE_SLUGS_QUERY = groq`
     "slug": slug.current
   }
 `;
+
+// =============================================================================
+// INSIGHT ARTICLE QUERIES
+// =============================================================================
+
+/**
+ * Author fragment for article listings and detail pages
+ */
+export const authorFragment = /* groq */ `
+  _id,
+  name,
+  "slug": slug.current,
+  role,
+  bio,
+  photo {
+    ${imageFragment}
+  }
+`;
+
+/**
+ * Article card fragment — lightweight for listing pages
+ */
+export const articleCardFragment = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  publishedAt,
+  author-> {
+    ${authorFragment}
+  },
+  coverImage {
+    ${imageFragment}
+  }
+`;
+
+/**
+ * Get all insight articles for a locale, newest first
+ */
+export const ARTICLE_LIST_QUERY = groq`
+  *[_type == "article" && language == $locale]
+  | order(publishedAt desc) {
+    ${articleCardFragment}
+  }
+`;
+
+/**
+ * Get a single article by slug and locale (full detail)
+ */
+export const ARTICLE_BY_SLUG_QUERY = groq`
+  *[_type == "article" && slug.current == $slug && language == $locale][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    language,
+    publishedAt,
+    author-> {
+      ${authorFragment}
+    },
+    reviewedBy-> {
+      ${authorFragment}
+    },
+    coverImage {
+      ${imageFragment}
+    },
+    tldr,
+    body[] {
+      ...
+    },
+    faq[] {
+      _key,
+      question,
+      answer
+    },
+    references[] {
+      _key,
+      text,
+      doi
+    },
+    seo {
+      ${seoFragment}
+    }
+  }
+`;
+
+/**
+ * Get all article slugs for a locale (for static generation)
+ */
+export const ARTICLE_SLUGS_QUERY = groq`
+  *[_type == "article" && language == $locale && defined(slug.current)] {
+    "slug": slug.current
+  }
+`;

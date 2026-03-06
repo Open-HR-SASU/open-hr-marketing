@@ -9,6 +9,8 @@ export {
   generateFAQPageSchema,
   generateBreadcrumbSchema,
   generateHowToSchema,
+  generateServiceSchema,
+  generateArticleSchema,
   combineSchemas,
   type OrganizationSchema,
   type WebSiteSchema,
@@ -16,5 +18,7 @@ export {
   type FAQPageSchema,
   type BreadcrumbListSchema,
   type HowToSchema,
+  type ServiceSchema,
+  type ArticleSchema,
   type Schema,
 } from './schemas';
