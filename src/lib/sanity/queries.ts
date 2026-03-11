@@ -529,6 +529,7 @@ export const articleCardFragment = /* groq */ `
   title,
   "slug": slug.current,
   excerpt,
+  seriesType,
   publishedAt,
   author-> {
     ${authorFragment}
@@ -549,6 +550,16 @@ export const ARTICLE_LIST_QUERY = groq`
 `;
 
 /**
+ * Get articles filtered by series type for a locale, newest first
+ */
+export const ARTICLES_BY_SERIES_QUERY = groq`
+  *[_type == "article" && language == $locale && seriesType == $seriesType]
+  | order(publishedAt desc) {
+    ${articleCardFragment}
+  }
+`;
+
+/**
  * Get a single article by slug and locale (full detail)
  */
 export const ARTICLE_BY_SLUG_QUERY = groq`
@@ -558,12 +569,19 @@ export const ARTICLE_BY_SLUG_QUERY = groq`
     "slug": slug.current,
     excerpt,
     language,
+    seriesType,
     publishedAt,
     author-> {
       ${authorFragment}
     },
     reviewedBy-> {
       ${authorFragment}
+    },
+    verdict,
+    relatedPillar-> {
+      _id,
+      title,
+      "slug": slug.current
     },
     coverImage {
       ${imageFragment}
@@ -593,6 +611,15 @@ export const ARTICLE_BY_SLUG_QUERY = groq`
  */
 export const ARTICLE_SLUGS_QUERY = groq`
   *[_type == "article" && language == $locale && defined(slug.current)] {
+    "slug": slug.current
+  }
+`;
+
+/**
+ * Get article slugs filtered by series type for a locale (for static generation)
+ */
+export const ARTICLE_SLUGS_BY_SERIES_QUERY = groq`
+  *[_type == "article" && language == $locale && seriesType == $seriesType && defined(slug.current)] {
     "slug": slug.current
   }
 `;

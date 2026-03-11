@@ -12,16 +12,27 @@
 import type { ArticleCard } from '@/lib/sanity/fetchers';
 import type { Locale } from '@/lib/i18n';
 import { getInsightLabels } from '@/lib/i18n';
+import { seriesConfigs } from '@/lib/i18n/series';
 
 interface Props {
   article: ArticleCard;
   locale: Locale;
+  /** Override the detail URL path segment (e.g. 'glossary') */
+  seriesSlug?: string;
 }
 
-const { article, locale } = Astro.props;
+const { article, locale, seriesSlug } = Astro.props;
 const labels = getInsightLabels(locale);
 
-const detailHref = `/${locale}/insights/${article.slug}/`;
+// Build detail URL: series articles use /insights/[series]/[slug]/, pillar uses /insights/[slug]/
+const seriesPath = seriesSlug
+  ? seriesSlug
+  : article.seriesType && article.seriesType !== 'pillar'
+    ? seriesConfigs[article.seriesType]?.slug
+    : null;
+const detailHref = seriesPath
+  ? `/${locale}/insights/${seriesPath}/${article.slug}/`
+  : `/${locale}/insights/${article.slug}/`;
 const coverUrl = article.coverImage?.asset?.url;
 const lqip = article.coverImage?.asset?.metadata?.lqip;
 

@@ -11,6 +11,8 @@ export {
   generateHowToSchema,
   generateServiceSchema,
   generateArticleSchema,
+  generateDefinedTermSchema,
+  generateClaimReviewSchema,
   combineSchemas,
   type OrganizationSchema,
   type WebSiteSchema,
@@ -20,5 +22,7 @@ export {
   type HowToSchema,
   type ServiceSchema,
   type ArticleSchema,
+  type DefinedTermSchema,
+  type ClaimReviewSchema,
   type Schema,
 } from './schemas';

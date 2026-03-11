@@ -558,6 +558,116 @@ export function generateArticleSchema(opts: {
   };
 }
 
+/**
+ * DefinedTerm Schema (for Glossary entries)
+ *
+ * @see https://schema.org/DefinedTerm
+ * @see OPE-767
+ */
+export interface DefinedTermSchema {
+  '@context': 'https://schema.org';
+  '@type': 'DefinedTerm';
+  name: string;
+  description: string;
+  inDefinedTermSet: {
+    '@type': 'DefinedTermSet';
+    name: string;
+    url: string;
+  };
+  url: string;
+}
+
+export function generateDefinedTermSchema(opts: {
+  term: string;
+  definition: string;
+  locale: Locale;
+  slug: string;
+}): DefinedTermSchema {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTerm',
+    name: opts.term,
+    description: opts.definition,
+    inDefinedTermSet: {
+      '@type': 'DefinedTermSet',
+      name: 'Open HR — HR & People Science Glossary',
+      url: `${BASE_URL}/${opts.locale}/insights/glossary/`,
+    },
+    url: `${BASE_URL}/${opts.locale}/insights/glossary/${opts.slug}/`,
+  };
+}
+
+/**
+ * ClaimReview Schema (for Myth vs. Fact entries)
+ *
+ * @see https://schema.org/ClaimReview
+ * @see OPE-767
+ */
+export interface ClaimReviewSchema {
+  '@context': 'https://schema.org';
+  '@type': 'ClaimReview';
+  url: string;
+  claimReviewed: string;
+  author: {
+    '@type': 'Organization';
+    name: string;
+    url: string;
+  };
+  reviewRating: {
+    '@type': 'Rating';
+    ratingValue: number;
+    bestRating: number;
+    worstRating: number;
+    alternateName: string;
+  };
+  itemReviewed: {
+    '@type': 'Claim';
+    name: string;
+    author?: {
+      '@type': 'Organization';
+      name: string;
+    };
+  };
+}
+
+export function generateClaimReviewSchema(opts: {
+  claim: string;
+  verdict: 'false' | 'mostly-false' | 'half-true' | 'mostly-true' | 'true';
+  locale: Locale;
+  slug: string;
+}): ClaimReviewSchema {
+  const verdictMap: Record<string, {rating: number; label: string}> = {
+    false: {rating: 1, label: 'False'},
+    'mostly-false': {rating: 2, label: 'Mostly False'},
+    'half-true': {rating: 3, label: 'Half True'},
+    'mostly-true': {rating: 4, label: 'Mostly True'},
+    true: {rating: 5, label: 'True'},
+  };
+  const v = verdictMap[opts.verdict];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ClaimReview',
+    url: `${BASE_URL}/${opts.locale}/insights/myth-vs-fact/${opts.slug}/`,
+    claimReviewed: opts.claim,
+    author: {
+      '@type': 'Organization',
+      name: 'Open HR',
+      url: BASE_URL,
+    },
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: v.rating,
+      bestRating: 5,
+      worstRating: 1,
+      alternateName: v.label,
+    },
+    itemReviewed: {
+      '@type': 'Claim',
+      name: opts.claim,
+    },
+  };
+}
+
 export type Schema =
   | OrganizationSchema
   | WebSiteSchema
@@ -566,7 +676,9 @@ export type Schema =
   | BreadcrumbListSchema
   | HowToSchema
   | ServiceSchema
-  | ArticleSchema;
+  | ArticleSchema
+  | DefinedTermSchema
+  | ClaimReviewSchema;
 
 export function combineSchemas(schemas: Schema[]): string {
   if (schemas.length === 1) {

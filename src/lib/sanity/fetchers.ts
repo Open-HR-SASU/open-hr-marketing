@@ -18,8 +18,10 @@ import {
   RESOURCE_BY_SLUG_QUERY,
   RESOURCE_SLUGS_QUERY,
   ARTICLE_LIST_QUERY,
+  ARTICLES_BY_SERIES_QUERY,
   ARTICLE_BY_SLUG_QUERY,
   ARTICLE_SLUGS_QUERY,
+  ARTICLE_SLUGS_BY_SERIES_QUERY,
 } from './queries';
 import type { Locale } from '@/lib/i18n';
 
@@ -518,19 +520,36 @@ export interface Citation {
   doi?: string;
 }
 
+export type SeriesType =
+  | 'pillar'
+  | 'glossary'
+  | 'myth-vs-fact'
+  | 'compliance'
+  | 'research-digest'
+  | 'faq';
+
 export interface ArticleCard {
   _id: string;
   title: string;
   slug: string;
   excerpt: string;
+  seriesType?: SeriesType;
   publishedAt: string;
   author?: Author;
   coverImage?: SanityImage;
 }
 
+export interface RelatedPillar {
+  _id: string;
+  title: string;
+  slug: string;
+}
+
 export interface Article extends ArticleCard {
   language: Locale;
   reviewedBy?: Author;
+  relatedPillar?: RelatedPillar;
+  verdict?: string;
   tldr: string;
   body: unknown[]; // Portable Text
   faq?: FaqItem[];
@@ -557,4 +576,24 @@ export async function getArticleSlugs(
   locale: Locale
 ): Promise<Array<{ slug: string }>> {
   return sanityFetch<Array<{ slug: string }>>(ARTICLE_SLUGS_QUERY, { locale }) ?? [];
+}
+
+/**
+ * Get articles filtered by series type for a locale
+ */
+export async function getArticlesBySeries(
+  locale: Locale,
+  seriesType: SeriesType
+): Promise<ArticleCard[]> {
+  return sanityFetch<ArticleCard[]>(ARTICLES_BY_SERIES_QUERY, { locale, seriesType }) ?? [];
+}
+
+/**
+ * Get article slugs filtered by series type for a locale (for static generation)
+ */
+export async function getArticleSlugsBySeries(
+  locale: Locale,
+  seriesType: SeriesType
+): Promise<Array<{ slug: string }>> {
+  return sanityFetch<Array<{ slug: string }>>(ARTICLE_SLUGS_BY_SERIES_QUERY, { locale, seriesType }) ?? [];
 }
