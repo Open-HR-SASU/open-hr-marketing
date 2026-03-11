@@ -23,6 +23,12 @@ export interface InsightLabels {
   aboutTheAuthor: string;
   publishedOn: string;
 
+  // Reading time
+  readingTime: string;
+
+  // Related terms
+  relatedTermsHeading: string;
+
   // Empty state
   noArticles: string;
 }
@@ -39,6 +45,8 @@ const labels: Record<Locale, InsightLabels> = {
     backToInsights: '\u2190 Retour aux Insights',
     aboutTheAuthor: "A propos de l'auteur",
     publishedOn: 'Publie le',
+    readingTime: 'min de lecture',
+    relatedTermsHeading: 'Termes associes',
     noArticles: 'Aucun article disponible pour le moment.',
   },
   'en-GB': {
@@ -52,6 +60,8 @@ const labels: Record<Locale, InsightLabels> = {
     backToInsights: '\u2190 Back to Insights',
     aboutTheAuthor: 'About the Author',
     publishedOn: 'Published',
+    readingTime: 'min read',
+    relatedTermsHeading: 'Related Terms',
     noArticles: 'No articles available yet.',
   },
   'en-US': {
@@ -65,6 +75,8 @@ const labels: Record<Locale, InsightLabels> = {
     backToInsights: '\u2190 Back to Insights',
     aboutTheAuthor: 'About the Author',
     publishedOn: 'Published',
+    readingTime: 'min read',
+    relatedTermsHeading: 'Related Terms',
     noArticles: 'No articles available yet.',
   },
   de: {
@@ -78,6 +90,8 @@ const labels: Record<Locale, InsightLabels> = {
     backToInsights: '\u2190 Zuruck zu Insights',
     aboutTheAuthor: 'Uber den Autor',
     publishedOn: 'Veroffentlicht am',
+    readingTime: 'Min. Lesezeit',
+    relatedTermsHeading: 'Verwandte Begriffe',
     noArticles: 'Noch keine Artikel verfugbar.',
   },
   es: {
@@ -91,6 +105,8 @@ const labels: Record<Locale, InsightLabels> = {
     backToInsights: '\u2190 Volver a Insights',
     aboutTheAuthor: 'Sobre el autor',
     publishedOn: 'Publicado el',
+    readingTime: 'min de lectura',
+    relatedTermsHeading: 'Terminos relacionados',
     noArticles: 'Aun no hay articulos disponibles.',
   },
   it: {
@@ -104,6 +120,8 @@ const labels: Record<Locale, InsightLabels> = {
     backToInsights: '\u2190 Torna agli Insights',
     aboutTheAuthor: "Sull'autore",
     publishedOn: 'Pubblicato il',
+    readingTime: 'min di lettura',
+    relatedTermsHeading: 'Termini correlati',
     noArticles: 'Nessun articolo disponibile al momento.',
   },
 };

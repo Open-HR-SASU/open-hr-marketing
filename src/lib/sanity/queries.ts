@@ -600,6 +600,12 @@ export const ARTICLE_BY_SLUG_QUERY = groq`
       text,
       doi
     },
+    relatedArticles[]-> {
+      _id,
+      title,
+      "slug": slug.current,
+      seriesType
+    },
     seo {
       ${seoFragment}
     }

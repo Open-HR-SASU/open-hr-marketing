@@ -11,6 +11,7 @@
 import MainLayout from '@/layouts/MainLayout.astro';
 import { RichText } from '@/components/sections/RichText';
 import { locales, type Locale, getInsightLabels, getSeriesLabels } from '@/lib/i18n';
+import { estimateReadingTime } from '@/lib/utils/readingTime';
 import { getArticleSlugsBySeries, getArticle } from '@/lib/sanity';
 import {
   generateArticleSchema,
@@ -57,6 +58,8 @@ const publishedDate = article.publishedAt
       day: 'numeric',
     }).format(new Date(article.publishedAt))
   : null;
+
+const readingTime = article.body ? estimateReadingTime(article.body) : null;
 
 const seriesHref = `/${locale}/insights/glossary/`;
 const insightsHref = `/${locale}/insights/`;
@@ -148,6 +151,12 @@ if (article.faq && article.faq.length > 0) {
               <span>{labels.publishedOn} {publishedDate}</span>
             </div>
           )}
+          {readingTime && (
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+              <span class="text-gray-300">|</span>
+              <span>{readingTime} {labels.readingTime}</span>
+            </div>
+          )}
         </div>
       </div>
     </header>
@@ -184,6 +193,25 @@ if (article.faq && article.faq.length > 0) {
           </aside>
         )}
 
+        <!-- Related terms -->
+        {article.relatedArticles && article.relatedArticles.length > 0 && (
+          <aside class="mb-12 rounded-xl border border-gray-200 bg-gray-50 p-6">
+            <h2 class="mb-4 font-display text-sm font-bold uppercase tracking-wider text-gray-400">
+              {labels.relatedTermsHeading}
+            </h2>
+            <div class="flex flex-wrap gap-2">
+              {article.relatedArticles.map((related) => (
+                <a
+                  href={`/${locale}/insights/${related.seriesType === 'glossary' ? 'glossary/' : ''}${related.slug}/`}
+                  class="rounded-full bg-openhr-teal-900/10 px-3 py-1 text-sm text-openhr-teal-900 transition-colors hover:bg-openhr-teal-900/20"
+                >
+                  {related.title}
+                </a>
+              ))}
+            </div>
+          </aside>
+        )}
+
         <!-- FAQ Section -->
         {article.faq && article.faq.length > 0 && (
           <section class="mb-12 rounded-xl border border-gray-200 bg-gray-50 p-6 md:p-8">
@@ -215,8 +243,9 @@ if (article.faq && article.faq.length > 0) {
               {article.references.map((ref) => (
                 <li class="pl-4 -indent-4">
                   {ref.doi ? (
-                    <a href={ref.doi} target="_blank" rel="noopener noreferrer" class="hover:text-openhr-teal-900">
+                    <a href={ref.doi} target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-openhr-teal-700 hover:underline">
                       {ref.text}
+                      <span class="ml-1.5 inline-flex items-center rounded bg-openhr-teal-900/10 px-1.5 py-0.5 align-middle font-mono text-[10px] uppercase tracking-wider text-openhr-teal-900">DOI</span>
                     </a>
                   ) : (
                     <span>{ref.text}</span>
