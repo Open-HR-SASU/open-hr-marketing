@@ -297,7 +297,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
   const foundingIsFull = slots?.isFull ?? false;
   const slotsRemaining = slots?.remaining ?? foundingTier.cap ?? 100;
 
-  const pilotUrl = `/${locale}/pilot/`;
+  const checkoutUrl = 'https://app.open-hr.work/pricing';
 
   return (
     <div className="py-12">
@@ -358,14 +358,14 @@ export function PricingSection({ locale }: PricingSectionProps) {
           {/* CTA */}
           {foundingIsFull ? (
             <a
-              href={pilotUrl + '?tier=standard'}
+              href={`${checkoutUrl}?tier=standard`}
               className="mt-8 block w-full rounded-lg border border-gray-400 bg-white px-4 py-3 text-center font-medium text-gray-700 transition-colors hover:bg-gray-50"
             >
               {t.founding.ctaFull}
             </a>
           ) : (
             <a
-              href={pilotUrl}
+              href={`${checkoutUrl}?tier=founding`}
               className="mt-8 block w-full rounded-lg bg-openhr-teal-900 px-4 py-3 text-center font-medium text-white transition-colors hover:bg-openhr-teal-800 focus:outline-none focus:ring-2 focus:ring-openhr-teal-500 focus:ring-offset-2"
             >
               {t.founding.cta}
@@ -420,7 +420,7 @@ export function PricingSection({ locale }: PricingSectionProps) {
 
           {/* CTA */}
           <a
-            href={pilotUrl + '?tier=standard'}
+            href={`${checkoutUrl}?tier=standard`}
             className="mt-8 block w-full rounded-lg border border-openhr-teal-900 bg-white px-4 py-3 text-center font-medium text-openhr-teal-900 transition-colors hover:bg-openhr-teal-50 focus:outline-none focus:ring-2 focus:ring-openhr-teal-500 focus:ring-offset-2"
           >
             {t.standard.cta}
