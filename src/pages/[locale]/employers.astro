@@ -9,7 +9,6 @@
  */
 import MainLayout from '@/layouts/MainLayout.astro';
 import Mark from '@/components/Mark.astro';
-import EmployerPricingSection from '@/components/islands/EmployerPricingSection';
 import { locales, type Locale } from '@/lib/i18n';
 import { generateBreadcrumbSchema } from '@/lib/seo';
 
@@ -36,6 +35,7 @@ const content: Record<Locale, {
   steps: { title: string; description: string }[];
   pricingHeading: string;
   pricingSub: string;
+  pricingCta: string;
   ctaHeading: string;
   ctaSub: string;
   ctaButton: string;
@@ -59,6 +59,7 @@ const content: Record<Locale, {
     ],
     pricingHeading: 'Tarification par evaluation',
     pricingSub: 'Payez uniquement pour les evaluations dont vous avez besoin. Sans abonnement.',
+    pricingCta: 'Voir les tarifs',
     ctaHeading: 'Pret a recruter en confiance ?',
     ctaSub: 'Creez votre compte employeur et lancez votre premiere evaluation en quelques minutes.',
     ctaButton: 'Creer un compte employeur',
@@ -82,6 +83,7 @@ const content: Record<Locale, {
     ],
     pricingHeading: 'Per-assessment pricing',
     pricingSub: 'Pay only for the assessments you need. No subscriptions.',
+    pricingCta: 'View pricing',
     ctaHeading: 'Ready to hire with confidence?',
     ctaSub: 'Create your employer account and launch your first assessment in minutes.',
     ctaButton: 'Create employer account',
@@ -105,6 +107,7 @@ const content: Record<Locale, {
     ],
     pricingHeading: 'Per-assessment pricing',
     pricingSub: 'Pay only for the assessments you need. No subscriptions.',
+    pricingCta: 'View pricing',
     ctaHeading: 'Ready to hire with confidence?',
     ctaSub: 'Create your employer account and launch your first assessment in minutes.',
     ctaButton: 'Create employer account',
@@ -128,6 +131,7 @@ const content: Record<Locale, {
     ],
     pricingHeading: 'Pro-Bewertung-Preise',
     pricingSub: 'Zahlen Sie nur fur die Bewertungen, die Sie benotigen. Kein Abonnement.',
+    pricingCta: 'Preise ansehen',
     ctaHeading: 'Bereit, mit Vertrauen einzustellen?',
     ctaSub: 'Erstellen Sie Ihr Arbeitgeberkonto und starten Sie Ihre erste Bewertung in wenigen Minuten.',
     ctaButton: 'Arbeitgeberkonto erstellen',
@@ -151,6 +155,7 @@ const content: Record<Locale, {
     ],
     pricingHeading: 'Precios por evaluacion',
     pricingSub: 'Pague solo por las evaluaciones que necesita. Sin suscripciones.',
+    pricingCta: 'Ver precios',
     ctaHeading: 'Listo para contratar con confianza?',
     ctaSub: 'Cree su cuenta de empleador y lance su primera evaluacion en minutos.',
     ctaButton: 'Crear cuenta de empleador',
@@ -174,6 +179,7 @@ const content: Record<Locale, {
     ],
     pricingHeading: 'Prezzi per valutazione',
     pricingSub: 'Paga solo per le valutazioni di cui hai bisogno. Nessun abbonamento.',
+    pricingCta: 'Vedi i prezzi',
     ctaHeading: 'Pronto ad assumere con fiducia?',
     ctaSub: 'Crea il tuo account datore di lavoro e lancia la tua prima valutazione in pochi minuti.',
     ctaButton: 'Crea account datore di lavoro',
@@ -268,8 +274,13 @@ const breadcrumbSchema = generateBreadcrumbSchema([
       <p class="text-xl text-gray-600">
         {t.pricingSub}
       </p>
+      <a
+        href={`/${locale}/pricing/?view=employers`}
+        class="btn btn-primary mt-8 inline-flex text-base px-8 py-3"
+      >
+        {t.pricingCta}
+      </a>
     </div>
-    <EmployerPricingSection locale={locale} client:load />
   </section>
 
   <!-- Bottom CTA -->

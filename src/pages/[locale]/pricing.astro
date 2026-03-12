@@ -7,7 +7,7 @@
  */
 import MainLayout from '@/layouts/MainLayout.astro';
 import Mark from '@/components/Mark.astro';
-import PricingSection from '@/components/islands/PricingSection';
+import PricingPageToggle from '@/components/islands/PricingPageToggle';
 import { locales, type Locale } from '@/lib/i18n';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/seo';
 
@@ -23,39 +23,39 @@ const { locale } = Astro.params as { locale: Locale };
 const content = {
   fr: {
     title: 'Tarifs - Open HR',
-    description: 'Tarifs simples et transparents. Choisissez le plan qui vous convient.',
+    description: 'Tarifs simples et transparents pour les travailleurs et les employeurs.',
     heading: 'Tarifs simples. Sans surprise.',
-    subheading: 'Choisissez le plan qui correspond a vos besoins.',
+    subheading: 'Pour les travailleurs et les employeurs.',
   },
   'en-GB': {
     title: 'Pricing - Open HR',
-    description: 'Straightforward, transparent pricing. Choose the plan that suits you.',
+    description: 'Straightforward, transparent pricing for workers and employers.',
     heading: 'Straightforward pricing. No surprises.',
-    subheading: 'Choose the plan that suits your needs.',
+    subheading: 'For workers and employers.',
   },
   'en-US': {
     title: 'Pricing - Open HR',
-    description: 'Simple, transparent pricing. Choose the plan that works for you.',
+    description: 'Simple, transparent pricing for workers and employers.',
     heading: 'Simple pricing. No surprises.',
-    subheading: 'Pick the plan that works for you.',
+    subheading: 'For workers and employers.',
   },
   de: {
     title: 'Preise - Open HR',
-    description: 'Klare, transparente Preise. Wahlen Sie den Plan, der zu Ihnen passt.',
+    description: 'Klare, transparente Preise fur Arbeitnehmer und Arbeitgeber.',
     heading: 'Klare Preise. Keine Uberraschungen.',
-    subheading: 'Wahlen Sie den Plan, der zu Ihnen passt.',
+    subheading: 'Fur Arbeitnehmer und Arbeitgeber.',
   },
   es: {
     title: 'Precios - Open HR',
-    description: 'Precios claros y transparentes. Elige el plan que mejor te funcione.',
+    description: 'Precios claros y transparentes para trabajadores y empleadores.',
     heading: 'Precios claros. Sin sorpresas.',
-    subheading: 'Elige el plan que mejor te funcione.',
+    subheading: 'Para trabajadores y empleadores.',
   },
   it: {
     title: 'Prezzi - Open HR',
-    description: 'Prezzi chiari e trasparenti. Scegli il piano giusto per te.',
+    description: 'Prezzi chiari e trasparenti per lavoratori e datori di lavoro.',
     heading: 'Prezzi chiari. Nessuna sorpresa.',
-    subheading: 'Scegli il piano giusto per te.',
+    subheading: 'Per lavoratori e datori di lavoro.',
   },
 }[locale];
 
@@ -98,7 +98,7 @@ const breadcrumbSchema = generateBreadcrumbSchema([
       </p>
     </div>
 
-    <!-- Pricing Section (React Island) -->
-    <PricingSection locale={locale} client:load />
+    <!-- Pricing Section with Workers/Employers Toggle (React Island) -->
+    <PricingPageToggle locale={locale} client:load />
   </section>
 </MainLayout>
