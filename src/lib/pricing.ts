@@ -14,6 +14,7 @@
 export type Locale = 'fr' | 'en-GB' | 'en-US' | 'de' | 'es' | 'it';
 export type Currency = 'eur' | 'gbp' | 'usd';
 export type Tier = 'founding' | 'standard';
+export type EmployerTier = 'essential' | 'professional' | 'executive';
 
 interface TierCurrencyConfig {
   /** Annual total in whole currency units (e.g. 12 = €12/yr) */
@@ -31,6 +32,22 @@ interface TierConfig {
   gbp: TierCurrencyConfig;
   usd: TierCurrencyConfig;
   isFounding: boolean;
+}
+
+interface EmployerTierCurrencyConfig {
+  /** Per-assessment price in whole currency units */
+  amount: number;
+  currency: '€' | '£' | '$';
+}
+
+interface EmployerTierConfig {
+  name: Record<Locale, string>;
+  eur: EmployerTierCurrencyConfig;
+  gbp: EmployerTierCurrencyConfig;
+  usd: EmployerTierCurrencyConfig;
+  references: number | string;
+  confidence: string;
+  isPopular: boolean;
 }
 
 /** Annual pricing tiers — DL-34, DL-35 */
@@ -146,6 +163,70 @@ export function getAnnualLabel(locale: Locale): string {
     default:
       return 'year';
   }
+}
+
+/** Employer B2B per-assessment pricing — OPE-778 */
+export const EMPLOYER_TIERS: Record<EmployerTier, EmployerTierConfig> = {
+  essential: {
+    name: {
+      fr: 'Essentiel',
+      'en-GB': 'Essential',
+      'en-US': 'Essential',
+      de: 'Basis',
+      es: 'Esencial',
+      it: 'Essenziale',
+    },
+    eur: { amount: 79, currency: '€' },
+    gbp: { amount: 69, currency: '£' },
+    usd: { amount: 79, currency: '$' },
+    references: 3,
+    confidence: '~56%',
+    isPopular: false,
+  },
+  professional: {
+    name: {
+      fr: 'Professionnel',
+      'en-GB': 'Professional',
+      'en-US': 'Professional',
+      de: 'Professionell',
+      es: 'Profesional',
+      it: 'Professionale',
+    },
+    eur: { amount: 149, currency: '€' },
+    gbp: { amount: 129, currency: '£' },
+    usd: { amount: 149, currency: '$' },
+    references: '5-6',
+    confidence: '~85%',
+    isPopular: true,
+  },
+  executive: {
+    name: {
+      fr: 'Dirigeant',
+      'en-GB': 'Executive',
+      'en-US': 'Executive',
+      de: 'Exekutiv',
+      es: 'Ejecutivo',
+      it: 'Dirigente',
+    },
+    eur: { amount: 299, currency: '€' },
+    gbp: { amount: 259, currency: '£' },
+    usd: { amount: 299, currency: '$' },
+    references: '8-10',
+    confidence: '~93%+',
+    isPopular: false,
+  },
+} as const;
+
+/**
+ * Format a per-assessment price with VAT labeling.
+ * Reuses the same locale→currency→VAT logic as formatAnnualPrice.
+ */
+export function formatPerAssessmentPrice(
+  amount: number,
+  locale: Locale,
+  showVatLabel: boolean = true,
+): string {
+  return formatAnnualPrice(amount, locale, showVatLabel);
 }
 
 // ── Legacy exports kept for backward compatibility during migration ──────────

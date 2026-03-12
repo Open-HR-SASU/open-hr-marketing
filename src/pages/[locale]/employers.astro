@@ -1,0 +1,300 @@
+---
+/**
+ * Employers Page — B2B Landing
+ *
+ * Per-assessment pricing for employers.
+ * Platform endpoints already live at app.open-hr.work/employer/*.
+ *
+ * @see OPE-778 - Employer B2B Portal
+ */
+import MainLayout from '@/layouts/MainLayout.astro';
+import Mark from '@/components/Mark.astro';
+import EmployerPricingSection from '@/components/islands/EmployerPricingSection';
+import { locales, type Locale } from '@/lib/i18n';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+const content: Record<Locale, {
+  title: string;
+  description: string;
+  heading: string;
+  subheading: string;
+  signInLabel: string;
+  signInNote: string;
+  heroHeading: string;
+  heroSub: string;
+  heroCta: string;
+  heroSignIn: string;
+  howTitle: string;
+  steps: { title: string; description: string }[];
+  pricingHeading: string;
+  pricingSub: string;
+  ctaHeading: string;
+  ctaSub: string;
+  ctaButton: string;
+}> = {
+  fr: {
+    title: 'Employeurs - Open HR',
+    description: 'Evaluez vos candidats avec des references professionnelles verifiees. Recrutez en toute confiance avec RefScore.',
+    heading: 'Recrutez en confiance.',
+    subheading: 'Des references verifiees, pas des suppositions.',
+    signInLabel: 'Deja un compte ?',
+    signInNote: 'Connexion employeur',
+    heroHeading: 'Arretez de deviner.\nCommencez a verifier.',
+    heroSub: 'RefScore transforme les references professionnelles en donnees exploitables. Evaluations par assessment, pas par abonnement.',
+    heroCta: 'Commencer une evaluation',
+    heroSignIn: 'Connexion employeur',
+    howTitle: 'Comment ca marche',
+    steps: [
+      { title: 'Initiez une evaluation', description: 'Entrez les coordonnees du candidat et choisissez un niveau d\'evaluation. Le candidat recoit une invitation securisee.' },
+      { title: 'Les references repondent', description: 'Les references du candidat completent un questionnaire valide psychometriquement, de maniere anonyme et verifiee.' },
+      { title: 'Recevez votre rapport', description: 'Un rapport RefScore detaille avec le grade global, les dimensions cles et les recommandations pour l\'entretien.' },
+    ],
+    pricingHeading: 'Tarification par evaluation',
+    pricingSub: 'Payez uniquement pour les evaluations dont vous avez besoin. Sans abonnement.',
+    ctaHeading: 'Pret a recruter en confiance ?',
+    ctaSub: 'Creez votre compte employeur et lancez votre premiere evaluation en quelques minutes.',
+    ctaButton: 'Creer un compte employeur',
+  },
+  'en-GB': {
+    title: 'Employers - Open HR',
+    description: 'Evaluate candidates with verified professional references. Hire with confidence using RefScore.',
+    heading: 'Hire with confidence.',
+    subheading: 'Verified references, not guesswork.',
+    signInLabel: 'Already have an account?',
+    signInNote: 'Employer sign in',
+    heroHeading: 'Stop guessing.\nStart verifying.',
+    heroSub: 'RefScore turns professional references into actionable data. Per-assessment pricing, not subscriptions.',
+    heroCta: 'Start an assessment',
+    heroSignIn: 'Employer sign in',
+    howTitle: 'How it works',
+    steps: [
+      { title: 'Initiate an assessment', description: 'Enter candidate details and choose an assessment tier. The candidate receives a secure invitation.' },
+      { title: 'References respond', description: 'The candidate\'s references complete a psychometrically validated questionnaire, anonymously and verified.' },
+      { title: 'Receive your report', description: 'A detailed RefScore report with overall grade, key dimensions, and interview recommendations.' },
+    ],
+    pricingHeading: 'Per-assessment pricing',
+    pricingSub: 'Pay only for the assessments you need. No subscriptions.',
+    ctaHeading: 'Ready to hire with confidence?',
+    ctaSub: 'Create your employer account and launch your first assessment in minutes.',
+    ctaButton: 'Create employer account',
+  },
+  'en-US': {
+    title: 'Employers - Open HR',
+    description: 'Evaluate candidates with verified professional references. Hire with confidence using RefScore.',
+    heading: 'Hire with confidence.',
+    subheading: 'Verified references, not guesswork.',
+    signInLabel: 'Already have an account?',
+    signInNote: 'Employer sign in',
+    heroHeading: 'Stop guessing.\nStart verifying.',
+    heroSub: 'RefScore turns professional references into actionable data. Per-assessment pricing, not subscriptions.',
+    heroCta: 'Start an assessment',
+    heroSignIn: 'Employer sign in',
+    howTitle: 'How it works',
+    steps: [
+      { title: 'Initiate an assessment', description: 'Enter candidate details and choose an assessment tier. The candidate receives a secure invitation.' },
+      { title: 'References respond', description: 'The candidate\'s references complete a psychometrically validated questionnaire, anonymously and verified.' },
+      { title: 'Receive your report', description: 'A detailed RefScore report with overall grade, key dimensions, and interview recommendations.' },
+    ],
+    pricingHeading: 'Per-assessment pricing',
+    pricingSub: 'Pay only for the assessments you need. No subscriptions.',
+    ctaHeading: 'Ready to hire with confidence?',
+    ctaSub: 'Create your employer account and launch your first assessment in minutes.',
+    ctaButton: 'Create employer account',
+  },
+  de: {
+    title: 'Arbeitgeber - Open HR',
+    description: 'Bewerten Sie Kandidaten mit verifizierten beruflichen Referenzen. Stellen Sie mit Vertrauen ein mit RefScore.',
+    heading: 'Mit Vertrauen einstellen.',
+    subheading: 'Verifizierte Referenzen, keine Vermutungen.',
+    signInLabel: 'Bereits ein Konto?',
+    signInNote: 'Arbeitgeber-Anmeldung',
+    heroHeading: 'Schluss mit Raten.\nAnfangen zu verifizieren.',
+    heroSub: 'RefScore verwandelt berufliche Referenzen in verwertbare Daten. Pro-Bewertung, kein Abonnement.',
+    heroCta: 'Bewertung starten',
+    heroSignIn: 'Arbeitgeber-Anmeldung',
+    howTitle: 'So funktioniert es',
+    steps: [
+      { title: 'Bewertung initiieren', description: 'Geben Sie die Kandidatendaten ein und wahlen Sie eine Bewertungsstufe. Der Kandidat erhalt eine sichere Einladung.' },
+      { title: 'Referenzen antworten', description: 'Die Referenzen des Kandidaten fullen einen psychometrisch validierten Fragebogen aus, anonym und verifiziert.' },
+      { title: 'Bericht erhalten', description: 'Ein detaillierter RefScore-Bericht mit Gesamtnote, Schlusselsdimensionen und Interviewempfehlungen.' },
+    ],
+    pricingHeading: 'Pro-Bewertung-Preise',
+    pricingSub: 'Zahlen Sie nur fur die Bewertungen, die Sie benotigen. Kein Abonnement.',
+    ctaHeading: 'Bereit, mit Vertrauen einzustellen?',
+    ctaSub: 'Erstellen Sie Ihr Arbeitgeberkonto und starten Sie Ihre erste Bewertung in wenigen Minuten.',
+    ctaButton: 'Arbeitgeberkonto erstellen',
+  },
+  es: {
+    title: 'Empleadores - Open HR',
+    description: 'Evalue candidatos con referencias profesionales verificadas. Contrate con confianza usando RefScore.',
+    heading: 'Contrate con confianza.',
+    subheading: 'Referencias verificadas, no suposiciones.',
+    signInLabel: 'Ya tiene una cuenta?',
+    signInNote: 'Acceso empleador',
+    heroHeading: 'Deje de adivinar.\nEmpiece a verificar.',
+    heroSub: 'RefScore convierte las referencias profesionales en datos accionables. Precio por evaluacion, sin suscripciones.',
+    heroCta: 'Iniciar una evaluacion',
+    heroSignIn: 'Acceso empleador',
+    howTitle: 'Como funciona',
+    steps: [
+      { title: 'Inicie una evaluacion', description: 'Ingrese los datos del candidato y elija un nivel de evaluacion. El candidato recibe una invitacion segura.' },
+      { title: 'Las referencias responden', description: 'Las referencias del candidato completan un cuestionario psicometricamente validado, de forma anonima y verificada.' },
+      { title: 'Reciba su informe', description: 'Un informe RefScore detallado con nota global, dimensiones clave y recomendaciones para la entrevista.' },
+    ],
+    pricingHeading: 'Precios por evaluacion',
+    pricingSub: 'Pague solo por las evaluaciones que necesita. Sin suscripciones.',
+    ctaHeading: 'Listo para contratar con confianza?',
+    ctaSub: 'Cree su cuenta de empleador y lance su primera evaluacion en minutos.',
+    ctaButton: 'Crear cuenta de empleador',
+  },
+  it: {
+    title: 'Datori di lavoro - Open HR',
+    description: 'Valuta i candidati con referenze professionali verificate. Assumi con fiducia usando RefScore.',
+    heading: 'Assumi con fiducia.',
+    subheading: 'Referenze verificate, non supposizioni.',
+    signInLabel: 'Hai gia un account?',
+    signInNote: 'Accesso datore di lavoro',
+    heroHeading: 'Smetti di indovinare.\nInizia a verificare.',
+    heroSub: 'RefScore trasforma le referenze professionali in dati utilizzabili. Prezzo per valutazione, nessun abbonamento.',
+    heroCta: 'Inizia una valutazione',
+    heroSignIn: 'Accesso datore di lavoro',
+    howTitle: 'Come funziona',
+    steps: [
+      { title: 'Avvia una valutazione', description: 'Inserisci i dati del candidato e scegli un livello di valutazione. Il candidato riceve un invito sicuro.' },
+      { title: 'Le referenze rispondono', description: 'Le referenze del candidato completano un questionario psicometricamente validato, in modo anonimo e verificato.' },
+      { title: 'Ricevi il tuo report', description: 'Un report RefScore dettagliato con voto complessivo, dimensioni chiave e raccomandazioni per il colloquio.' },
+    ],
+    pricingHeading: 'Prezzi per valutazione',
+    pricingSub: 'Paga solo per le valutazioni di cui hai bisogno. Nessun abbonamento.',
+    ctaHeading: 'Pronto ad assumere con fiducia?',
+    ctaSub: 'Crea il tuo account datore di lavoro e lancia la tua prima valutazione in pochi minuti.',
+    ctaButton: 'Crea account datore di lavoro',
+  },
+};
+
+const t = content[locale];
+const signupUrl = 'https://app.open-hr.work/employer/auth/signup';
+const signinUrl = 'https://app.open-hr.work/employer/auth/login';
+
+// Breadcrumb structured data
+const breadcrumbNames: Record<Locale, string> = {
+  'fr': 'Employeurs',
+  'en-GB': 'Employers',
+  'en-US': 'Employers',
+  'de': 'Arbeitgeber',
+  'es': 'Empleadores',
+  'it': 'Datori di lavoro',
+};
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Open HR', url: `/${locale}/` },
+  { name: breadcrumbNames[locale], url: `/${locale}/employers/` },
+]);
+---
+
+<MainLayout
+  title={t.title}
+  description={t.description}
+  locale={locale}
+  additionalSchemas={[breadcrumbSchema]}
+  pagePath="/employers/"
+>
+  <!-- Hero -->
+  <section class="container py-16 md:py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="mb-6 flex justify-center">
+        <Mark size="lg" class="text-openhr-teal-900" />
+      </div>
+      <h1 class="mb-4 font-display text-4xl font-extrabold text-foreground md:text-5xl whitespace-pre-line">
+        {t.heroHeading}
+      </h1>
+      <p class="mx-auto max-w-2xl text-xl text-gray-600">
+        {t.heroSub}
+      </p>
+      <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <a
+          href={signupUrl}
+          class="btn btn-primary text-base px-8 py-3"
+        >
+          {t.heroCta}
+        </a>
+        <a
+          href={signinUrl}
+          class="btn btn-secondary text-base px-8 py-3"
+        >
+          {t.heroSignIn}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="border-t border-gray-200 bg-gray-50">
+    <div class="container py-16 md:py-24">
+      <h2 class="mb-12 text-center font-display text-3xl font-bold text-foreground md:text-4xl">
+        {t.howTitle}
+      </h2>
+      <div class="mx-auto grid max-w-4xl gap-8 md:grid-cols-3">
+        {t.steps.map((step, i) => (
+          <div class="text-center">
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-openhr-teal-900 text-lg font-bold text-white">
+              {i + 1}
+            </div>
+            <h3 class="mb-2 font-display text-lg font-semibold text-foreground">
+              {step.title}
+            </h3>
+            <p class="text-sm text-gray-600">
+              {step.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="container py-16 md:py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">
+        {t.pricingHeading}
+      </h2>
+      <p class="text-xl text-gray-600">
+        {t.pricingSub}
+      </p>
+    </div>
+    <EmployerPricingSection locale={locale} client:load />
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="border-t border-gray-200 bg-openhr-teal-900">
+    <div class="container py-16 md:py-20 text-center">
+      <h2 class="mb-4 font-display text-3xl font-bold text-white md:text-4xl">
+        {t.ctaHeading}
+      </h2>
+      <p class="mx-auto mb-8 max-w-xl text-lg text-openhr-teal-100">
+        {t.ctaSub}
+      </p>
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <a
+          href={signupUrl}
+          class="inline-flex min-h-12 items-center rounded-md bg-white px-8 py-3 text-base font-medium text-openhr-teal-900 transition-colors hover:bg-openhr-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-openhr-teal-900"
+        >
+          {t.ctaButton}
+        </a>
+        <a
+          href={signinUrl}
+          class="inline-flex min-h-12 items-center rounded-md border border-white/30 px-8 py-3 text-base font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-openhr-teal-900"
+        >
+          {t.signInLabel} {t.signInNote}
+        </a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

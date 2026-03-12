@@ -5,8 +5,8 @@
  * Static header with navigation links.
  * Mobile menu is a React island for interactivity.
  *
- * Navigation order (B2C pivot 2026-01-08):
- * Workers | About | Pricing
+ * Navigation order (B2B addition 2026-03-12):
+ * Workers | Employers | About | Pricing
  */
 import Mark from './Mark.astro';
 import MobileNav from './islands/MobileNav';
@@ -23,31 +23,37 @@ const { locale } = Astro.props;
 const FALLBACK_NAV_LINKS: Record<Locale, Array<{ href: string; label: string }>> = {
   fr: [
     { href: 'workers', label: 'Travailleurs' },
+    { href: 'employers', label: 'Employeurs' },
     { href: 'about', label: 'À propos' },
     { href: 'pricing', label: 'Tarifs' },
   ],
   'en-GB': [
     { href: 'workers', label: 'Workers' },
+    { href: 'employers', label: 'Employers' },
     { href: 'about', label: 'About' },
     { href: 'pricing', label: 'Pricing' },
   ],
   'en-US': [
     { href: 'workers', label: 'Workers' },
+    { href: 'employers', label: 'Employers' },
     { href: 'about', label: 'About' },
     { href: 'pricing', label: 'Pricing' },
   ],
   de: [
     { href: 'workers', label: 'Arbeitnehmer' },
+    { href: 'employers', label: 'Arbeitgeber' },
     { href: 'about', label: 'Über uns' },
     { href: 'pricing', label: 'Preise' },
   ],
   es: [
     { href: 'workers', label: 'Trabajadores' },
+    { href: 'employers', label: 'Empleadores' },
     { href: 'about', label: 'Nosotros' },
     { href: 'pricing', label: 'Precios' },
   ],
   it: [
     { href: 'workers', label: 'Lavoratori' },
+    { href: 'employers', label: 'Datori di lavoro' },
     { href: 'about', label: 'Chi siamo' },
     { href: 'pricing', label: 'Prezzi' },
   ],
