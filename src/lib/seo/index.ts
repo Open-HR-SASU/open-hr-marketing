@@ -13,6 +13,7 @@ export {
   generateArticleSchema,
   generateDefinedTermSchema,
   generateClaimReviewSchema,
+  generateSoftwareApplicationSchema,
   combineSchemas,
   type OrganizationSchema,
   type WebSiteSchema,
@@ -24,5 +25,6 @@ export {
   type ArticleSchema,
   type DefinedTermSchema,
   type ClaimReviewSchema,
+  type SoftwareApplicationSchema,
   type Schema,
 } from './schemas';

@@ -28,6 +28,44 @@ export default defineConfig({
         !page.includes('/pilot/') &&
         !page.includes('/pilot/success/') &&
         !page.endsWith('/open-hr.work/'),
+      serialize(item) {
+        // Exclude known duplicate slugs that have 301 redirects to canonical versions
+        if (/\/it\/legal\/politica-cookie\//.test(item.url)) {
+          return undefined;
+        }
+
+        // Strip locale prefix to match on page slug
+        const path = new URL(item.url).pathname.replace(/^\/(fr|en-GB|en-US|de|es|it)\//, '/');
+
+        if (path === '/' || path === '') {
+          // Homepages — highest value landing pages
+          item.priority = 1.0;
+          item.changefreq = 'weekly';
+        } else if (path.startsWith('/pricing/')) {
+          item.priority = 0.9;
+          item.changefreq = 'weekly';
+        } else if (path.startsWith('/how-it-works/')) {
+          item.priority = 0.8;
+          item.changefreq = 'monthly';
+        } else if (path.startsWith('/workers/')) {
+          item.priority = 0.8;
+          item.changefreq = 'monthly';
+        } else if (path.startsWith('/about/')) {
+          item.priority = 0.7;
+          item.changefreq = 'monthly';
+        } else if (path.startsWith('/legal/')) {
+          item.priority = 0.3;
+          item.changefreq = 'yearly';
+        } else {
+          item.priority = 0.5;
+          item.changefreq = 'monthly';
+        }
+
+        // lastmod = build time (Google uses this to prioritize crawling)
+        item.lastmod = new Date();
+
+        return item;
+      },
     }),
   ],
 
@@ -53,7 +91,7 @@ export default defineConfig({
     },
   },
 
-  // Redirects: sitemap alias + removed pages
+  // Redirects: sitemap alias + removed pages + legal slug canonicalization
   redirects: {
     '/sitemap.xml': '/sitemap-index.xml',
     '/fr/pilot/': '/fr/pricing/',
@@ -68,5 +106,32 @@ export default defineConfig({
     '/de/pilot/success/': '/de/pricing/',
     '/es/pilot/success/': '/es/pricing/',
     '/it/pilot/success/': '/it/pricing/',
+
+    // Legal slug canonicalization — generic English slugs → localized canonical versions
+    // Privacy: /legal/privacy/ → locale-specific privacy page
+    '/fr/legal/privacy/': '/fr/legal/confidentialite/',
+    '/en-GB/legal/privacy/': '/en-GB/legal/privacy-policy/',
+    '/en-US/legal/privacy/': '/en-US/legal/privacy-policy/',
+    '/de/legal/privacy/': '/de/legal/datenschutz/',
+    '/es/legal/privacy/': '/es/legal/politica-privacidad/',
+    '/it/legal/privacy/': '/it/legal/informativa-privacy/',
+
+    // Terms: /legal/terms/ → locale-specific terms page
+    '/fr/legal/terms/': '/fr/legal/conditions-generales/',
+    '/en-GB/legal/terms/': '/en-GB/legal/terms-of-service/',
+    '/en-US/legal/terms/': '/en-US/legal/terms-of-service/',
+    '/de/legal/terms/': '/de/legal/agb/',
+    '/es/legal/terms/': '/es/legal/condiciones-generales/',
+    '/it/legal/terms/': '/it/legal/termini-condizioni/',
+
+    // Cookies: /legal/cookies/ → locale-specific cookie page (fr keeps /cookies/ as canonical)
+    '/en-GB/legal/cookies/': '/en-GB/legal/cookie-policy/',
+    '/en-US/legal/cookies/': '/en-US/legal/cookie-policy/',
+    '/de/legal/cookies/': '/de/legal/cookie-richtlinie/',
+    '/es/legal/cookies/': '/es/legal/politica-cookies/',
+    '/it/legal/cookies/': '/it/legal/informativa-cookie/',
+
+    // Italian duplicate: politica-cookie → informativa-cookie
+    '/it/legal/politica-cookie/': '/it/legal/informativa-cookie/',
   },
 });

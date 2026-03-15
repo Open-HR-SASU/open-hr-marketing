@@ -39,11 +39,12 @@ export async function getStaticPaths() {
     }
   }
 
-  // Also add legacy slugs for backwards compatibility
-  const legacySlugs = ['privacy', 'terms', 'cookies', 'refscore'];
-  // Locale-specific legal document slugs (DE, ES, IT, FR)
+  // Legacy slugs that are the same across all locales (no localized variant exists)
+  const legacySlugs = ['refscore'];
+  // Locale-specific legal document slugs — canonical versions per locale
+  // Generic English slugs (privacy, terms, cookies) are 301-redirected to these in astro.config.mjs
   const localeSpecificSlugs: Partial<Record<Locale, string[]>> = {
-    fr: ['confidentialite'],
+    fr: ['confidentialite', 'cookies'],
     de: ['datenschutz', 'cookie-richtlinie'],
     es: ['politica-privacidad', 'politica-cookies'],
     it: ['informativa-privacy', 'informativa-cookie'],

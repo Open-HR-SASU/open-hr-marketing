@@ -13,6 +13,7 @@
  */
 
 import type { Locale } from '@/lib/i18n';
+import { EMPLOYER_TIERS, getCurrencyForLocale } from '@/lib/pricing';
 
 // Base URL for Open HR
 const BASE_URL = 'https://open-hr.work';
@@ -106,7 +107,22 @@ export function generateWebSiteSchema(locale: Locale): WebSiteSchema {
 
 /**
  * Product Schema for SaaS Offerings
+ *
+ * Workers are free. Always. (CEO decision, 2026-03-15)
+ * Revenue = B2B employer per-assessment pricing (Essential/Professional/Executive)
  */
+export interface ProductOffer {
+  '@type': 'Offer';
+  name: string;
+  description: string;
+  price: number;
+  priceCurrency: string;
+  priceValidUntil: string;
+  availability: string;
+  url: string;
+  isAccessibleForFree?: boolean;
+}
+
 export interface ProductSchema {
   '@context': 'https://schema.org';
   '@type': 'Product';
@@ -123,97 +139,66 @@ export interface ProductSchema {
     lowPrice: number;
     highPrice: number;
     offerCount: number;
-    offers: Array<{
-      '@type': 'Offer';
-      name: string;
-      description: string;
-      price: number;
-      priceCurrency: string;
-      priceValidUntil: string;
-      availability: string;
-      url: string;
-    }>;
+    offers: ProductOffer[];
   };
 }
 
-const PRICING = {
-  refscore: { monthly: 9, annualMonthly: 7 },
-  refscoreVerified: { monthly: 15, annualMonthly: 12 },
-};
-
-const productDescriptions: Record<
+const productContent: Record<
   Locale,
   {
     productName: string;
     productDescription: string;
-    refscoreName: string;
-    refscoreDescription: string;
-    refscoreVerifiedName: string;
-    refscoreVerifiedDescription: string;
+    workerOfferName: string;
+    workerOfferDescription: string;
   }
 > = {
   fr: {
-    productName: 'Open HR - Vérification de Références Professionnelles',
+    productName: 'Open HR — Vérification de Références Professionnelles',
     productDescription:
-      'Plateforme SaaS de vérification de références professionnelles et de parcours de carrière.',
-    refscoreName: 'RefScore',
-    refscoreDescription:
-      'Plan de base pour la vérification de références professionnelles.',
-    refscoreVerifiedName: 'RefScore Vérifié',
-    refscoreVerifiedDescription:
-      'Plan premium avec vérification prioritaire et rapports avancés.',
+      'Plateforme gratuite pour les travailleurs permettant de collecter des références professionnelles vérifiées et anonymes. Les employeurs paient par évaluation.',
+    workerOfferName: 'RefScore pour les travailleurs',
+    workerOfferDescription:
+      'Gratuit pour les travailleurs. Collectez des références anonymes, obtenez votre RefScore et joignez-le à vos candidatures.',
   },
   'en-GB': {
-    productName: 'Open HR - Professional Reference Verification',
+    productName: 'Open HR — Professional Reference Verification',
     productDescription:
-      'SaaS platform for professional reference verification and career history validation.',
-    refscoreName: 'RefScore',
-    refscoreDescription: 'Basic plan for professional reference verification.',
-    refscoreVerifiedName: 'RefScore Verified',
-    refscoreVerifiedDescription:
-      'Premium plan with priority verification and advanced reporting.',
+      'Free platform for workers to collect anonymous, verified professional references. Employers pay per assessment.',
+    workerOfferName: 'RefScore for Workers',
+    workerOfferDescription:
+      'Free for workers. Collect anonymous references, get your RefScore, and attach it to job applications.',
   },
   'en-US': {
-    productName: 'Open HR - Professional Reference Verification',
+    productName: 'Open HR — Professional Reference Verification',
     productDescription:
-      'SaaS platform for professional reference verification and career history validation.',
-    refscoreName: 'RefScore',
-    refscoreDescription: 'Basic plan for professional reference verification.',
-    refscoreVerifiedName: 'RefScore Verified',
-    refscoreVerifiedDescription:
-      'Premium plan with priority verification and advanced reporting.',
+      'Free platform for workers to collect anonymous, verified professional references. Employers pay per assessment.',
+    workerOfferName: 'RefScore for Workers',
+    workerOfferDescription:
+      'Free for workers. Collect anonymous references, get your RefScore, and attach it to job applications.',
   },
   de: {
-    productName: 'Open HR - Professionelle Referenzprüfung',
+    productName: 'Open HR — Professionelle Referenzprüfung',
     productDescription:
-      'SaaS-Plattform für professionelle Referenzprüfung und Karriereverlaufsvalidierung.',
-    refscoreName: 'RefScore',
-    refscoreDescription: 'Basisplan für professionelle Referenzprüfung.',
-    refscoreVerifiedName: 'RefScore Verifiziert',
-    refscoreVerifiedDescription:
-      'Premium-Plan mit prioritärer Verifizierung und erweiterten Berichten.',
+      'Kostenlose Plattform für Arbeitnehmer zur Sammlung anonymer, verifizierter professioneller Referenzen. Arbeitgeber zahlen pro Bewertung.',
+    workerOfferName: 'RefScore für Arbeitnehmer',
+    workerOfferDescription:
+      'Kostenlos für Arbeitnehmer. Sammeln Sie anonyme Referenzen, erhalten Sie Ihren RefScore und fügen Sie ihn Ihren Bewerbungen bei.',
   },
   es: {
-    productName: 'Open HR - Verificación de Referencias Profesionales',
+    productName: 'Open HR — Verificación de Referencias Profesionales',
     productDescription:
-      'Plataforma SaaS para verificación de referencias profesionales y validación de historial laboral.',
-    refscoreName: 'RefScore',
-    refscoreDescription:
-      'Plan básico para verificación de referencias profesionales.',
-    refscoreVerifiedName: 'RefScore Verificado',
-    refscoreVerifiedDescription:
-      'Plan premium con verificación prioritaria e informes avanzados.',
+      'Plataforma gratuita para trabajadores que permite recopilar referencias profesionales anónimas y verificadas. Los empleadores pagan por evaluación.',
+    workerOfferName: 'RefScore para trabajadores',
+    workerOfferDescription:
+      'Gratis para trabajadores. Recopila referencias anónimas, obtén tu RefScore y adjúntalo a tus solicitudes de empleo.',
   },
   it: {
-    productName: 'Open HR - Verifica Referenze Professionali',
+    productName: 'Open HR — Verifica Referenze Professionali',
     productDescription:
-      'Piattaforma SaaS per la verifica delle referenze professionali e la validazione della storia lavorativa.',
-    refscoreName: 'RefScore',
-    refscoreDescription:
-      'Piano base per la verifica delle referenze professionali.',
-    refscoreVerifiedName: 'RefScore Verificato',
-    refscoreVerifiedDescription:
-      'Piano premium con verifica prioritaria e report avanzati.',
+      'Piattaforma gratuita per i lavoratori per raccogliere referenze professionali anonime e verificate. I datori di lavoro pagano per valutazione.',
+    workerOfferName: 'RefScore per i lavoratori',
+    workerOfferDescription:
+      'Gratuito per i lavoratori. Raccogli referenze anonime, ottieni il tuo RefScore e allegalo alle tue candidature.',
   },
 };
 
@@ -228,8 +213,57 @@ export function generateProductSchema(locale: Locale): ProductSchema {
   };
 
   const currency = currencyMap[locale];
-  const content = productDescriptions[locale];
+  const cur = getCurrencyForLocale(locale);
+  const content = productContent[locale];
   const priceValidUntil = `${new Date().getFullYear()}-12-31`;
+
+  const essential = EMPLOYER_TIERS.essential[cur];
+  const professional = EMPLOYER_TIERS.professional[cur];
+  const executive = EMPLOYER_TIERS.executive[cur];
+
+  const offers: ProductOffer[] = [
+    {
+      '@type': 'Offer',
+      name: content.workerOfferName,
+      description: content.workerOfferDescription,
+      price: 0,
+      priceCurrency: currency,
+      priceValidUntil,
+      availability: 'https://schema.org/InStock',
+      url: `${BASE_URL}/${locale}/workers/`,
+      isAccessibleForFree: true,
+    },
+    {
+      '@type': 'Offer',
+      name: `${EMPLOYER_TIERS.essential.name[locale]} — Employer`,
+      description: `Per-assessment employer plan with ${EMPLOYER_TIERS.essential.references} references.`,
+      price: essential.amount,
+      priceCurrency: currency,
+      priceValidUntil,
+      availability: 'https://schema.org/InStock',
+      url: `${BASE_URL}/${locale}/pricing/`,
+    },
+    {
+      '@type': 'Offer',
+      name: `${EMPLOYER_TIERS.professional.name[locale]} — Employer`,
+      description: `Per-assessment employer plan with ${EMPLOYER_TIERS.professional.references} references.`,
+      price: professional.amount,
+      priceCurrency: currency,
+      priceValidUntil,
+      availability: 'https://schema.org/InStock',
+      url: `${BASE_URL}/${locale}/pricing/`,
+    },
+    {
+      '@type': 'Offer',
+      name: `${EMPLOYER_TIERS.executive.name[locale]} — Employer`,
+      description: `Per-assessment employer plan with ${EMPLOYER_TIERS.executive.references} references.`,
+      price: executive.amount,
+      priceCurrency: currency,
+      priceValidUntil,
+      availability: 'https://schema.org/InStock',
+      url: `${BASE_URL}/${locale}/pricing/`,
+    },
+  ];
 
   return {
     '@context': 'https://schema.org',
@@ -241,31 +275,10 @@ export function generateProductSchema(locale: Locale): ProductSchema {
     offers: {
       '@type': 'AggregateOffer',
       priceCurrency: currency,
-      lowPrice: PRICING.refscore.annualMonthly,
-      highPrice: PRICING.refscoreVerified.monthly,
-      offerCount: 2,
-      offers: [
-        {
-          '@type': 'Offer',
-          name: content.refscoreName,
-          description: content.refscoreDescription,
-          price: PRICING.refscore.monthly,
-          priceCurrency: currency,
-          priceValidUntil,
-          availability: 'https://schema.org/InStock',
-          url: `${BASE_URL}/${locale}/pricing/`,
-        },
-        {
-          '@type': 'Offer',
-          name: content.refscoreVerifiedName,
-          description: content.refscoreVerifiedDescription,
-          price: PRICING.refscoreVerified.monthly,
-          priceCurrency: currency,
-          priceValidUntil,
-          availability: 'https://schema.org/InStock',
-          url: `${BASE_URL}/${locale}/pricing/`,
-        },
-      ],
+      lowPrice: 0,
+      highPrice: executive.amount,
+      offerCount: 4,
+      offers,
     },
   };
 }
@@ -450,38 +463,38 @@ const serviceDescriptions: Record<
   fr: {
     name: 'Open HR — Vérification de Références Professionnelles',
     description:
-      "Open HR est une plateforme SaaS qui permet aux travailleurs de collecter des références professionnelles anonymes et vérifiées. Les références remplissent un questionnaire structuré conçu par des psychologues I-O, produisant un RefScore — une accréditation portable que les candidats peuvent joindre à leurs candidatures, profils LinkedIn et CV.",
-    serviceType: 'Vérification de références professionnelles',
+      "Open HR est une plateforme gratuite qui permet aux travailleurs de collecter des références professionnelles anonymes et vérifiées. Les références remplissent un questionnaire structuré conçu par des psychologues I-O, produisant un RefScore — une accréditation portable que les candidats peuvent joindre à leurs candidatures, profils LinkedIn et CV. Gratuit pour les travailleurs, toujours. Les employeurs paient par évaluation.",
+    serviceType: 'Vérification et scoring de références professionnelles',
   },
   'en-GB': {
     name: 'Open HR — Professional Reference Verification',
     description:
-      'Open HR is a SaaS platform that enables workers to collect anonymous, verified professional references. References complete a structured questionnaire designed by I-O psychologists, producing a RefScore — a portable credential candidates can attach to job applications, LinkedIn profiles, and CVs.',
-    serviceType: 'Professional reference verification',
+      'Open HR is a free platform that enables workers to collect anonymous, verified professional references. References complete a structured questionnaire designed by I-O psychologists, producing a RefScore — a portable credential candidates can attach to job applications, LinkedIn profiles, and CVs. Free for workers, always. Employers pay per assessment.',
+    serviceType: 'Professional reference verification and scoring',
   },
   'en-US': {
     name: 'Open HR — Professional Reference Verification',
     description:
-      'Open HR is a SaaS platform that enables workers to collect anonymous, verified professional references. References complete a structured questionnaire designed by I-O psychologists, producing a RefScore — a portable credential candidates can attach to job applications, LinkedIn profiles, and resumes.',
-    serviceType: 'Professional reference verification',
+      'Open HR is a free platform that enables workers to collect anonymous, verified professional references. References complete a structured questionnaire designed by I-O psychologists, producing a RefScore — a portable credential candidates can attach to job applications, LinkedIn profiles, and resumes. Free for workers, always. Employers pay per assessment.',
+    serviceType: 'Professional reference verification and scoring',
   },
   de: {
     name: 'Open HR — Professionelle Referenzprüfung',
     description:
-      'Open HR ist eine SaaS-Plattform, die es Arbeitnehmern ermöglicht, anonyme, verifizierte professionelle Referenzen zu sammeln. Referenzen füllen einen strukturierten Fragebogen aus, der von I-O-Psychologen entwickelt wurde, und erzeugen einen RefScore — eine tragbare Akkreditierung, die Kandidaten ihren Bewerbungen, LinkedIn-Profilen und Lebensläufen beifügen können.',
-    serviceType: 'Professionelle Referenzprüfung',
+      'Open HR ist eine kostenlose Plattform, die es Arbeitnehmern ermöglicht, anonyme, verifizierte professionelle Referenzen zu sammeln. Referenzen füllen einen strukturierten Fragebogen aus, der von I-O-Psychologen entwickelt wurde, und erzeugen einen RefScore — eine tragbare Akkreditierung, die Kandidaten ihren Bewerbungen, LinkedIn-Profilen und Lebensläufen beifügen können. Kostenlos für Arbeitnehmer, immer. Arbeitgeber zahlen pro Bewertung.',
+    serviceType: 'Professionelle Referenzprüfung und -bewertung',
   },
   es: {
     name: 'Open HR — Verificación de Referencias Profesionales',
     description:
-      'Open HR es una plataforma SaaS que permite a los trabajadores recopilar referencias profesionales anónimas y verificadas. Las referencias completan un cuestionario estructurado diseñado por psicólogos I-O, produciendo un RefScore — una acreditación portátil que los candidatos pueden adjuntar a sus solicitudes de empleo, perfiles de LinkedIn y CVs.',
-    serviceType: 'Verificación de referencias profesionales',
+      'Open HR es una plataforma gratuita que permite a los trabajadores recopilar referencias profesionales anónimas y verificadas. Las referencias completan un cuestionario estructurado diseñado por psicólogos I-O, produciendo un RefScore — una acreditación portátil que los candidatos pueden adjuntar a sus solicitudes de empleo, perfiles de LinkedIn y CVs. Gratis para trabajadores, siempre. Los empleadores pagan por evaluación.',
+    serviceType: 'Verificación y puntuación de referencias profesionales',
   },
   it: {
     name: 'Open HR — Verifica Referenze Professionali',
     description:
-      "Open HR è una piattaforma SaaS che consente ai lavoratori di raccogliere referenze professionali anonime e verificate. Le referenze completano un questionario strutturato progettato da psicologi I-O, producendo un RefScore — una credenziale portatile che i candidati possono allegare alle candidature, profili LinkedIn e CV.",
-    serviceType: 'Verifica referenze professionali',
+      "Open HR è una piattaforma gratuita che consente ai lavoratori di raccogliere referenze professionali anonime e verificate. Le referenze completano un questionario strutturato progettato da psicologi I-O, producendo un RefScore — una credenziale portatile che i candidati possono allegare alle candidature, profili LinkedIn e CV. Gratuito per i lavoratori, sempre. I datori di lavoro pagano per valutazione.",
+    serviceType: 'Verifica e valutazione di referenze professionali',
   },
 };
 
@@ -668,6 +681,90 @@ export function generateClaimReviewSchema(opts: {
   };
 }
 
+/**
+ * SoftwareApplication Schema
+ *
+ * For app store SEO — Android launching Q2 2026, iOS to follow.
+ * Free for workers (price: 0).
+ */
+export interface SoftwareApplicationSchema {
+  '@context': 'https://schema.org';
+  '@type': 'SoftwareApplication';
+  name: string;
+  description: string;
+  applicationCategory: string;
+  operatingSystem: string;
+  offers: {
+    '@type': 'Offer';
+    price: number;
+    priceCurrency: string;
+    isAccessibleForFree: boolean;
+  };
+  provider: {
+    '@type': 'Organization';
+    name: string;
+    url: string;
+  };
+}
+
+const softwareAppContent: Record<Locale, { description: string }> = {
+  fr: {
+    description:
+      'Application gratuite pour collecter des références professionnelles vérifiées et obtenir votre RefScore — une accréditation portable pour vos candidatures.',
+  },
+  'en-GB': {
+    description:
+      'Free app to collect verified professional references and get your RefScore — a portable credential for job applications.',
+  },
+  'en-US': {
+    description:
+      'Free app to collect verified professional references and get your RefScore — a portable credential for job applications.',
+  },
+  de: {
+    description:
+      'Kostenlose App zum Sammeln verifizierter professioneller Referenzen und Erhalt Ihres RefScore — eine tragbare Akkreditierung für Bewerbungen.',
+  },
+  es: {
+    description:
+      'Aplicación gratuita para recopilar referencias profesionales verificadas y obtener tu RefScore — una acreditación portátil para solicitudes de empleo.',
+  },
+  it: {
+    description:
+      'App gratuita per raccogliere referenze professionali verificate e ottenere il tuo RefScore — una credenziale portatile per le candidature.',
+  },
+};
+
+export function generateSoftwareApplicationSchema(locale: Locale): SoftwareApplicationSchema {
+  const currencyMap: Record<Locale, string> = {
+    fr: 'EUR',
+    'en-GB': 'GBP',
+    'en-US': 'USD',
+    de: 'EUR',
+    es: 'EUR',
+    it: 'EUR',
+  };
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Open HR',
+    description: softwareAppContent[locale].description,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Android, iOS, Web',
+    offers: {
+      '@type': 'Offer',
+      price: 0,
+      priceCurrency: currencyMap[locale],
+      isAccessibleForFree: true,
+    },
+    provider: {
+      '@type': 'Organization',
+      name: 'Open HR',
+      url: BASE_URL,
+    },
+  };
+}
+
 export type Schema =
   | OrganizationSchema
   | WebSiteSchema
@@ -678,7 +775,8 @@ export type Schema =
   | ServiceSchema
   | ArticleSchema
   | DefinedTermSchema
-  | ClaimReviewSchema;
+  | ClaimReviewSchema
+  | SoftwareApplicationSchema;
 
 export function combineSchemas(schemas: Schema[]): string {
   if (schemas.length === 1) {
