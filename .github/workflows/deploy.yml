@@ -120,3 +120,40 @@ jobs:
           fi
 
           echo "Cache purged successfully."
+
+      - name: Notify IndexNow (Bing, Yandex, Seznam, Naver)
+        run: |
+          set -e
+
+          INDEXNOW_KEY="046093a15bdb7f18ca706e52ead3b375"
+          SITE_HOST="open-hr.work"
+
+          # Extract all URLs from sitemap
+          urls=$(grep -oP 'https://open-hr\.work[^<]+' dist/sitemap-0.xml | sort -u)
+          url_count=$(echo "$urls" | wc -l | tr -d ' ')
+
+          echo "=== IndexNow: Submitting ${url_count} URLs ==="
+
+          # Build JSON array of URLs
+          url_json=$(echo "$urls" | jq -R -s 'split("\n") | map(select(length > 0))')
+
+          # Submit batch to IndexNow API
+          response=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST \
+            "https://api.indexnow.org/IndexNow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{
+              \"host\": \"${SITE_HOST}\",
+              \"key\": \"${INDEXNOW_KEY}\",
+              \"keyLocation\": \"https://${SITE_HOST}/${INDEXNOW_KEY}.txt\",
+              \"urlList\": ${url_json}
+            }")
+
+          http_code=$(echo "$response" | grep "HTTP_CODE:" | cut -d: -f2)
+
+          # IndexNow: 200 = OK, 202 = Accepted (queued)
+          if [ "$http_code" = "200" ] || [ "$http_code" = "202" ]; then
+            echo "IndexNow submitted successfully (HTTP ${http_code})"
+          else
+            echo "WARN: IndexNow returned HTTP ${http_code} (non-fatal)"
+            echo "Body: $(echo "$response" | grep -v "HTTP_CODE:")"
+          fi
