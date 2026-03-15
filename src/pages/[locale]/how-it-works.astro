@@ -2,11 +2,12 @@
 /**
  * How It Works Page
  *
- * CMS-powered explainer page.
- * Generates static pages for all 6 locales.
+ * CMS hero + React island toggle for Workers vs Employers process flows.
+ * CMS CTA at the bottom.
  */
 import MainLayout from '@/layouts/MainLayout.astro';
 import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
+import HowItWorksToggle from '@/components/islands/HowItWorksToggle';
 import { locales, type Locale } from '@/lib/i18n';
 import { getPage, getPageMetadata } from '@/lib/sanity';
 import { generateHowToSchema, generateBreadcrumbSchema } from '@/lib/seo';
@@ -23,23 +24,27 @@ const { locale } = Astro.params as { locale: Locale };
 const page = await getPage('how-it-works', locale);
 const metadata = await getPageMetadata('how-it-works', locale);
 
+// Separate hero and CTA sections from the process section
+const heroSection = page?.sections?.find(s => s.sectionType === 'hero');
+const ctaSection = page?.sections?.find(s => s.sectionType === 'cta');
+
 // Fallback content
 const fallbackTitle = {
-  'fr': 'Comment ça marche - Open HR',
+  'fr': 'Comment ca marche - Open HR',
   'en-GB': 'How It Works - Open HR',
   'en-US': 'How It Works - Open HR',
   'de': 'So funktioniert es - Open HR',
-  'es': 'Cómo funciona - Open HR',
+  'es': 'Como funciona - Open HR',
   'it': 'Come funziona - Open HR',
 }[locale];
 
 const fallbackDescription = {
-  'fr': 'Trois étapes pour obtenir une accréditation reconnue par les employeurs. Invitez vos références, elles répondent anonymement, vous recevez une note vérifiée.',
-  'en-GB': 'Three steps to a credential employers trust. Invite references, they answer anonymously, you get a verified rating.',
-  'en-US': 'Three steps to a credential employers trust. Invite references, they answer anonymously, you get a verified rating.',
-  'de': 'Drei Schritte zu einer Akkreditierung, der Arbeitgeber vertrauen. Laden Sie Referenzen ein, sie antworten anonym, Sie erhalten eine verifizierte Bewertung.',
-  'es': 'Tres pasos para una acreditación en la que confían los empleadores. Invita referencias, responden de forma anónima, obtienes una calificación verificada.',
-  'it': 'Tre passaggi per una credenziale di cui i datori di lavoro si fidano. Invita referenze, rispondono in modo anonimo, ottieni una valutazione verificata.',
+  'fr': 'Decouvrez comment Open HR fonctionne pour les travailleurs et les employeurs.',
+  'en-GB': 'Discover how Open HR works for workers and employers.',
+  'en-US': 'Discover how Open HR works for workers and employers.',
+  'de': 'Erfahren Sie, wie Open HR fur Arbeitnehmer und Arbeitgeber funktioniert.',
+  'es': 'Descubre como funciona Open HR para trabajadores y empleadores.',
+  'it': 'Scopri come funziona Open HR per lavoratori e datori di lavoro.',
 }[locale];
 
 const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle;
@@ -49,11 +54,11 @@ const description = metadata?.seo?.metaDescription || fallbackDescription;
 const howToSchema = generateHowToSchema(locale);
 
 const breadcrumbNames: Record<Locale, string> = {
-  'fr': 'Comment ça marche',
+  'fr': 'Comment ca marche',
   'en-GB': 'How It Works',
   'en-US': 'How It Works',
   'de': 'So funktioniert es',
-  'es': 'Cómo funciona',
+  'es': 'Como funciona',
   'it': 'Come funziona',
 };
 const breadcrumbSchema = generateBreadcrumbSchema([
@@ -69,19 +74,18 @@ const breadcrumbSchema = generateBreadcrumbSchema([
   additionalSchemas={[howToSchema, breadcrumbSchema]}
   pagePath="/how-it-works/"
 >
-  {page?.sections && page.sections.length > 0 ? (
-    <SectionsRenderer sections={page.sections} locale={locale} />
-  ) : (
-    <section class="container py-24 text-center">
-      <h1 class="text-display-2 text-foreground mb-6">
-        {locale === 'fr' ? 'Comment ça marche' : 'How It Works'}
-      </h1>
-      <p class="text-body text-muted-foreground max-w-2xl mx-auto mb-8">
-        {fallbackDescription}
-      </p>
-      <a href={`/${locale}/`} class="btn btn-primary">
-        {locale === 'fr' ? 'Retour à l\'accueil' : 'Back to Home'}
-      </a>
-    </section>
+  {/* CMS Hero Section */}
+  {heroSection && (
+    <SectionsRenderer sections={[heroSection]} locale={locale} />
+  )}
+
+  {/* Workers / Employers Toggle (React Island) */}
+  <section class="container py-8 md:py-12">
+    <HowItWorksToggle locale={locale} client:load />
+  </section>
+
+  {/* CMS CTA Section */}
+  {ctaSection && (
+    <SectionsRenderer sections={[ctaSection]} locale={locale} />
   )}
 </MainLayout>
