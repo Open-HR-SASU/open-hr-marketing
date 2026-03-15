@@ -2,12 +2,8 @@
 /**
  * Pilot Signup Page
  *
- * CRITICAL PATH: Must be live before Feb 6, 2026 announcement.
- *
- * Features:
- * - React island form (PilotSignupForm) with client:load
- * - POSTs to platform API (https://app.open-hr.work/api/pilot/signup)
- * - Localized content for all 6 locales
+ * Updated 2026-03-15: Workers are free. Always.
+ * No more founding member pricing — signup is free.
  */
 import MainLayout from '@/layouts/MainLayout.astro';
 import Mark from '@/components/Mark.astro';
@@ -22,50 +18,48 @@ export function getStaticPaths() {
 
 const { locale } = Astro.params as { locale: Locale };
 
-// Localized content — OPE-719 (2026-02-25): updated for annual pricing pivot (DL-34)
-// Removed stale "February 2026" launch date references; aligned with Founding Member framing
 const content = {
   fr: {
     title: 'Obtenez votre RefScore - Open HR',
-    description: 'Rejoignez les 100 premiers membres fondateurs d\'Open HR. Accès annuel complet à partir de 12 €/an.',
-    heading: 'Membre Fondateur',
-    subheading: 'Obtenez votre RefScore. Verrouillez votre tarif fondateur.',
-    intro: 'Votre RefScore est disponible maintenant. Rejoignez les 100 premiers membres fondateurs à 12 €/an — moins d\'1 €/mois.',
+    description: 'Inscrivez-vous gratuitement et obtenez votre RefScore. Gratuit pour les travailleurs. Toujours.',
+    heading: 'Obtenez votre RefScore',
+    subheading: 'Gratuit pour les travailleurs. Toujours.',
+    intro: 'Votre RefScore est disponible maintenant. Inscrivez-vous et construisez votre reputation professionnelle verifiee — sans frais, sans conditions.',
   },
   'en-GB': {
     title: 'Get Your RefScore - Open HR',
-    description: 'Join the first 100 founding members of Open HR. Full annual access from £10/year.',
-    heading: 'Founding Member',
-    subheading: 'Get Your RefScore. Lock in your founding rate.',
-    intro: 'Your RefScore is available now. Join the first 100 founding members for £10/year — less than £1/month.',
+    description: 'Sign up for free and get your RefScore. Free for workers. Always.',
+    heading: 'Get Your RefScore',
+    subheading: 'Free for workers. Always.',
+    intro: 'Your RefScore is available now. Sign up and build your verified professional reputation — no cost, no catch.',
   },
   'en-US': {
     title: 'Get Your RefScore - Open HR',
-    description: 'Join the first 100 founding members of Open HR. Full annual access from $12/year.',
-    heading: 'Founding Member',
-    subheading: 'Get Your RefScore. Lock in your founding rate.',
-    intro: 'Your RefScore is available now. Join the first 100 founding members for $12/year — less than $1/month.',
+    description: 'Sign up for free and get your RefScore. Free for workers. Always.',
+    heading: 'Get Your RefScore',
+    subheading: 'Free for workers. Always.',
+    intro: 'Your RefScore is available now. Sign up and build your verified professional reputation — no cost, no catch.',
   },
   de: {
     title: 'Holen Sie sich Ihren RefScore - Open HR',
-    description: 'Werden Sie eines der ersten 100 Gründungsmitglieder von Open HR. Vollständiger Jahreszugang ab 12 €/Jahr.',
-    heading: 'Gründungsmitglied',
-    subheading: 'Holen Sie sich Ihren RefScore. Sichern Sie sich Ihren Gründungspreis.',
-    intro: 'Ihr RefScore ist jetzt verfügbar. Werden Sie eines der ersten 100 Gründungsmitglieder für 12 €/Jahr — weniger als 1 €/Monat.',
+    description: 'Melden Sie sich kostenlos an und erhalten Sie Ihren RefScore. Kostenlos fur Arbeitnehmer. Immer.',
+    heading: 'Holen Sie sich Ihren RefScore',
+    subheading: 'Kostenlos fur Arbeitnehmer. Immer.',
+    intro: 'Ihr RefScore ist jetzt verfugbar. Melden Sie sich an und erstellen Sie Ihr verifiziertes Berufsprofil — ohne Kosten, ohne Bedingungen.',
   },
   es: {
-    title: 'Obtén tu RefScore - Open HR',
-    description: 'Únete a los primeros 100 miembros fundadores de Open HR. Acceso anual completo desde 12 €/año.',
-    heading: 'Miembro Fundador',
-    subheading: 'Obtén tu RefScore. Bloquea tu tarifa de fundador.',
-    intro: 'Tu RefScore ya está disponible. Únete a los primeros 100 miembros fundadores por 12 €/año — menos de 1 €/mes.',
+    title: 'Obten tu RefScore - Open HR',
+    description: 'Registrate gratis y obten tu RefScore. Gratis para trabajadores. Siempre.',
+    heading: 'Obten tu RefScore',
+    subheading: 'Gratis para trabajadores. Siempre.',
+    intro: 'Tu RefScore ya esta disponible. Registrate y construye tu reputacion profesional verificada — sin coste, sin condiciones.',
   },
   it: {
     title: 'Ottieni il tuo RefScore - Open HR',
-    description: 'Unisciti ai primi 100 membri fondatori di Open HR. Accesso annuale completo da 12 €/anno.',
-    heading: 'Membro Fondatore',
-    subheading: 'Ottieni il tuo RefScore. Blocca la tariffa fondatore.',
-    intro: 'Il tuo RefScore è disponibile ora. Unisciti ai primi 100 membri fondatori per 12 €/anno — meno di 1 €/mese.',
+    description: 'Registrati gratuitamente e ottieni il tuo RefScore. Gratuito per i lavoratori. Sempre.',
+    heading: 'Ottieni il tuo RefScore',
+    subheading: 'Gratuito per i lavoratori. Sempre.',
+    intro: 'Il tuo RefScore e disponibile ora. Registrati e costruisci la tua reputazione professionale verificata — senza costi, senza condizioni.',
   },
 }[locale];
 ---

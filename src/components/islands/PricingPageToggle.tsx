@@ -2,14 +2,11 @@
  * Pricing Page Toggle (React Island)
  *
  * Unified pricing page with Workers / Employers audience toggle.
- * Renders PricingSection (B2C annual) or EmployerPricingSection (B2B per-assessment)
- * based on user selection.
+ * Workers: Free (always). Employers: Per-assessment pricing.
  *
- * Supports URL param `?view=employers` for deep-linking from the Employers page.
+ * CEO Decision: 2026-03-15 — Workers are free. Always.
  *
  * @see OPE-778 - Employer B2B Portal
- * @see DL-34  - Annual pricing model (workers)
- * @see DL-35  - Psychological rounding multi-currency
  */
 
 import { useState, useEffect } from 'react';
@@ -28,37 +25,37 @@ const toggleLabels: Record<Locale, { workers: string; employers: string; workers
   fr: {
     workers: 'Travailleurs',
     employers: 'Employeurs',
-    workersDesc: 'Abonnement annuel pour les professionnels',
+    workersDesc: 'Gratuit pour tous les travailleurs',
     employersDesc: 'Tarification par evaluation pour les entreprises',
   },
   'en-GB': {
     workers: 'Workers',
     employers: 'Employers',
-    workersDesc: 'Annual subscription for professionals',
+    workersDesc: 'Free for all workers',
     employersDesc: 'Per-assessment pricing for businesses',
   },
   'en-US': {
     workers: 'Workers',
     employers: 'Employers',
-    workersDesc: 'Annual subscription for professionals',
+    workersDesc: 'Free for all workers',
     employersDesc: 'Per-assessment pricing for businesses',
   },
   de: {
     workers: 'Arbeitnehmer',
     employers: 'Arbeitgeber',
-    workersDesc: 'Jahresabonnement fur Fachkrafte',
+    workersDesc: 'Kostenlos fur alle Arbeitnehmer',
     employersDesc: 'Preis pro Bewertung fur Unternehmen',
   },
   es: {
     workers: 'Trabajadores',
     employers: 'Empleadores',
-    workersDesc: 'Suscripcion anual para profesionales',
+    workersDesc: 'Gratis para todos los trabajadores',
     employersDesc: 'Precio por evaluacion para empresas',
   },
   it: {
     workers: 'Lavoratori',
     employers: 'Datori di lavoro',
-    workersDesc: 'Abbonamento annuale per professionisti',
+    workersDesc: 'Gratuito per tutti i lavoratori',
     employersDesc: 'Prezzo per valutazione per le aziende',
   },
 };

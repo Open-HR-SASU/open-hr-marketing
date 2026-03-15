@@ -1,19 +1,11 @@
 ---
 /**
- * Inline Pricing CTA — Annual Flat-Fee Model
+ * Inline Pricing CTA — Workers Are Free. Always.
  *
- * Lightweight static 2-card pricing display for homepage.
- * Uses shared pricing.ts for source-of-truth annual pricing data.
- * Static Astro component (server-rendered, no JS bundle impact).
- *
- * Tiers: Founding Member (€12/yr) + Standard (€24/yr)
- * CTA language LOCKED: "Get Your RefScore" / "Claim Your Profile"
- *
- * @see OPE-719 - Pricing Pivot
- * @see DL-34   - Annual pricing model
+ * Lightweight static single-card "Free" display for homepage.
+ * CEO Decision: 2026-03-15 — B2C is free, revenue from B2B employers only.
  */
 
-import { TIERS, formatAnnualPrice, getCurrencyForLocale, getAnnualLabel, type Locale } from '@/lib/pricing';
 import { getBackgroundClass, type SectionProps } from './types';
 
 interface Props extends Partial<SectionProps> {}
@@ -28,114 +20,62 @@ const {
 } = Astro.props;
 
 const bgClass = getBackgroundClass(backgroundStyle);
-const locale = (language ?? 'en-GB') as Locale;
-
-// Get locale-appropriate currency and prices
-const currency = getCurrencyForLocale(locale);
-const perYear = `/${getAnnualLabel(locale)}`;
-
-const foundingPrice = formatAnnualPrice(TIERS.founding[currency].amount, locale);
-const standardPrice = formatAnnualPrice(TIERS.standard[currency].amount, locale);
+const locale = (language ?? 'en-GB') as string;
 
 // Localized content
 const labels: Record<string, {
-  founding: { name: string; subtitle: string; feature: string; cta: string; badge: string };
-  standard: { name: string; subtitle: string; feature: string; cta: string };
+  price: string;
+  subtitle: string;
+  feature: string;
+  cta: string;
+  anchor: string;
 }> = {
   fr: {
-    founding: {
-      name: 'Membre Fondateur',
-      subtitle: 'Tarif fondateur garanti à vie',
-      feature: 'Références vérifiées illimitées + priorité',
-      cta: 'Obtenir mon RefScore',
-      badge: '100 places',
-    },
-    standard: {
-      name: 'Standard',
-      subtitle: 'Rejoignez à tout moment',
-      feature: 'Références vérifiées illimitées',
-      cta: 'Obtenir mon RefScore',
-    },
+    price: 'Gratuit',
+    subtitle: 'Votre RepScore verifie. Sans frais. Sans conditions.',
+    feature: 'References verifiees illimitees + verification d\'identite',
+    cta: 'Obtenir mon RefScore',
+    anchor: 'Gratuit pour les travailleurs. Toujours.',
   },
   'en-GB': {
-    founding: {
-      name: 'Founding Member',
-      subtitle: 'Founding rate locked for life',
-      feature: 'Unlimited verified references + priority',
-      cta: 'Get Your RefScore',
-      badge: '100 spots',
-    },
-    standard: {
-      name: 'Standard',
-      subtitle: 'Join any time',
-      feature: 'Unlimited verified references',
-      cta: 'Get Your RefScore',
-    },
+    price: 'Free',
+    subtitle: 'Your verified RefScore. No cost. No catch.',
+    feature: 'Unlimited verified references + identity verification',
+    cta: 'Get Your RefScore',
+    anchor: 'Free for workers. Always.',
   },
   'en-US': {
-    founding: {
-      name: 'Founding Member',
-      subtitle: 'Founding rate locked for life',
-      feature: 'Unlimited verified references + priority',
-      cta: 'Get Your RefScore',
-      badge: '100 spots',
-    },
-    standard: {
-      name: 'Standard',
-      subtitle: 'Join any time',
-      feature: 'Unlimited verified references',
-      cta: 'Get Your RefScore',
-    },
+    price: 'Free',
+    subtitle: 'Your verified RefScore. No cost. No catch.',
+    feature: 'Unlimited verified references + identity verification',
+    cta: 'Get Your RefScore',
+    anchor: 'Free for workers. Always.',
   },
   de: {
-    founding: {
-      name: 'Gründungsmitglied',
-      subtitle: 'Gründungstarif dauerhaft gesichert',
-      feature: 'Unbegrenzte verifizierte Referenzen + Priorität',
-      cta: 'RefScore holen',
-      badge: '100 Plätze',
-    },
-    standard: {
-      name: 'Standard',
-      subtitle: 'Jederzeit beitreten',
-      feature: 'Unbegrenzte verifizierte Referenzen',
-      cta: 'RefScore holen',
-    },
+    price: 'Kostenlos',
+    subtitle: 'Ihr verifizierter RefScore. Keine Kosten. Keine Bedingungen.',
+    feature: 'Unbegrenzte verifizierte Referenzen + Identitatsverifizierung',
+    cta: 'RefScore holen',
+    anchor: 'Kostenlos fur Arbeitnehmer. Immer.',
   },
   es: {
-    founding: {
-      name: 'Miembro Fundador',
-      subtitle: 'Precio fundador garantizado de por vida',
-      feature: 'Referencias verificadas ilimitadas + prioridad',
-      cta: 'Obtener mi RefScore',
-      badge: '100 plazas',
-    },
-    standard: {
-      name: 'Estándar',
-      subtitle: 'Únete cuando quieras',
-      feature: 'Referencias verificadas ilimitadas',
-      cta: 'Obtener mi RefScore',
-    },
+    price: 'Gratis',
+    subtitle: 'Tu RefScore verificado. Sin coste. Sin condiciones.',
+    feature: 'Referencias verificadas ilimitadas + verificacion de identidad',
+    cta: 'Obtener mi RefScore',
+    anchor: 'Gratis para trabajadores. Siempre.',
   },
   it: {
-    founding: {
-      name: 'Membro Fondatore',
-      subtitle: 'Tariffa fondatrice garantita a vita',
-      feature: 'Referenze verificate illimitate + priorità',
-      cta: 'Ottieni il mio RefScore',
-      badge: '100 posti',
-    },
-    standard: {
-      name: 'Standard',
-      subtitle: 'Iscriviti quando vuoi',
-      feature: 'Referenze verificate illimitate',
-      cta: 'Ottieni il mio RefScore',
-    },
+    price: 'Gratuito',
+    subtitle: 'Il tuo RefScore verificato. Senza costi. Senza condizioni.',
+    feature: 'Referenze verificate illimitate + verifica dell\'identita',
+    cta: 'Ottieni il mio RefScore',
+    anchor: 'Gratuito per i lavoratori. Sempre.',
   },
 };
 
 const t = labels[locale] ?? labels['en-GB'];
-const pilotUrl = `/${locale}/pilot/`;
+const signupUrl = 'https://app.open-hr.work/auth/login';
 ---
 
 <section class:list={['py-16 md:py-24', bgClass, className]} id={anchor ?? undefined}>
@@ -152,54 +92,29 @@ const pilotUrl = `/${locale}/pilot/`;
       </div>
     )}
 
-    <!-- Pricing Cards -->
-    <div class="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
-      <!-- Founding Member -->
+    <!-- Single Free Card -->
+    <div class="mx-auto max-w-lg">
       <div class="relative flex flex-col rounded-2xl border-2 border-openhr-teal-900 bg-white p-8 shadow-lg">
-        <!-- Scarcity badge -->
-        <div class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-openhr-teal-900 px-4 py-1 text-sm font-semibold text-white whitespace-nowrap">
-          {t.founding.badge}
+        <!-- Badge -->
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-openhr-teal-900 px-6 py-1.5 text-sm font-semibold text-white whitespace-nowrap">
+          {t.anchor}
         </div>
 
-        <h3 class="text-xl font-bold text-gray-900">{t.founding.name}</h3>
-        <p class="mt-2 text-sm text-gray-600">{t.founding.subtitle}</p>
-        <div class="mt-6">
-          <span class="text-4xl font-bold text-gray-900">{foundingPrice}</span>
-          <span class="text-gray-600">{perYear}</span>
+        <div class="mt-4 text-center">
+          <span class="text-5xl font-bold text-openhr-teal-900">{t.price}</span>
         </div>
+        <p class="mt-4 text-center text-sm text-gray-600">{t.subtitle}</p>
         <div class="mt-6 flex items-start gap-3">
           <svg class="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
-          <span class="text-gray-700">{t.founding.feature}</span>
+          <span class="text-gray-700">{t.feature}</span>
         </div>
         <a
-          href={pilotUrl}
+          href={signupUrl}
           class="mt-8 block w-full rounded-lg bg-openhr-teal-900 px-4 py-3 text-center font-medium text-white transition-colors hover:bg-openhr-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
         >
-          {t.founding.cta}
-        </a>
-      </div>
-
-      <!-- Standard -->
-      <div class="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-        <h3 class="text-xl font-bold text-gray-900">{t.standard.name}</h3>
-        <p class="mt-2 text-sm text-gray-600">{t.standard.subtitle}</p>
-        <div class="mt-6">
-          <span class="text-4xl font-bold text-gray-900">{standardPrice}</span>
-          <span class="text-gray-600">{perYear}</span>
-        </div>
-        <div class="mt-6 flex items-start gap-3">
-          <svg class="h-5 w-5 flex-shrink-0 text-openhr-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          <span class="text-gray-700">{t.standard.feature}</span>
-        </div>
-        <a
-          href={`${pilotUrl}?tier=standard`}
-          class="mt-8 block w-full rounded-lg border border-openhr-teal-900 bg-white px-4 py-3 text-center font-medium text-openhr-teal-900 transition-colors hover:bg-openhr-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-openhr-teal-900 focus-visible:ring-offset-2"
-        >
-          {t.standard.cta}
+          {t.cta}
         </a>
       </div>
     </div>
