@@ -69,7 +69,9 @@ const localeToHreflang: Record<string, string> = {
   'it': 'it'
 };
 
-const allLocales = ['fr', 'en-GB', 'en-US', 'de', 'es', 'it'];
+// SEO: Only primary locales in hreflang to concentrate crawl budget (fr + en-US).
+// Other locales still build but are excluded from sitemap and hreflang signals.
+const allLocales = ['fr', 'en-US'];
 
 const htmlLang = localeToLang[locale] || 'fr';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -116,7 +118,7 @@ const allSchemas = [organizationSchema, ...additionalSchemas];
       <link rel="alternate" hreflang={localeToHreflang[loc]} href={`https://open-hr.work/${loc}${pagePath === '/' ? '/' : pagePath}`} />
     ))}
     {pagePath && (
-      <link rel="alternate" hreflang="x-default" href={`https://open-hr.work/en-GB${pagePath === '/' ? '/' : pagePath}`} />
+      <link rel="alternate" hreflang="x-default" href={`https://open-hr.work/en-US${pagePath === '/' ? '/' : pagePath}`} />
     )}
 
     <!-- Favicons -->

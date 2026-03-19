@@ -11,15 +11,14 @@ export default defineConfig({
     react(),
     // Tailwind v4 uses CSS import + @tailwindcss/postcss, not @astrojs/tailwind
     sitemap({
+      // SEO: Only fr + en-US in sitemap to concentrate crawl budget on primary markets.
+      // Other locales still build and are accessible but are excluded from sitemap
+      // until those markets open (Q2 2026 global launch).
       i18n: {
         defaultLocale: 'fr',
         locales: {
           fr: 'fr-FR',
-          'en-GB': 'en-GB',
           'en-US': 'en-US',
-          de: 'de-DE',
-          es: 'es-ES',
-          it: 'it-IT',
         },
       },
       filter: (page) =>
@@ -27,7 +26,12 @@ export default defineConfig({
         !page.includes('/login/') &&
         !page.includes('/pilot/') &&
         !page.includes('/pilot/success/') &&
-        !page.endsWith('/open-hr.work/'),
+        !page.endsWith('/open-hr.work/') &&
+        // Exclude non-primary locales from sitemap (crawl budget optimisation)
+        !page.includes('/en-GB/') &&
+        !page.includes('/de/') &&
+        !page.includes('/es/') &&
+        !page.includes('/it/'),
       serialize(item) {
         // Exclude known duplicate slugs that have 301 redirects to canonical versions
         if (/\/it\/legal\/politica-cookie\//.test(item.url)) {
@@ -52,6 +56,14 @@ export default defineConfig({
           item.changefreq = 'monthly';
         } else if (path.startsWith('/about/')) {
           item.priority = 0.7;
+          item.changefreq = 'monthly';
+        } else if (path.startsWith('/insights/') && path !== '/insights/') {
+          // Articles, glossary entries, research — primary backlink magnets
+          item.priority = 0.8;
+          item.changefreq = 'monthly';
+        } else if (path.startsWith('/resources/') && path !== '/resources/') {
+          // Whitepapers, frameworks — high-value linkable assets
+          item.priority = 0.8;
           item.changefreq = 'monthly';
         } else if (path.startsWith('/legal/')) {
           item.priority = 0.3;
@@ -133,5 +145,8 @@ export default defineConfig({
 
     // Italian duplicate: politica-cookie → informativa-cookie
     '/it/legal/politica-cookie/': '/it/legal/informativa-cookie/',
+
+    // Bare /pilot/ without locale prefix (fixes GSC 404)
+    '/pilot/': '/en-US/pricing/',
   },
 });
