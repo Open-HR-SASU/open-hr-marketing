@@ -231,7 +231,7 @@ const t = isFr ? {
         <a href={`/${locale}/`} class="flex items-center gap-3 group">
           <img src="/openhr-mark.svg" alt="" width="36" height="36" class="rounded" />
           <span class="text-base font-semibold text-stone-900" style="font-family: 'Bricolage Grotesque', sans-serif;">
-            Open&nbsp;HR <span class="text-stone-400 font-normal mx-1">·</span> <span class="text-[#00625A]">{t.subBrand}</span>
+            Open&nbsp;HR <span aria-hidden="true" class="text-stone-600 font-normal mx-1">·</span> <span class="text-[#00625A]">{t.subBrand}</span>
           </span>
         </a>
         <a href="https://app.open-hr.work/" class="text-sm text-stone-600 hover:text-[#00625A] transition">
@@ -261,7 +261,7 @@ const t = isFr ? {
               {t.ctaPackages}
             </a>
           </div>
-          <p class="mt-6 text-sm text-stone-500">{t.ctaSubnote}</p>
+          <p class="mt-6 text-sm text-stone-600">{t.ctaSubnote}</p>
         </div>
 
         <div class="order-1 lg:order-2 flex justify-center lg:justify-end">
