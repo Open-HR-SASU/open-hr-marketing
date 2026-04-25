@@ -103,21 +103,75 @@ export default defineConfig({
     },
   },
 
-  // Redirects: sitemap alias + removed pages + legal slug canonicalization
+  // Redirects: removed Open HR product pages now redirect to locale homepage (ESL holding)
+  // Legal slug canonicalization preserved (legal pages still required)
   redirects: {
     '/sitemap.xml': '/sitemap-index.xml',
-    '/fr/pilot/': '/fr/pricing/',
-    '/en-GB/pilot/': '/en-GB/pricing/',
-    '/en-US/pilot/': '/en-US/pricing/',
-    '/de/pilot/': '/de/pricing/',
-    '/es/pilot/': '/es/pricing/',
-    '/it/pilot/': '/it/pricing/',
-    '/fr/pilot/success/': '/fr/pricing/',
-    '/en-GB/pilot/success/': '/en-GB/pricing/',
-    '/en-US/pilot/success/': '/en-US/pricing/',
-    '/de/pilot/success/': '/de/pricing/',
-    '/es/pilot/success/': '/es/pricing/',
-    '/it/pilot/success/': '/it/pricing/',
+
+    // Removed Open HR product pages → locale homepage
+    '/fr/pilot/': '/fr/',
+    '/en-GB/pilot/': '/en-GB/',
+    '/en-US/pilot/': '/en-US/',
+    '/de/pilot/': '/de/',
+    '/es/pilot/': '/es/',
+    '/it/pilot/': '/it/',
+    '/fr/pilot/success/': '/fr/',
+    '/en-GB/pilot/success/': '/en-GB/',
+    '/en-US/pilot/success/': '/en-US/',
+    '/de/pilot/success/': '/de/',
+    '/es/pilot/success/': '/es/',
+    '/it/pilot/success/': '/it/',
+    '/fr/pricing/': '/fr/',
+    '/en-GB/pricing/': '/en-GB/',
+    '/en-US/pricing/': '/en-US/',
+    '/de/pricing/': '/de/',
+    '/es/pricing/': '/es/',
+    '/it/pricing/': '/it/',
+    '/fr/about/': '/fr/',
+    '/en-GB/about/': '/en-GB/',
+    '/en-US/about/': '/en-US/',
+    '/de/about/': '/de/',
+    '/es/about/': '/es/',
+    '/it/about/': '/it/',
+    '/fr/workers/': '/fr/',
+    '/en-GB/workers/': '/en-GB/',
+    '/en-US/workers/': '/en-US/',
+    '/de/workers/': '/de/',
+    '/es/workers/': '/es/',
+    '/it/workers/': '/it/',
+    '/fr/employers/': '/fr/',
+    '/en-GB/employers/': '/en-GB/',
+    '/en-US/employers/': '/en-US/',
+    '/de/employers/': '/de/',
+    '/es/employers/': '/es/',
+    '/it/employers/': '/it/',
+    '/fr/how-it-works/': '/fr/',
+    '/en-GB/how-it-works/': '/en-GB/',
+    '/en-US/how-it-works/': '/en-US/',
+    '/de/how-it-works/': '/de/',
+    '/es/how-it-works/': '/es/',
+    '/it/how-it-works/': '/it/',
+    '/fr/login/': '/fr/',
+    '/en-GB/login/': '/en-GB/',
+    '/en-US/login/': '/en-US/',
+    '/de/login/': '/de/',
+    '/es/login/': '/es/',
+    '/it/login/': '/it/',
+    '/fr/insights/': '/fr/',
+    '/en-GB/insights/': '/en-GB/',
+    '/en-US/insights/': '/en-US/',
+    '/de/insights/': '/de/',
+    '/es/insights/': '/es/',
+    '/it/insights/': '/it/',
+    '/fr/resources/': '/fr/',
+    '/en-GB/resources/': '/en-GB/',
+    '/en-US/resources/': '/en-US/',
+    '/de/resources/': '/de/',
+    '/es/resources/': '/es/',
+    '/it/resources/': '/it/',
+
+    // Bare /pilot/ without locale prefix (fixes GSC 404)
+    '/pilot/': '/en-US/',
 
     // Legal slug canonicalization — generic English slugs → localized canonical versions
     // Privacy: /legal/privacy/ → locale-specific privacy page
@@ -145,8 +199,5 @@ export default defineConfig({
 
     // Italian duplicate: politica-cookie → informativa-cookie
     '/it/legal/politica-cookie/': '/it/legal/informativa-cookie/',
-
-    // Bare /pilot/ without locale prefix (fixes GSC 404)
-    '/pilot/': '/en-US/pricing/',
   },
 });

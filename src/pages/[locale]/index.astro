@@ -1,15 +1,6 @@
 ---
-/**
- * Homepage for each locale
- *
- * CMS-powered homepage with sections from Sanity.
- * Generates static pages for: /fr/, /en-GB/, /en-US/, /de/, /es/, /it/
- */
-import MainLayout from '@/layouts/MainLayout.astro';
-import SectionsRenderer from '@/components/sections/SectionsRenderer.astro';
+import Layout from '@/layouts/Layout.astro';
 import { locales, type Locale } from '@/lib/i18n';
-import { getPage, getPageMetadata } from '@/lib/sanity';
-import { generateWebSiteSchema, generateServiceSchema, generateSoftwareApplicationSchema } from '@/lib/seo';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -18,68 +9,339 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.params as { locale: Locale };
+const isFr = locale === 'fr';
 
-// Fetch page content from Sanity
-const page = await getPage('home', locale);
-const metadata = await getPageMetadata('home', locale);
-
-// Fallback content aligned with OPE-698 v2 value proposition
-const fallbackTitle: Record<Locale, string> = {
-  'fr': 'Open HR — Votre CV dit ce que vous avez fait. Nous prouvons comment vous l\'avez fait.',
-  'en-GB': 'Open HR — Your CV says what you did. We prove how well you did it.',
-  'en-US': 'Open HR — Your resume says what you did. We prove how well you did it.',
-  'de': 'Open HR — Ihr Lebenslauf sagt, was Sie getan haben. Wir beweisen, wie gut Sie es getan haben.',
-  'es': 'Open HR — Tu CV dice lo que hiciste. Nosotros demostramos lo bien que lo hiciste.',
-  'it': 'Open HR — Il tuo CV dice cosa hai fatto. Noi dimostriamo quanto bene lo hai fatto.',
+const t = isFr ? {
+  metaTitle: "Cours d'anglais avec Johnathen Evans-Guilbault — Bordeaux et en ligne",
+  metaDescription: "Cours particuliers d'anglais alignés CEFR pour adultes, candidats aux examens et équipes d'entreprise. Anglophone natif, méthode structurée, comptes rendus écrits. Séance d'évaluation 30 €.",
+  eyebrow: "Cours d'anglais individuels · Bordeaux Métropole et en ligne",
+  h1: "Cours d'anglais avec Johnathen Evans-Guilbault",
+  intro: "Anglophone natif, niveau master, fort d'une expérience en conception pédagogique. Cours d'anglais en face-à-face, alignés CEFR, pour adultes, candidats aux examens et équipes d'entreprise à Bordeaux et en ligne.",
+  ctaTrial: "Réserver une séance d'évaluation — 30 €",
+  ctaPackages: "Voir les formules",
+  ctaSubnote: "Le tarif d'évaluation est crédité sur toute formule achetée dans les 14 jours · Bilan écrit sous 48 h",
+  pillar1Title: "Anglophone natif, pédagogie structurée",
+  pillar1Body: "Anglophone natif des États-Unis. Formation universitaire de niveau master. Expérience d'enseignement antérieure en théologie et en gestion — la conception pédagogique est directement transférable à l'enseignement de l'anglais.",
+  pillar2Title: "Aligné CEFR, préparation aux examens",
+  pillar2Body: "Chaque apprenant est positionné sur le Cadre européen commun de référence pour les langues. Préparation ciblée pour TOEIC, IELTS, TOEFL, Cambridge B2 First et C1 Advanced. Méthode communicative ancrée dans les <em>Quatre Volets</em> de Paul Nation.",
+  pillar3Title: "Bordeaux et en ligne",
+  pillar3Body: "En présentiel à Villenave-d'Ornon, Pessac, Talence, Bègles et au centre de Bordeaux. À distance via Zoom pour les apprenants éloignés. Engagements d'entreprise sur site ou en hybride.",
+  pricingH2: "Formules et tarifs",
+  pricingIntro: "Vendu en formules, pas à la séance. Remise pour engagement. Périodes de validité pour préserver le rythme. Tous les tarifs : TVA non applicable, art. 293 B du CGI.",
+  trialEyebrow: "Évaluation",
+  trialName: "Diagnostic",
+  trialPrice: "30 €",
+  trialUnit: " / 60 min",
+  trialBullets: [
+    "Évaluation structurée des 4 compétences",
+    "Positionnement CEFR",
+    "Bilan écrit sous 48 h",
+    "30 € crédités sur toute formule achetée dans les 14 jours",
+  ],
+  pkgAEyebrow: "Formule A",
+  pkgAName: "Foundation",
+  pkgAPrice: "420 €",
+  pkgAUnit: " / 10 séances",
+  pkgAPerHour: "42 € / heure · validité 4 mois",
+  pkgABullets: [
+    "10 séances de 60 min",
+    "Créneau hebdomadaire fixe",
+    "Bilan CEFR à mi-parcours",
+    "Adultes généralistes, B1–B2",
+  ],
+  pkgBEyebrow: "Formule B",
+  pkgBName: "Progress",
+  pkgBPrice: "780 €",
+  pkgBUnit: " / 20 séances",
+  pkgBPerHour: "39 € / heure · validité 7 mois",
+  pkgBBullets: [
+    "20 séances de 60 min",
+    "1 ou 2 créneaux hebdomadaires fixes",
+    "Comptes rendus écrits mensuels",
+    "Réévaluation CEFR à mi-parcours et en fin",
+    "Reprogrammation prioritaire",
+  ],
+  pkgBBadge: "Formule la plus choisie",
+  pkgCEyebrow: "Formule C",
+  pkgCName: "Specialist",
+  pkgCPrice: "600–750 €",
+  pkgCUnit: " / 10 séances",
+  pkgCPerHour: "60–75 € / heure",
+  pkgCBullets: [
+    "Préparations intensives (TOEIC, IELTS, TOEFL)",
+    "Cambridge B2 First / C1 Advanced",
+    "Anglais académique, rédaction de mémoire",
+    "Sujets blancs + retour écrit sur productions longues",
+  ],
+  alacarte: "Séances à l'unité hors formule : 45 € / heure",
+  corpEyebrow: "Formule D",
+  corpH2: "Entreprises et formation d'équipe",
+  corpBody: "Formation en anglais sur mesure pour les équipes export, l'hôtellerie et les entreprises tech de la métropole bordelaise. Livrée en <em>convention de formation</em> via Open HR SASU, avec programme structuré, suivi de présence et bilan en fin d'engagement.",
+  corpBullets: [
+    "70–120 € / heure, devis sur mesure",
+    "Individuel ou en petit groupe (jusqu'à 4 apprenants)",
+    "Typiquement 20–40 heures sur 3–6 mois",
+    "Vins & spiritueux, tech, hôtellerie, enseignement supérieur",
+  ],
+  corpCta: "Demander un devis entreprise",
+  methodH2: "Méthode",
+  methodP1: "Les cours sont construits sur le <strong>Cadre européen commun de référence pour les langues</strong> (CEFR) et son volume complémentaire 2020. Chaque apprenant est positionné, suivi et réévalué selon la même échelle utilisée par Cambridge English, TOEIC, IELTS et TOEFL.",
+  methodP2: "La pédagogie suit l'<strong>approche communicative</strong> avec une dimension actionnelle, structurée autour des <em>Quatre Volets</em> de Paul Nation : entrée centrée sur le sens, sortie centrée sur le sens, apprentissage centré sur la langue, et développement de la fluidité. Ouvrages de référence : <em>Practical English Usage</em> de Swan et <em>About Language</em> de Thornbury.",
+  methodP3: "La discipline compte plus que le charme. Chaque séance alterne activités axées fluidité et activités axées exactitude, le mode étant signalé explicitement à l'apprenant. La langue maternelle est le sol — pas le plafond.",
+  contactH2: "Commencez par une séance d'évaluation",
+  contactBody: "Soixante minutes, quatre compétences, bilan écrit. 30 €, intégralement crédités sur toute formule achetée dans les quatorze jours.",
+  legalEntity: "Open HR SASU — RCS Paris 994 927 242 — Capital social 1 500 €",
+  legalSiege: "Siège social : 60 rue François Ier, 75008 Paris (France)",
+  legalOps: "Opérations : Villenave-d'Ornon, Gironde (Bordeaux Métropole)",
+  legalPub: "Directeur de la publication : Johnathen Fate Evans-Guilbault",
+  legalHost: "Hébergeur : Bunny.net (BunnyWay d.o.o., Slovénie)",
+  legalVat: "TVA non applicable, art. 293 B du CGI",
+  legalLink1: "Mentions légales",
+  legalLink2: "Politique de confidentialité",
+  legalLink3: "CGV",
+} : {
+  metaTitle: "English tutoring with Johnathen Evans-Guilbault — Bordeaux & online",
+  metaDescription: "CEFR-anchored 1:1 English lessons for adults, exam candidates, and corporate teams. Native speaker, structured method, written progress reports. Trial session €30.",
+  eyebrow: "1:1 English tutoring · Bordeaux Métropole & online",
+  h1: "English tutoring with Johnathen Evans-Guilbault",
+  intro: "Native English speaker, master's-level qualified, with a decade of instructional design experience. CEFR-anchored 1:1 lessons for adult learners, exam candidates, and corporate teams in Bordeaux and online.",
+  ctaTrial: "Book a trial session — €30",
+  ctaPackages: "See packages",
+  ctaSubnote: "Trial fee credited to any package purchased within 14 days · Written diagnostic report within 48 hours",
+  pillar1Title: "Native fluency, structured pedagogy",
+  pillar1Body: "Native English from the United States. Master's-level academic background. Prior teaching experience in theology and business — instructional design transferred directly to ESL.",
+  pillar2Title: "CEFR-anchored, exam-ready",
+  pillar2Body: "Every learner placed on the Common European Framework. Targeted preparation for TOEIC, IELTS, TOEFL, Cambridge B2 First & C1 Advanced. Communicative method grounded in Paul Nation's <em>Four Strands</em>.",
+  pillar3Title: "Bordeaux & online",
+  pillar3Body: "In-person across Villenave-d'Ornon, Pessac, Talence, Bègles, central Bordeaux. Remote 1:1 via Zoom for learners further afield. Corporate engagements delivered on-site or hybrid.",
+  pricingH2: "Packages & pricing",
+  pricingIntro: "Sold as packages, not single lessons. Discount for commitment. Validity windows protect pace. All prices: TVA non applicable, art. 293 B du CGI.",
+  trialEyebrow: "Trial",
+  trialName: "Diagnostic",
+  trialPrice: "€30",
+  trialUnit: " / 60 min",
+  trialBullets: [
+    "4-skill structured assessment",
+    "CEFR placement",
+    "Written report within 48 hours",
+    "€30 credited to any package within 14 days",
+  ],
+  pkgAEyebrow: "Package A",
+  pkgAName: "Foundation",
+  pkgAPrice: "€420",
+  pkgAUnit: " / 10 lessons",
+  pkgAPerHour: "€42 per hour · 4-month validity",
+  pkgABullets: [
+    "10 × 60-min lessons",
+    "Fixed weekly slot",
+    "Mid-package CEFR check-in",
+    "General adult learners, B1–B2",
+  ],
+  pkgBEyebrow: "Package B",
+  pkgBName: "Progress",
+  pkgBPrice: "€780",
+  pkgBUnit: " / 20 lessons",
+  pkgBPerHour: "€39 per hour · 7-month validity",
+  pkgBBullets: [
+    "20 × 60-min lessons",
+    "1–2 fixed weekly slots",
+    "Monthly written progress reports",
+    "Mid + end CEFR re-assessment",
+    "Priority rescheduling",
+  ],
+  pkgBBadge: "Most popular",
+  pkgCEyebrow: "Package C",
+  pkgCName: "Specialist",
+  pkgCPrice: "€600–750",
+  pkgCUnit: " / 10 lessons",
+  pkgCPerHour: "€60–75 per hour",
+  pkgCBullets: [
+    "Exam intensives (TOEIC, IELTS, TOEFL)",
+    "Cambridge B2 First / C1 Advanced",
+    "Academic English, thesis writing",
+    "Practice papers + extended writing feedback",
+  ],
+  alacarte: "À la carte sessions: €45 / hour",
+  corpEyebrow: "Package D",
+  corpH2: "Corporate & team training",
+  corpBody: "Tailored English training for export teams, hospitality groups, and tech companies across the Bordeaux Métropole. Delivered as a <em>convention de formation</em> through Open HR SASU, with structured curriculum, attendance tracking, and end-of-engagement reporting.",
+  corpBullets: [
+    "€70–120 per hour, scoped per engagement",
+    "1:1 or small-group (up to 4 learners)",
+    "Typically 20–40 hours over 3–6 months",
+    "Wine & spirits, tech, hospitality, higher ed",
+  ],
+  corpCta: "Request a corporate quote",
+  methodH2: "Method",
+  methodP1: "Lessons are built on the <strong>Common European Framework</strong> (CEFR) and its 2020 Companion Volume. Every learner is placed, tracked, and re-assessed against the same scale used by Cambridge English, TOEIC, IELTS, and TOEFL.",
+  methodP2: "Pedagogy follows <strong>Communicative Language Teaching</strong> with task-based elements, structured around Paul Nation's <em>Four Strands</em>: meaning-focused input, meaning-focused output, language-focused learning, and fluency development. Reference texts include Swan's <em>Practical English Usage</em> and Thornbury's <em>About Language</em>.",
+  methodP3: "Discipline matters more than charm. Each lesson alternates fluency-focused and accuracy-focused activities, with the mode signalled explicitly to the learner. Native fluency is the floor — not the ceiling.",
+  contactH2: "Start with a trial session",
+  contactBody: "Sixty minutes, four skills, written report. €30, fully credited toward any package within fourteen days.",
+  legalEntity: "Open HR SASU — RCS Paris 994 927 242 — Capital social €1,500",
+  legalSiege: "Siège social : 60 rue François Ier, 75008 Paris (France)",
+  legalOps: "Opérations : Villenave-d'Ornon, Gironde (Bordeaux Métropole)",
+  legalPub: "Directeur de la publication : Johnathen Fate Evans-Guilbault",
+  legalHost: "Hébergeur : Bunny.net (BunnyWay d.o.o., Slovenia)",
+  legalVat: "TVA non applicable, art. 293 B du CGI",
+  legalLink1: "Mentions légales",
+  legalLink2: "Politique de confidentialité",
+  legalLink3: "CGV",
 };
-
-const fallbackDescription: Record<Locale, string> = {
-  'fr': 'Construisez une accréditation vérifiée à partir de références anonymes. Joignez votre RefScore à vos candidatures, LinkedIn et plus encore.',
-  'en-GB': 'Build a verified credential from anonymous references. Attach your RefScore to job applications, LinkedIn, and more.',
-  'en-US': 'Build a verified credential from anonymous references. Attach your RefScore to job applications, LinkedIn, and more.',
-  'de': 'Erstellen Sie eine verifizierte Akkreditierung aus anonymen Referenzen. Fügen Sie Ihren RefScore Bewerbungen, LinkedIn und mehr bei.',
-  'es': 'Construye una acreditación verificada a partir de referencias anónimas. Adjunta tu RefScore a solicitudes de empleo, LinkedIn y más.',
-  'it': 'Costruisci una credenziale verificata da referenze anonime. Allega il tuo RefScore alle candidature, LinkedIn e altro.',
-};
-
-const title = metadata?.seo?.metaTitle || metadata?.title || fallbackTitle[locale];
-const description = metadata?.seo?.metaDescription || fallbackDescription[locale];
-
-// Generate WebSite + Service + SoftwareApplication schemas for homepage (OPE-421, AEO/GEO)
-const webSiteSchema = generateWebSiteSchema(locale);
-const serviceSchema = generateServiceSchema(locale);
-const softwareAppSchema = generateSoftwareApplicationSchema(locale);
 ---
 
-<MainLayout
-  title={title}
-  description={description}
-  locale={locale}
-  additionalSchemas={[webSiteSchema, serviceSchema, softwareAppSchema]}
-  pagePath="/"
->
-  {page?.sections && page.sections.length > 0 ? (
-    <SectionsRenderer sections={page.sections} locale={locale} />
-  ) : (
-    <!-- Fallback Hero Section (when Sanity unavailable) -->
-    <section class="container py-24 text-center">
-      <p class="text-sm font-medium text-openhr-teal-900 mb-4">
-        {locale === 'fr' ? 'Bientôt disponible' : 'Coming Soon'}
-      </p>
-      <h1 class="text-display-2 text-foreground mb-6">
-        Open HR
-      </h1>
-      <p class="text-body text-muted-foreground max-w-2xl mx-auto mb-8">
-        {fallbackDescription[locale]}
-      </p>
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href={`/${locale}/pilot/`} class="btn btn-primary">
-          {locale === 'fr' ? 'Rejoindre le pilote' : 'Join the Pilot'}
-        </a>
-        <a href={`/${locale}/about/`} class="btn btn-secondary">
-          {locale === 'fr' ? 'En savoir plus' : 'Learn More'}
+<Layout title={t.metaTitle} description={t.metaDescription} locale={locale} pagePath="/">
+  <main class="flex-1">
+    <!-- Hero -->
+    <section class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-20 md:py-28">
+        <p class="text-sm uppercase tracking-widest text-teal-900 font-semibold mb-4">{t.eyebrow}</p>
+        <h1 class="text-4xl md:text-6xl font-bold text-stone-900 leading-tight mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">
+          {t.h1}
+        </h1>
+        <p class="text-lg md:text-xl text-stone-700 max-w-3xl mb-8 leading-relaxed">{t.intro}</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="mailto:johnathen@open-hr.work?subject=Trial%20session%20enquiry"
+             class="inline-flex items-center justify-center px-8 py-4 bg-teal-900 hover:bg-teal-800 text-white font-semibold rounded-lg transition">
+            {t.ctaTrial}
+          </a>
+          <a href="#pricing"
+             class="inline-flex items-center justify-center px-8 py-4 border-2 border-teal-900 text-teal-900 hover:bg-teal-50 font-semibold rounded-lg transition">
+            {t.ctaPackages}
+          </a>
+        </div>
+        <p class="mt-6 text-sm text-stone-500">{t.ctaSubnote}</p>
+      </div>
+    </section>
+
+    <!-- Pillars -->
+    <section class="bg-stone-50 border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-16">
+        <div class="grid md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pillar1Title}</h3>
+            <p class="text-stone-700 leading-relaxed" set:html={t.pillar1Body} />
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pillar2Title}</h3>
+            <p class="text-stone-700 leading-relaxed" set:html={t.pillar2Body} />
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pillar3Title}</h3>
+            <p class="text-stone-700 leading-relaxed" set:html={t.pillar3Body} />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-20">
+        <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pricingH2}</h2>
+        <p class="text-stone-600 mb-12 max-w-2xl">{t.pricingIntro}</p>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">{t.trialEyebrow}</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.trialName}</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-4">{t.trialPrice}<span class="text-base font-normal text-stone-500">{t.trialUnit}</span></p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              {t.trialBullets.map((b: string) => <li>• {b}</li>)}
+            </ul>
+          </div>
+
+          <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">{t.pkgAEyebrow}</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pkgAName}</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-1">{t.pkgAPrice}<span class="text-base font-normal text-stone-500">{t.pkgAUnit}</span></p>
+            <p class="text-sm text-stone-500 mb-4">{t.pkgAPerHour}</p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              {t.pkgABullets.map((b: string) => <li>• {b}</li>)}
+            </ul>
+          </div>
+
+          <div class="border-2 border-teal-900 rounded-xl p-6 flex flex-col relative shadow-lg">
+            <span class="absolute -top-3 left-6 bg-teal-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">{t.pkgBBadge}</span>
+            <p class="text-xs uppercase tracking-widest text-teal-900 font-semibold mb-2">{t.pkgBEyebrow}</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pkgBName}</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-1">{t.pkgBPrice}<span class="text-base font-normal text-stone-500">{t.pkgBUnit}</span></p>
+            <p class="text-sm text-stone-500 mb-4">{t.pkgBPerHour}</p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              {t.pkgBBullets.map((b: string) => <li>• {b}</li>)}
+            </ul>
+          </div>
+
+          <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">{t.pkgCEyebrow}</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pkgCName}</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-1">{t.pkgCPrice}<span class="text-base font-normal text-stone-500">{t.pkgCUnit}</span></p>
+            <p class="text-sm text-stone-500 mb-4">{t.pkgCPerHour}</p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              {t.pkgCBullets.map((b: string) => <li>• {b}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        <p class="mt-8 text-sm text-stone-500 text-center">{t.alacarte}</p>
+      </div>
+    </section>
+
+    <!-- Corporate -->
+    <section class="bg-stone-900 text-white">
+      <div class="mx-auto max-w-5xl px-6 py-20">
+        <p class="text-sm uppercase tracking-widest text-teal-300 font-semibold mb-4">{t.corpEyebrow}</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.corpH2}</h2>
+        <p class="text-lg text-stone-200 max-w-3xl mb-6 leading-relaxed" set:html={t.corpBody} />
+        <div class="grid sm:grid-cols-2 gap-x-12 gap-y-3 max-w-3xl text-stone-200 mb-8">
+          {t.corpBullets.map((b: string) => <p>• {b}</p>)}
+        </div>
+        <a href="mailto:johnathen@open-hr.work?subject=Corporate%20training%20enquiry"
+           class="inline-flex items-center justify-center px-8 py-4 bg-white text-stone-900 hover:bg-stone-100 font-semibold rounded-lg transition">
+          {t.corpCta}
         </a>
       </div>
     </section>
-  )}
-</MainLayout>
+
+    <!-- Method -->
+    <section class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-3xl px-6 py-20">
+        <h2 class="text-3xl font-bold text-stone-900 mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.methodH2}</h2>
+        <div class="space-y-4 text-stone-700 leading-relaxed text-lg">
+          <p set:html={t.methodP1} />
+          <p set:html={t.methodP2} />
+          <p set:html={t.methodP3} />
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="bg-teal-900 text-white">
+      <div class="mx-auto max-w-3xl px-6 py-20 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.contactH2}</h2>
+        <p class="text-lg text-teal-100 mb-8 max-w-xl mx-auto">{t.contactBody}</p>
+        <a href="mailto:johnathen@open-hr.work?subject=Trial%20session%20enquiry"
+           class="inline-flex items-center justify-center px-8 py-4 bg-white text-teal-900 hover:bg-stone-100 font-semibold rounded-lg transition">
+          johnathen@open-hr.work
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-stone-100 border-t border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-12 text-sm text-stone-600 leading-relaxed">
+        <p class="mb-2"><strong>{t.legalEntity}</strong></p>
+        <p class="mb-2">{t.legalSiege}</p>
+        <p class="mb-2">{t.legalOps}</p>
+        <p class="mb-2">{t.legalPub}</p>
+        <p class="mb-2">{t.legalHost}</p>
+        <p class="mb-4">{t.legalVat}</p>
+        <p>
+          <a href={`/${locale}/legal/mentions-legales/`} class="text-teal-900 hover:underline">{t.legalLink1}</a> ·
+          <a href={`/${locale}/legal/politique-confidentialite/`} class="text-teal-900 hover:underline">{t.legalLink2}</a> ·
+          <a href={`/${locale}/legal/cgv/`} class="text-teal-900 hover:underline">{t.legalLink3}</a>
+        </p>
+      </div>
+    </footer>
+  </main>
+</Layout>

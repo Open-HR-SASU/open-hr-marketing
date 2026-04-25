@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const locales = ['fr', 'en-GB'];
-const pages = ['/', '/about/', '/pricing/', '/pilot/'];
+const locales = ['fr', 'en-US'];
+const pages = ['/'];
 
 for (const locale of locales) {
   for (const page of pages) {

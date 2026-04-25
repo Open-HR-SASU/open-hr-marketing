@@ -1,61 +1,206 @@
 ---
-/**
- * Root Index — Locale Redirect Fallback
- *
- * Locale detection is handled at the Bunny CDN edge layer via Edge Rules
- * (OPE-726). The edge rules read Accept-Language and issue a 302 redirect
- * before this HTML is ever served to the browser.
- *
- * This page exists as an ultimate fallback only — it is served if edge rules
- * fail or are bypassed (e.g. direct storage access, edge rule misconfiguration).
- *
- * - meta http-equiv refresh: redirects to /en-GB/ after 0ms (bot/no-JS fallback)
- * - noscript links: manual locale selection for no-JS browsers
- * - noindex: prevents this redirect page from being indexed
- *
- * @see OPE-726 — Edge-level locale detection
- * @see DL-26 — Global access enabled 2026-02-11
- */
+import Layout from '@/layouts/Layout.astro';
+
+const title = 'English tutoring with Johnathen Evans-Guilbault — Bordeaux & online';
+const description = 'CEFR-anchored 1:1 English lessons for adults, students, and corporate teams. Native fluency, structured method, written progress reports. Trial session €30.';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open HR — Redirecting</title>
-    <meta name="description" content="Open HR — The HR infrastructure of tomorrow. Redirecting to your language." />
-
-    <!-- SEO: hreflang for primary locales (fr + en-US) -->
-    <link rel="alternate" hreflang="fr" href="https://open-hr.work/fr/" />
-    <link rel="alternate" hreflang="en-US" href="https://open-hr.work/en-US/" />
-    <link rel="alternate" hreflang="x-default" href="https://open-hr.work/en-US/" />
-
-    <!-- Fallback redirect for when edge rules are bypassed -->
-    <meta http-equiv="refresh" content="0;url=/en-US/" />
-
-    <!-- Prevent indexing this redirect page; localized pages are the canonical targets -->
-    <meta name="robots" content="noindex, follow" />
-
-    <style>
-      /* Hide everything — redirect should feel instant with no flash */
-      body { display: none; }
-    </style>
-  </head>
-  <body>
-    <noscript>
-      <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; text-align: center; line-height: 1.6;">
-        <h1 style="font-size: 1.5rem; margin-bottom: 1rem;">Open HR</h1>
-        <p style="margin-bottom: 1.5rem;">Please select your language / Veuillez choisir votre langue:</p>
-        <ul style="list-style: none; padding: 0;">
-          <li style="margin: 0.5rem 0;"><a href="/fr/">Francais</a></li>
-          <li style="margin: 0.5rem 0;"><a href="/en-GB/">English (UK)</a></li>
-          <li style="margin: 0.5rem 0;"><a href="/en-US/">English (US)</a></li>
-          <li style="margin: 0.5rem 0;"><a href="/de/">Deutsch</a></li>
-          <li style="margin: 0.5rem 0;"><a href="/es/">Espanol</a></li>
-          <li style="margin: 0.5rem 0;"><a href="/it/">Italiano</a></li>
-        </ul>
+<Layout title={title} description={description} locale="en-US" pagePath="/">
+  <main class="flex-1">
+    <!-- Hero -->
+    <section class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-20 md:py-28">
+        <p class="text-sm uppercase tracking-widest text-teal-900 font-semibold mb-4">
+          1:1 English tutoring · Bordeaux Métropole &amp; online
+        </p>
+        <h1 class="text-4xl md:text-6xl font-bold text-stone-900 leading-tight mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">
+          English tutoring with Johnathen Evans-Guilbault
+        </h1>
+        <p class="text-lg md:text-xl text-stone-700 max-w-3xl mb-8 leading-relaxed">
+          Native English speaker, master's-level qualified, with a decade of instructional design experience. CEFR-anchored 1:1 lessons for adult learners, exam candidates, and corporate teams in Bordeaux and online.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="mailto:johnathen@open-hr.work?subject=Trial%20session%20enquiry"
+             class="inline-flex items-center justify-center px-8 py-4 bg-teal-900 hover:bg-teal-800 text-white font-semibold rounded-lg transition">
+            Book a trial session — €30
+          </a>
+          <a href="#pricing"
+             class="inline-flex items-center justify-center px-8 py-4 border-2 border-teal-900 text-teal-900 hover:bg-teal-50 font-semibold rounded-lg transition">
+            See packages
+          </a>
+        </div>
+        <p class="mt-6 text-sm text-stone-500">
+          Trial fee credited to any package purchased within 14 days · Written diagnostic report within 48 hours
+        </p>
       </div>
-    </noscript>
-  </body>
-</html>
+    </section>
+
+    <!-- Pillars -->
+    <section class="bg-stone-50 border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-16">
+        <div class="grid md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">Native fluency, structured pedagogy</h3>
+            <p class="text-stone-700 leading-relaxed">
+              Native English from the United States. Master's-level academic background. Prior teaching experience in theology and business — instructional design transferred directly to ESL.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">CEFR-anchored, exam-ready</h3>
+            <p class="text-stone-700 leading-relaxed">
+              Every learner placed on the Common European Framework. Targeted preparation for TOEIC, IELTS, TOEFL, Cambridge B2 First &amp; C1 Advanced. Communicative method grounded in Paul Nation's <em>Four Strands</em>.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">Bordeaux &amp; online</h3>
+            <p class="text-stone-700 leading-relaxed">
+              In-person across Villenave-d'Ornon, Pessac, Talence, Bègles, central Bordeaux. Remote 1:1 via Zoom for learners further afield. Corporate engagements delivered on-site or hybrid.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-20">
+        <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-3" style="font-family: 'Bricolage Grotesque', sans-serif;">Packages &amp; pricing</h2>
+        <p class="text-stone-600 mb-12 max-w-2xl">
+          Sold as packages, not single lessons. Discount for commitment. Validity windows protect pace. All prices: TVA non applicable, art. 293 B du CGI.
+        </p>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <!-- Trial -->
+          <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">Trial</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">Diagnostic</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-4">€30<span class="text-base font-normal text-stone-500"> / 60 min</span></p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              <li>• 4-skill structured assessment</li>
+              <li>• CEFR placement</li>
+              <li>• Written report within 48 hr</li>
+              <li>• €30 credited to any package within 14 days</li>
+            </ul>
+          </div>
+
+          <!-- Foundation -->
+          <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">Package A</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">Foundation</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-1">€420<span class="text-base font-normal text-stone-500"> / 10 lessons</span></p>
+            <p class="text-sm text-stone-500 mb-4">€42 per hour · 4-month validity</p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              <li>• 10 × 60-min lessons</li>
+              <li>• Fixed weekly slot</li>
+              <li>• Mid-package CEFR check-in</li>
+              <li>• General adult learners, B1–B2</li>
+            </ul>
+          </div>
+
+          <!-- Progress (most popular) -->
+          <div class="border-2 border-teal-900 rounded-xl p-6 flex flex-col relative shadow-lg">
+            <span class="absolute -top-3 left-6 bg-teal-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Most popular</span>
+            <p class="text-xs uppercase tracking-widest text-teal-900 font-semibold mb-2">Package B</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">Progress</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-1">€780<span class="text-base font-normal text-stone-500"> / 20 lessons</span></p>
+            <p class="text-sm text-stone-500 mb-4">€39 per hour · 7-month validity</p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              <li>• 20 × 60-min lessons</li>
+              <li>• 1–2 fixed weekly slots</li>
+              <li>• Monthly written progress reports</li>
+              <li>• Mid + end CEFR re-assessment</li>
+              <li>• Priority rescheduling</li>
+            </ul>
+          </div>
+
+          <!-- Specialist -->
+          <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
+            <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">Package C</p>
+            <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">Specialist</h3>
+            <p class="text-3xl font-bold text-teal-900 mb-1">€600–750<span class="text-base font-normal text-stone-500"> / 10 lessons</span></p>
+            <p class="text-sm text-stone-500 mb-4">€60–75 per hour</p>
+            <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
+              <li>• Exam intensives (TOEIC, IELTS, TOEFL)</li>
+              <li>• Cambridge B2 First / C1 Advanced</li>
+              <li>• Academic English, thesis writing</li>
+              <li>• Practice papers + extended writing feedback</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="mt-8 text-sm text-stone-500 text-center">À la carte sessions: €45 / hour</p>
+      </div>
+    </section>
+
+    <!-- Corporate -->
+    <section class="bg-stone-900 text-white">
+      <div class="mx-auto max-w-5xl px-6 py-20">
+        <p class="text-sm uppercase tracking-widest text-teal-300 font-semibold mb-4">Package D</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Bricolage Grotesque', sans-serif;">Corporate &amp; team training</h2>
+        <p class="text-lg text-stone-200 max-w-3xl mb-6 leading-relaxed">
+          Tailored English training for export teams, hospitality groups, and tech companies across the Bordeaux Métropole. Delivered as a <em>convention de formation</em> through Open HR SASU, with structured curriculum, attendance tracking, and end-of-engagement reporting.
+        </p>
+        <div class="grid sm:grid-cols-2 gap-x-12 gap-y-3 max-w-3xl text-stone-200 mb-8">
+          <p>• €70–120 per hour, scoped per engagement</p>
+          <p>• 1:1 or small-group (up to 4 learners)</p>
+          <p>• Typically 20–40 hours over 3–6 months</p>
+          <p>• Wine &amp; spirits, tech, hospitality, higher ed</p>
+        </div>
+        <a href="mailto:johnathen@open-hr.work?subject=Corporate%20training%20enquiry"
+           class="inline-flex items-center justify-center px-8 py-4 bg-white text-stone-900 hover:bg-stone-100 font-semibold rounded-lg transition">
+          Request a corporate quote
+        </a>
+      </div>
+    </section>
+
+    <!-- Method -->
+    <section class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-3xl px-6 py-20">
+        <h2 class="text-3xl font-bold text-stone-900 mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">Method</h2>
+        <div class="space-y-4 text-stone-700 leading-relaxed text-lg">
+          <p>
+            Lessons are built on the <strong>Common European Framework</strong> (CEFR) and its 2020 Companion Volume. Every learner is placed, tracked, and re-assessed against the same scale used by Cambridge English, TOEIC, IELTS, and TOEFL.
+          </p>
+          <p>
+            Pedagogy follows <strong>Communicative Language Teaching</strong> with task-based elements, structured around Paul Nation's <em>Four Strands</em>: meaning-focused input, meaning-focused output, language-focused learning, and fluency development. Reference texts include Swan's <em>Practical English Usage</em> and Thornbury's <em>About Language</em>.
+          </p>
+          <p>
+            Discipline matters more than charm. Each lesson alternates fluency-focused and accuracy-focused activities, with the mode signalled explicitly to the learner. Native fluency is the floor — not the ceiling.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="bg-teal-900 text-white">
+      <div class="mx-auto max-w-3xl px-6 py-20 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Bricolage Grotesque', sans-serif;">Start with a trial session</h2>
+        <p class="text-lg text-teal-100 mb-8 max-w-xl mx-auto">
+          Sixty minutes, four skills, written report. €30, fully credited toward any package within fourteen days.
+        </p>
+        <a href="mailto:johnathen@open-hr.work?subject=Trial%20session%20enquiry"
+           class="inline-flex items-center justify-center px-8 py-4 bg-white text-teal-900 hover:bg-stone-100 font-semibold rounded-lg transition">
+          johnathen@open-hr.work
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-stone-100 border-t border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-12 text-sm text-stone-600 leading-relaxed">
+        <p class="mb-2"><strong>Open HR SASU</strong> — RCS Paris 994 927 242 — Capital social €1,500</p>
+        <p class="mb-2">Siège social : 60 rue François Ier, 75008 Paris (France)</p>
+        <p class="mb-2">Opérations : Villenave-d'Ornon, Gironde (Bordeaux Métropole)</p>
+        <p class="mb-2">Directeur de la publication : Johnathen Fate Evans-Guilbault</p>
+        <p class="mb-2">Hébergeur : Bunny.net (BunnyWay d.o.o., Slovenia)</p>
+        <p class="mb-4">TVA non applicable, art. 293 B du CGI</p>
+        <p>
+          <a href="/fr/legal/mentions-legales/" class="text-teal-900 hover:underline">Mentions légales</a> ·
+          <a href="/fr/legal/politique-confidentialite/" class="text-teal-900 hover:underline">Politique de confidentialité</a> ·
+          <a href="/fr/legal/cgv/" class="text-teal-900 hover:underline">CGV</a>
+        </p>
+      </div>
+    </footer>
+  </main>
+</Layout>
