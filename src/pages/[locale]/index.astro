@@ -14,18 +14,32 @@ const isFr = locale === 'fr';
 const t = isFr ? {
   metaTitle: "Cours d'anglais avec Johnathen Evans-Guilbault — Bordeaux et en ligne",
   metaDescription: "Cours particuliers d'anglais alignés CEFR pour adultes, candidats aux examens et équipes d'entreprise. Anglophone natif, méthode structurée, comptes rendus écrits. Séance d'évaluation 30 €.",
+  subBrand: "Anglais",
+  platformLink: "Plateforme Open HR →",
   eyebrow: "Cours d'anglais individuels · Bordeaux Métropole et en ligne",
-  h1: "Cours d'anglais avec Johnathen Evans-Guilbault",
-  intro: "Anglophone natif, niveau master, fort d'une expérience en conception pédagogique. Cours d'anglais en face-à-face, alignés CEFR, pour adultes, candidats aux examens et équipes d'entreprise à Bordeaux et en ligne.",
+  h1Line1: "Cours d'anglais avec",
+  h1Line2: "Johnathen Evans-Guilbault",
+  intro: "Anglophone natif, niveau master, fort d'une expérience de conception et d'animation de séries de cours de niveau supérieur. Cours d'anglais en face-à-face, alignés CEFR, pour adultes, candidats aux examens et équipes d'entreprise à Bordeaux et en ligne.",
   ctaTrial: "Réserver une séance d'évaluation — 30 €",
   ctaPackages: "Voir les formules",
   ctaSubnote: "Le tarif d'évaluation est crédité sur toute formule achetée dans les 14 jours · Bilan écrit sous 48 h",
+  portraitAlt: "Johnathen Evans-Guilbault, professeur d'anglais et fondateur d'Open HR",
   pillar1Title: "Anglophone natif, pédagogie structurée",
-  pillar1Body: "Anglophone natif des États-Unis. Formation universitaire de niveau master. Expérience d'enseignement antérieure en théologie et en gestion — la conception pédagogique est directement transférable à l'enseignement de l'anglais.",
+  pillar1Body: "Anglophone natif des États-Unis. Formation universitaire de niveau master. Expérience d'enseignement antérieure en théologie et en gestion — la conception pédagogique se transfère directement à l'enseignement de l'anglais.",
   pillar2Title: "Aligné CEFR, préparation aux examens",
   pillar2Body: "Chaque apprenant est positionné sur le Cadre européen commun de référence pour les langues. Préparation ciblée pour TOEIC, IELTS, TOEFL, Cambridge B2 First et C1 Advanced. Méthode communicative ancrée dans les <em>Quatre Volets</em> de Paul Nation.",
   pillar3Title: "Bordeaux et en ligne",
   pillar3Body: "En présentiel à Villenave-d'Ornon, Pessac, Talence, Bègles et au centre de Bordeaux. À distance via Zoom pour les apprenants éloignés. Engagements d'entreprise sur site ou en hybride.",
+  pedagogyEyebrow: "La pédagogie, pas seulement la langue",
+  pedagogyH2: "La langue maternelle est le sol — pas le plafond.",
+  pedagogyP1: "Les cours seront structurés plutôt qu'improvisés parce que le travail a déjà été fait ailleurs.",
+  pedagogyP2: "Avant de fonder Open HR, j'ai conçu et animé quatre séries de cours de niveau supérieur en théologie et en littérature biblique à St. James — plans de cours, polycopiés, supports de présentation et notes de séance complets pour chaque session. Ce qui se transfère, c'est l'appareil pédagogique : progression structurée, évaluations de fin de cycle, résultats centrés sur l'apprenant adulte. La même colonne vertébrale, appliquée à la langue.",
+  pedagogyTile1: "4",
+  pedagogyTile1Label: "Séries de cours de niveau supérieur conçues et animées",
+  pedagogyTile2: "20+",
+  pedagogyTile2Label: "Leçons distinctes avec plans, polycopiés et supports complets",
+  pedagogyTile3: "200+",
+  pedagogyTile3Label: "Documents pédagogiques produits — les preuves",
   pricingH2: "Formules et tarifs",
   pricingIntro: "Vendu en formules, pas à la séance. Remise pour engagement. Périodes de validité pour préserver le rythme. Tous les tarifs : TVA non applicable, art. 293 B du CGI.",
   trialEyebrow: "Évaluation",
@@ -87,10 +101,12 @@ const t = isFr ? {
   methodH2: "Méthode",
   methodP1: "Les cours sont construits sur le <strong>Cadre européen commun de référence pour les langues</strong> (CEFR) et son volume complémentaire 2020. Chaque apprenant est positionné, suivi et réévalué selon la même échelle utilisée par Cambridge English, TOEIC, IELTS et TOEFL.",
   methodP2: "La pédagogie suit l'<strong>approche communicative</strong> avec une dimension actionnelle, structurée autour des <em>Quatre Volets</em> de Paul Nation : entrée centrée sur le sens, sortie centrée sur le sens, apprentissage centré sur la langue, et développement de la fluidité. Ouvrages de référence : <em>Practical English Usage</em> de Swan et <em>About Language</em> de Thornbury.",
-  methodP3: "La discipline compte plus que le charme. Chaque séance alterne activités axées fluidité et activités axées exactitude, le mode étant signalé explicitement à l'apprenant. La langue maternelle est le sol — pas le plafond.",
+  methodP3: "La discipline compte plus que le charme. Chaque séance alterne activités axées fluidité et activités axées exactitude, le mode étant signalé explicitement à l'apprenant.",
   contactH2: "Commencez par une séance d'évaluation",
   contactBody: "Soixante minutes, quatre compétences, bilan écrit. 30 €, intégralement crédités sur toute formule achetée dans les quatorze jours.",
-  legalEntity: "Open HR SASU — RCS Paris 994 927 242 — Capital social 1 500 €",
+  contactCta: "Réserver ma séance d'évaluation",
+  legalEntity: "Open HR SASU",
+  legalRcs: "RCS Paris 994 927 242 — Capital social 1 500 €",
   legalSiege: "Siège social : 60 rue François Ier, 75008 Paris (France)",
   legalOps: "Opérations : Villenave-d'Ornon, Gironde (Bordeaux Métropole)",
   legalPub: "Directeur de la publication : Johnathen Fate Evans-Guilbault",
@@ -102,18 +118,32 @@ const t = isFr ? {
 } : {
   metaTitle: "English tutoring with Johnathen Evans-Guilbault — Bordeaux & online",
   metaDescription: "CEFR-anchored 1:1 English lessons for adults, exam candidates, and corporate teams. Native speaker, structured method, written progress reports. Trial session €30.",
+  subBrand: "English",
+  platformLink: "Open HR Platform →",
   eyebrow: "1:1 English tutoring · Bordeaux Métropole & online",
-  h1: "English tutoring with Johnathen Evans-Guilbault",
-  intro: "Native English speaker, master's-level qualified, with a decade of instructional design experience. CEFR-anchored 1:1 lessons for adult learners, exam candidates, and corporate teams in Bordeaux and online.",
+  h1Line1: "English tutoring with",
+  h1Line2: "Johnathen Evans-Guilbault",
+  intro: "Native English speaker, master's-level qualified, with prior experience designing and delivering graduate-level course series. CEFR-anchored 1:1 lessons for adult learners, exam candidates, and corporate teams in Bordeaux and online.",
   ctaTrial: "Book a trial session — €30",
   ctaPackages: "See packages",
   ctaSubnote: "Trial fee credited to any package purchased within 14 days · Written diagnostic report within 48 hours",
+  portraitAlt: "Johnathen Evans-Guilbault, English tutor and founder of Open HR",
   pillar1Title: "Native fluency, structured pedagogy",
-  pillar1Body: "Native English from the United States. Master's-level academic background. Prior teaching experience in theology and business — instructional design transferred directly to ESL.",
+  pillar1Body: "Native English from the United States. Master's-level academic background. Prior teaching experience in theology and business — instructional design transferred directly to language pedagogy.",
   pillar2Title: "CEFR-anchored, exam-ready",
   pillar2Body: "Every learner placed on the Common European Framework. Targeted preparation for TOEIC, IELTS, TOEFL, Cambridge B2 First & C1 Advanced. Communicative method grounded in Paul Nation's <em>Four Strands</em>.",
   pillar3Title: "Bordeaux & online",
   pillar3Body: "In-person across Villenave-d'Ornon, Pessac, Talence, Bègles, central Bordeaux. Remote 1:1 via Zoom for learners further afield. Corporate engagements delivered on-site or hybrid.",
+  pedagogyEyebrow: "Pedagogy, not just fluency",
+  pedagogyH2: "Native fluency is the floor — not the ceiling.",
+  pedagogyP1: "Lessons will be structured rather than improvised because the work has already been done elsewhere.",
+  pedagogyP2: "Before founding Open HR, I designed and delivered four multi-week graduate-level course series in theology and biblical literature at St. James — full lesson plans, handouts, slide decks, and speaker notes for each. The pedagogical apparatus is what transfers: scaffolded learning arcs, exit assessments, adult-learner outcomes. Same spine, applied to language.",
+  pedagogyTile1: "4",
+  pedagogyTile1Label: "Multi-week graduate-level course series designed and delivered",
+  pedagogyTile2: "20+",
+  pedagogyTile2Label: "Distinct lessons with full plans, handouts, and slide decks",
+  pedagogyTile3: "200+",
+  pedagogyTile3Label: "Instructional artefacts produced — the pedagogical receipts",
   pricingH2: "Packages & pricing",
   pricingIntro: "Sold as packages, not single lessons. Discount for commitment. Validity windows protect pace. All prices: TVA non applicable, art. 293 B du CGI.",
   trialEyebrow: "Trial",
@@ -175,10 +205,12 @@ const t = isFr ? {
   methodH2: "Method",
   methodP1: "Lessons are built on the <strong>Common European Framework</strong> (CEFR) and its 2020 Companion Volume. Every learner is placed, tracked, and re-assessed against the same scale used by Cambridge English, TOEIC, IELTS, and TOEFL.",
   methodP2: "Pedagogy follows <strong>Communicative Language Teaching</strong> with task-based elements, structured around Paul Nation's <em>Four Strands</em>: meaning-focused input, meaning-focused output, language-focused learning, and fluency development. Reference texts include Swan's <em>Practical English Usage</em> and Thornbury's <em>About Language</em>.",
-  methodP3: "Discipline matters more than charm. Each lesson alternates fluency-focused and accuracy-focused activities, with the mode signalled explicitly to the learner. Native fluency is the floor — not the ceiling.",
+  methodP3: "Discipline matters more than charm. Each lesson alternates fluency-focused and accuracy-focused activities, with the mode signalled explicitly to the learner.",
   contactH2: "Start with a trial session",
   contactBody: "Sixty minutes, four skills, written report. €30, fully credited toward any package within fourteen days.",
-  legalEntity: "Open HR SASU — RCS Paris 994 927 242 — Capital social €1,500",
+  contactCta: "Book your trial session",
+  legalEntity: "Open HR SASU",
+  legalRcs: "RCS Paris 994 927 242 — Capital social €1,500",
   legalSiege: "Siège social : 60 rue François Ier, 75008 Paris (France)",
   legalOps: "Opérations : Villenave-d'Ornon, Gironde (Bordeaux Métropole)",
   legalPub: "Directeur de la publication : Johnathen Fate Evans-Guilbault",
@@ -192,30 +224,64 @@ const t = isFr ? {
 
 <Layout title={t.metaTitle} description={t.metaDescription} locale={locale} pagePath="/">
   <main class="flex-1">
+
+    <!-- Top bar -->
+    <header class="bg-white border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
+        <a href={`/${locale}/`} class="flex items-center gap-3 group">
+          <img src="/openhr-mark.svg" alt="" width="36" height="36" class="rounded" />
+          <span class="text-base font-semibold text-stone-900" style="font-family: 'Bricolage Grotesque', sans-serif;">
+            Open&nbsp;HR <span class="text-stone-400 font-normal mx-1">·</span> <span class="text-[#00625A]">{t.subBrand}</span>
+          </span>
+        </a>
+        <a href="https://app.open-hr.work/" class="text-sm text-stone-600 hover:text-[#00625A] transition">
+          {t.platformLink}
+        </a>
+      </div>
+    </header>
+
     <!-- Hero -->
-    <section class="bg-white border-b border-stone-200">
-      <div class="mx-auto max-w-5xl px-6 py-20 md:py-28">
-        <p class="text-sm uppercase tracking-widest text-teal-900 font-semibold mb-4">{t.eyebrow}</p>
-        <h1 class="text-4xl md:text-6xl font-bold text-stone-900 leading-tight mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">
-          {t.h1}
-        </h1>
-        <p class="text-lg md:text-xl text-stone-700 max-w-3xl mb-8 leading-relaxed">{t.intro}</p>
-        <div class="flex flex-col sm:flex-row gap-4">
-          <a href="https://calendly.com/johnathen-open-hr/trial_period"
-             class="inline-flex items-center justify-center px-8 py-4 bg-teal-900 hover:bg-teal-800 text-white font-semibold rounded-lg transition">
-            {t.ctaTrial}
-          </a>
-          <a href="#pricing"
-             class="inline-flex items-center justify-center px-8 py-4 border-2 border-teal-900 text-teal-900 hover:bg-teal-50 font-semibold rounded-lg transition">
-            {t.ctaPackages}
-          </a>
+    <section class="bg-[#F8F4ED] border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-20 md:py-24 grid lg:grid-cols-3 gap-12 items-center">
+        <div class="lg:col-span-2 order-2 lg:order-1">
+          <p class="text-sm uppercase tracking-widest text-[#00625A] font-semibold mb-4">{t.eyebrow}</p>
+          <h1 class="text-4xl md:text-6xl font-bold text-stone-900 leading-tight mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">
+            {t.h1Line1}<br />{t.h1Line2}
+          </h1>
+          <p class="text-lg md:text-xl text-stone-700 max-w-2xl mb-8 leading-relaxed" style="font-family: Georgia, 'Source Serif Pro', serif;">
+            {t.intro}
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="https://calendly.com/johnathen-open-hr/trial_period"
+               class="inline-flex items-center justify-center px-8 py-4 bg-[#00625A] hover:bg-[#004F49] text-white font-semibold rounded-lg transition">
+              {t.ctaTrial}
+            </a>
+            <a href="#pricing"
+               class="inline-flex items-center justify-center px-8 py-4 border-2 border-[#00625A] text-[#00625A] hover:bg-[#00625A]/5 font-semibold rounded-lg transition">
+              {t.ctaPackages}
+            </a>
+          </div>
+          <p class="mt-6 text-sm text-stone-500">{t.ctaSubnote}</p>
         </div>
-        <p class="mt-6 text-sm text-stone-500">{t.ctaSubnote}</p>
+
+        <div class="order-1 lg:order-2 flex justify-center lg:justify-end">
+          <picture>
+            <source srcset="/portrait/johnathen-800.webp" type="image/webp" />
+            <img
+              src="/portrait/johnathen-800.jpg"
+              alt={t.portraitAlt}
+              width="320"
+              height="320"
+              class="w-64 h-64 lg:w-80 lg:h-80 object-cover rounded-2xl shadow-xl ring-1 ring-black/5"
+              loading="eager"
+            />
+          </picture>
+        </div>
       </div>
     </section>
 
     <!-- Pillars -->
-    <section class="bg-stone-50 border-b border-stone-200">
+    <section class="bg-white border-b border-stone-200">
       <div class="mx-auto max-w-5xl px-6 py-16">
         <div class="grid md:grid-cols-3 gap-8">
           <div>
@@ -234,6 +300,35 @@ const t = isFr ? {
       </div>
     </section>
 
+    <!-- Pedagogy / credentials -->
+    <section class="bg-[#F8F4ED] border-b border-stone-200">
+      <div class="mx-auto max-w-5xl px-6 py-20">
+        <p class="text-sm uppercase tracking-widest text-[#00625A] font-semibold mb-3">{t.pedagogyEyebrow}</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-6 max-w-3xl" style="font-family: 'Bricolage Grotesque', sans-serif;">
+          {t.pedagogyH2}
+        </h2>
+        <div class="max-w-3xl text-lg text-stone-700 leading-relaxed space-y-5 mb-12" style="font-family: Georgia, 'Source Serif Pro', serif;">
+          <p>{t.pedagogyP1}</p>
+          <p>{t.pedagogyP2}</p>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-6 max-w-3xl">
+          <div class="border border-stone-300 rounded-xl p-6 bg-white/60">
+            <p class="text-4xl font-bold text-[#00625A] mb-1" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pedagogyTile1}</p>
+            <p class="text-sm text-stone-600 leading-snug">{t.pedagogyTile1Label}</p>
+          </div>
+          <div class="border border-stone-300 rounded-xl p-6 bg-white/60">
+            <p class="text-4xl font-bold text-[#00625A] mb-1" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pedagogyTile2}</p>
+            <p class="text-sm text-stone-600 leading-snug">{t.pedagogyTile2Label}</p>
+          </div>
+          <div class="border border-stone-300 rounded-xl p-6 bg-white/60">
+            <p class="text-4xl font-bold text-[#00625A] mb-1" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pedagogyTile3}</p>
+            <p class="text-sm text-stone-600 leading-snug">{t.pedagogyTile3Label}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Pricing -->
     <section id="pricing" class="bg-white border-b border-stone-200">
       <div class="mx-auto max-w-5xl px-6 py-20">
@@ -245,7 +340,7 @@ const t = isFr ? {
           <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
             <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">{t.trialEyebrow}</p>
             <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.trialName}</h3>
-            <p class="text-3xl font-bold text-teal-900 mb-4">{t.trialPrice}<span class="text-base font-normal text-stone-500">{t.trialUnit}</span></p>
+            <p class="text-3xl font-bold text-[#00625A] mb-4">{t.trialPrice}<span class="text-base font-normal text-stone-500">{t.trialUnit}</span></p>
             <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
               {t.trialBullets.map((b: string) => <li>• {b}</li>)}
             </ul>
@@ -254,18 +349,18 @@ const t = isFr ? {
           <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
             <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">{t.pkgAEyebrow}</p>
             <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pkgAName}</h3>
-            <p class="text-3xl font-bold text-teal-900 mb-1">{t.pkgAPrice}<span class="text-base font-normal text-stone-500">{t.pkgAUnit}</span></p>
+            <p class="text-3xl font-bold text-[#00625A] mb-1">{t.pkgAPrice}<span class="text-base font-normal text-stone-500">{t.pkgAUnit}</span></p>
             <p class="text-sm text-stone-500 mb-4">{t.pkgAPerHour}</p>
             <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
               {t.pkgABullets.map((b: string) => <li>• {b}</li>)}
             </ul>
           </div>
 
-          <div class="border-2 border-teal-900 rounded-xl p-6 flex flex-col relative shadow-lg">
-            <span class="absolute -top-3 left-6 bg-teal-900 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">{t.pkgBBadge}</span>
-            <p class="text-xs uppercase tracking-widest text-teal-900 font-semibold mb-2">{t.pkgBEyebrow}</p>
+          <div class="border-2 border-[#00625A] rounded-xl p-6 flex flex-col relative shadow-lg">
+            <span class="absolute -top-3 left-6 bg-[#00625A] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">{t.pkgBBadge}</span>
+            <p class="text-xs uppercase tracking-widest text-[#00625A] font-semibold mb-2">{t.pkgBEyebrow}</p>
             <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pkgBName}</h3>
-            <p class="text-3xl font-bold text-teal-900 mb-1">{t.pkgBPrice}<span class="text-base font-normal text-stone-500">{t.pkgBUnit}</span></p>
+            <p class="text-3xl font-bold text-[#00625A] mb-1">{t.pkgBPrice}<span class="text-base font-normal text-stone-500">{t.pkgBUnit}</span></p>
             <p class="text-sm text-stone-500 mb-4">{t.pkgBPerHour}</p>
             <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
               {t.pkgBBullets.map((b: string) => <li>• {b}</li>)}
@@ -275,7 +370,7 @@ const t = isFr ? {
           <div class="border border-stone-200 rounded-xl p-6 flex flex-col">
             <p class="text-xs uppercase tracking-widest text-stone-500 font-semibold mb-2">{t.pkgCEyebrow}</p>
             <h3 class="text-2xl font-bold text-stone-900 mb-2" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.pkgCName}</h3>
-            <p class="text-3xl font-bold text-teal-900 mb-1">{t.pkgCPrice}<span class="text-base font-normal text-stone-500">{t.pkgCUnit}</span></p>
+            <p class="text-3xl font-bold text-[#00625A] mb-1">{t.pkgCPrice}<span class="text-base font-normal text-stone-500">{t.pkgCUnit}</span></p>
             <p class="text-sm text-stone-500 mb-4">{t.pkgCPerHour}</p>
             <ul class="text-sm text-stone-700 space-y-2 mb-6 flex-1">
               {t.pkgCBullets.map((b: string) => <li>• {b}</li>)}
@@ -288,9 +383,9 @@ const t = isFr ? {
     </section>
 
     <!-- Corporate -->
-    <section class="bg-stone-900 text-white">
+    <section class="bg-[#0F2926] text-white">
       <div class="mx-auto max-w-5xl px-6 py-20">
-        <p class="text-sm uppercase tracking-widest text-teal-300 font-semibold mb-4">{t.corpEyebrow}</p>
+        <p class="text-sm uppercase tracking-widest text-[#7BC9C0] font-semibold mb-4">{t.corpEyebrow}</p>
         <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.corpH2}</h2>
         <p class="text-lg text-stone-200 max-w-3xl mb-6 leading-relaxed" set:html={t.corpBody} />
         <div class="grid sm:grid-cols-2 gap-x-12 gap-y-3 max-w-3xl text-stone-200 mb-8">
@@ -307,7 +402,7 @@ const t = isFr ? {
     <section class="bg-white border-b border-stone-200">
       <div class="mx-auto max-w-3xl px-6 py-20">
         <h2 class="text-3xl font-bold text-stone-900 mb-6" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.methodH2}</h2>
-        <div class="space-y-4 text-stone-700 leading-relaxed text-lg">
+        <div class="space-y-4 text-stone-700 leading-relaxed text-lg" style="font-family: Georgia, 'Source Serif Pro', serif;">
           <p set:html={t.methodP1} />
           <p set:html={t.methodP2} />
           <p set:html={t.methodP3} />
@@ -316,30 +411,36 @@ const t = isFr ? {
     </section>
 
     <!-- Contact -->
-    <section class="bg-teal-900 text-white">
+    <section class="bg-[#00625A] text-white">
       <div class="mx-auto max-w-3xl px-6 py-20 text-center">
         <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Bricolage Grotesque', sans-serif;">{t.contactH2}</h2>
-        <p class="text-lg text-teal-100 mb-8 max-w-xl mx-auto">{t.contactBody}</p>
+        <p class="text-lg text-white/85 mb-8 max-w-xl mx-auto">{t.contactBody}</p>
         <a href="https://calendly.com/johnathen-open-hr/trial_period"
-           class="inline-flex items-center justify-center px-8 py-4 bg-white text-teal-900 hover:bg-stone-100 font-semibold rounded-lg transition">
-          {isFr ? 'Réserver ma séance d\'évaluation' : 'Book your trial session'}
+           class="inline-flex items-center justify-center px-8 py-4 bg-white text-[#00625A] hover:bg-stone-100 font-semibold rounded-lg transition">
+          {t.contactCta}
         </a>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-stone-100 border-t border-stone-200">
+    <footer class="bg-[#F8F4ED] border-t border-stone-200">
       <div class="mx-auto max-w-5xl px-6 py-12 text-sm text-stone-600 leading-relaxed">
-        <p class="mb-2"><strong>{t.legalEntity}</strong></p>
-        <p class="mb-2">{t.legalSiege}</p>
-        <p class="mb-2">{t.legalOps}</p>
-        <p class="mb-2">{t.legalPub}</p>
-        <p class="mb-2">{t.legalHost}</p>
+        <div class="flex items-center gap-3 mb-4">
+          <img src="/openhr-mark.svg" alt="" width="32" height="32" class="rounded" />
+          <p class="font-semibold text-stone-900" style="font-family: 'Bricolage Grotesque', sans-serif;">
+            {t.legalEntity}
+          </p>
+        </div>
+        <p class="mb-1">{t.legalRcs}</p>
+        <p class="mb-1">{t.legalSiege}</p>
+        <p class="mb-1">{t.legalOps}</p>
+        <p class="mb-1">{t.legalPub}</p>
+        <p class="mb-1">{t.legalHost}</p>
         <p class="mb-4">{t.legalVat}</p>
         <p>
-          <a href={`/${locale}/legal/mentions-legales/`} class="text-teal-900 hover:underline">{t.legalLink1}</a> ·
-          <a href={`/${locale}/legal/politique-confidentialite/`} class="text-teal-900 hover:underline">{t.legalLink2}</a> ·
-          <a href={`/${locale}/legal/cgv/`} class="text-teal-900 hover:underline">{t.legalLink3}</a>
+          <a href={`/${locale}/legal/mentions-legales/`} class="text-[#00625A] hover:underline">{t.legalLink1}</a> ·
+          <a href={`/${locale}/legal/politique-confidentialite/`} class="text-[#00625A] hover:underline">{t.legalLink2}</a> ·
+          <a href={`/${locale}/legal/cgv/`} class="text-[#00625A] hover:underline">{t.legalLink3}</a>
         </p>
       </div>
     </footer>

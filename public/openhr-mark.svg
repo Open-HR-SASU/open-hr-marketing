@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Open HR Social Media Profile Picture
+  Dimensions: 320×320px (Instagram & Threads)
+  Background: White (#FFFFFF)
+  Mark: Teal 900 (#006064)
+  Note: Displays as circle on Instagram/Threads
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320">
+  <title>Open HR</title>
+  <desc>Open HR verified employment infrastructure</desc>
+  
+  <!-- White background -->
+  <rect width="320" height="320" fill="#FFFFFF"/>
+  
+  <!-- Centered mark - scaled to fit with proper padding -->
+  <!-- Original: 512×200, scaled to ~256×100 (0.5x), centered -->
+  <g fill="#006064" transform="translate(32, 110) scale(0.5)">
+    <!-- OUTER LEFT PARENTHESIS -->
+    <path d="M 70 15 A 95 95 0 0 0 70 185 L 70 174 A 84 84 0 0 1 70 26 Z"/>
+    
+    <!-- INNER LEFT PARENTHESIS -->
+    <path d="M 150 30 A 78 78 0 0 0 150 170 L 150 159 A 67 67 0 0 1 150 41 Z"/>
+    
+    <!-- CENTER OPEN CIRCLE (Filled annulus with 30° gap at 12 o'clock) -->
+    <path d="M 268.94 51.70 A 50 50 0 1 1 243.06 51.70 L 245.91 62.33 A 39 39 0 1 0 266.09 62.33 Z" fill-rule="evenodd"/>
+    
+    <!-- INNER RIGHT PARENTHESIS -->
+    <path d="M 362 30 A 78 78 0 0 1 362 170 L 362 159 A 67 67 0 0 0 362 41 Z"/>
+    
+    <!-- OUTER RIGHT PARENTHESIS -->
+    <path d="M 442 15 A 95 95 0 0 1 442 185 L 442 174 A 84 84 0 0 0 442 26 Z"/>
+  </g>
+</svg>
